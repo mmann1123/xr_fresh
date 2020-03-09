@@ -1,0 +1,511 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>timefraym.calc &#8212; TimeFraym 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/time-fraym-logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=fraymio&repo=TimeFraym&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../prep.html">Prep Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../prep.html#module-timefraym.prep">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../calc.html">Calculate Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../calc.html#module-timefraym.calc">Functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for timefraym.calc</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Wed Sep 11 10:31:39 2019</span>
+
+<span class="sd">@author: mmann</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">dateparser.search</span> <span class="kn">import</span> <span class="n">search_dates</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+
+
+<div class="viewcode-block" id="calc_period_metrics"><a class="viewcode-back" href="../../calc.html#timefraym.calc.calc_period_metrics">[docs]</a><span class="k">def</span> <span class="nf">calc_period_metrics</span><span class="p">(</span><span class="n">xarray_obj</span><span class="p">,</span>
+                        <span class="n">variable</span> <span class="o">=</span> <span class="s2">&quot;NDVI&quot;</span><span class="p">,</span>
+                        <span class="n">TF_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                        <span class="n">example_tif_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                        <span class="n">write_tifs</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                        <span class="n">dest_folder</span> <span class="o">=</span> <span class="s1">&#39;Country_Name&#39;</span><span class="p">,</span>
+                        <span class="n">root_dir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()),</span><span class="s1">&#39;Documents&#39;</span><span class="p">,</span><span class="s1">&#39;TimeFraymStats&#39;</span><span class="p">)):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Uses an xarray object to calculate time series statistics at a desired time</span>
+<span class="sd">        interval. This includes yearly, quarterly, and monthly. Available statistics</span>
+<span class="sd">        include min max std mean but can be expanded to include numpy static</span>
+<span class="sd">        functions shown in link below:</span>
+
+<span class="sd">        All statistics are numpy statics</span>
+<span class="sd">        See: https://docs.scipy.org/doc/numpy/reference/routines.statistics.html</span>
+
+<span class="sd">        :param xarray_obj: An xarray objected created by dir_to_xarray()</span>
+<span class="sd">        :type xarray_obj: xarray </span>
+
+<span class="sd">        :param variable: String representing the variable of interest for instance &#39;NDVI&#39; or &#39;EVI&#39;</span>
+<span class="sd">        :type variable: character </span>
+
+<span class="sd">        :param TF_parameters: dictionary mapping from time period to feature names, where feature names are numpy static</span>
+<span class="sd">               routines. Only those names  which are keys in this dict will be calculated </span>
+<span class="sd">               - so whenever you delete a key from this dict, you disable the calculation of this feature.</span>
+<span class="sd">               For year month combinations use the key year_month same for year_quarter</span>
+<span class="sd">        :type TF_parameters: dictionary </span>
+<span class="sd">       </span>
+<span class="sd">        :param example_tif_path: Path to an example raster file with same properties of extected output</span>
+<span class="sd">        :type example_tif_path: character </span>
+
+<span class="sd">        :param write_tifs: boolean Should statistics be written to tiffs </span>
+<span class="sd">        :type write_tifs: boolean </span>
+
+<span class="sd">        :param dest_folder: All files are written to this folder in the home/Documents/TimeFraymStats/dest_folder</span>
+<span class="sd">                typically a country name will be used</span>
+<span class="sd">        :type dest_folder: character </span>
+<span class="sd">        </span>
+<span class="sd">        :param root_dir: character All files are written to this folder  </span>
+<span class="sd">        :type root_dir: character</span>
+<span class="sd">        </span>
+<span class="sd">        :return: multiple xarray object for each time period of interest, based on order of TF_parameters</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1"># set default metrics </span>
+        
+        <span class="n">TF_parameters_default</span> <span class="o">=</span>   <span class="p">{</span> <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">,</span><span class="s1">&#39;min&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">],</span>
+                                    <span class="s2">&quot;year_quarter&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">,</span><span class="s1">&#39;min&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">],</span>
+                                    <span class="s2">&quot;year_month&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">,</span><span class="s1">&#39;min&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">],</span>
+                                    <span class="s2">&quot;year_week&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">,</span><span class="s1">&#39;min&#39;</span><span class="p">,</span><span class="s1">&#39;std&#39;</span><span class="p">,</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span>
+
+                                  <span class="p">}</span> 
+        <span class="k">if</span> <span class="n">TF_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using default parameters&#39;</span><span class="p">)</span>
+            <span class="n">TF_parameters</span><span class="o">=</span><span class="n">TF_parameters_default</span> 
+
+
+        <span class="c1"># create indexes for year_month and year_quarter (multiple observations per quarter etc)</span>
+        <span class="n">year_week</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xarray_obj</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">to_index</span><span class="p">(),</span> 
+                                                                <span class="n">xarray_obj</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">week</span><span class="o">.</span><span class="n">to_index</span><span class="p">())</span> <span class="p">]</span>
+
+        <span class="n">year_month</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xarray_obj</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">to_index</span><span class="p">(),</span> 
+                                                                <span class="n">xarray_obj</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">to_index</span><span class="p">())</span> <span class="p">]</span>
+
+        <span class="n">year_quarter</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xarray_obj</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">to_index</span><span class="p">(),</span> 
+                                                                <span class="n">xarray_obj</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">quarter</span><span class="o">.</span><span class="n">to_index</span><span class="p">())</span> <span class="p">]</span>
+
+
+        <span class="c1"># assign new dimension to groupby</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">xarray_obj</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
+        <span class="n">xarray_obj</span> <span class="o">=</span> <span class="n">xarray_obj</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">year_week</span>    <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">year_week</span><span class="p">,</span>   <span class="n">name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">))</span>
+        <span class="n">xarray_obj</span> <span class="o">=</span> <span class="n">xarray_obj</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">year_quarter</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">year_quarter</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">))</span>
+        <span class="n">xarray_obj</span> <span class="o">=</span> <span class="n">xarray_obj</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">year_month</span>   <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">year_month</span><span class="p">,</span>  <span class="n">name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">))</span>
+        <span class="n">xarray_obj</span> <span class="o">=</span> <span class="n">xarray_obj</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">year</span>         <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">year</span><span class="p">,</span>        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">))</span>
+
+
+        <span class="c1"># create dictionary with TF_parameter keys initialize with empty list</span>
+        <span class="n">periods</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:{}</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">TF_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span> 
+
+
+        <span class="c1"># create metrics </span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">TF_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing: &#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;----&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">metric</span><span class="p">))</span>
+                
+                <span class="c1"># generate statistics by period</span>
+                <span class="n">summary_stat</span> <span class="o">=</span> <span class="n">xarray_obj</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                                                <span class="nb">getattr</span><span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">metric</span><span class="p">),</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+                
+                <span class="c1"># update values in dictionary </span>
+                <span class="n">periods</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">metric</span><span class="p">:</span><span class="n">summary_stat</span><span class="p">[</span><span class="n">variable</span><span class="p">]})</span>
+
+
+        <span class="c1"># create desination folder if writing tifs </span>
+        <span class="k">if</span> <span class="n">write_tifs</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span><span class="n">dest_folder</span><span class="p">,</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">xarray_obj</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="c1">#print(&#39;Writing files to &#39;, folder)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+
+            <span class="c1"># make folders for time keys and write out tifs </span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">TF_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>    
+                <span class="n">key_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">key_folder</span><span class="p">):</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">key_folder</span><span class="p">)</span>
+ 
+                <span class="c1"># write out data </span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;writing to &#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key_folder</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;key:&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;    value&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">periods</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">image_period</span> <span class="ow">in</span> <span class="n">periods</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">metric</span><span class="p">]:</span>
+                        <span class="n">period_name</span> <span class="o">=</span> <span class="n">image_period</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                        <span class="n">out_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">period_name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.tif&#39;</span>                       
+                        
+                        <span class="c1"># write tifs to key_folder </span>
+                        <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">example_tif_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+                            <span class="n">kwds</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">profile</span>
+                            <span class="n">kwds</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                                <span class="s1">&#39;dtype&#39;</span><span class="p">:</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;nodata&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">9999</span>
+                                <span class="p">})</span>
+                                       
+                            <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_folder</span><span class="p">,</span><span class="n">out_name</span><span class="p">),</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+                                <span class="n">dst</span><span class="o">.</span><span class="n">write_band</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">image_period</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+
+        <span class="k">return</span><span class="p">(</span><span class="n">periods</span><span class="p">)</span></div>
+    
+ 
+
+
+<div class="viewcode-block" id="parse_filename_dates"><a class="viewcode-back" href="../../calc.html#timefraym.calc.parse_filename_dates">[docs]</a><span class="k">def</span> <span class="nf">parse_filename_dates</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses dates from file names</span>
+<span class="sd">    </span>
+<span class="sd">    :param filenames: A list of files to parse</span>
+<span class="sd">    :type filenames: list </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">date_filenames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    
+    <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+    
+        <span class="n">d_name</span><span class="p">,</span> <span class="n">f_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="n">f_base</span><span class="p">,</span> <span class="n">f_ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">f_name</span><span class="p">)</span>
+    
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">search_dates</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">f_base</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)),</span>
+                                           <span class="n">settings</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;DATE_ORDER&#39;</span><span class="p">:</span> <span class="s1">&#39;YMD&#39;</span><span class="p">,</span>
+                                                     <span class="s1">&#39;STRICT_PARSING&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                                                     <span class="s1">&#39;PREFER_LANGUAGE_DATE_ORDER&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dt</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    
+        <span class="n">date_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">date_filenames</span></div>
+
+
+<div class="viewcode-block" id="parse_metric_dates"><a class="viewcode-back" href="../../calc.html#timefraym.calc.parse_metric_dates">[docs]</a><span class="k">def</span> <span class="nf">parse_metric_dates</span><span class="p">(</span><span class="n">metric_df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Adds datetime column for image metric values extracted by point </span>
+<span class="sd">    </span>
+<span class="sd">    :param metric_df: dataframe containing extracted metric values created</span>
+<span class="sd">                        by extract_dt_raster_dt_point. </span>
+<span class="sd">    :type metric_df:  pandas dataframe    </span>
+<span class="sd">    </span>
+<span class="sd">    :return: pandas dataframe with datetime object column for images  </span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+
+    <span class="k">assert</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">metric_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)),</span> <span class="s2">&quot;Input must be a dataframe&quot;</span>
+     
+    <span class="k">if</span> <span class="n">metric_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;year&#39;</span><span class="p">:</span>
+        <span class="c1"># set to first day of year</span>
+        <span class="n">metric_df</span><span class="p">[</span><span class="s2">&quot;metric_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">metric_df</span><span class="o">.</span><span class="n">metric_date</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                                                   <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="n">metric_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;year_quarter&#39;</span><span class="p">:</span>
+        <span class="n">quarter_to_month</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">:</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">:</span><span class="s1">&#39;04&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">:</span><span class="s1">&#39;07&#39;</span><span class="p">,</span><span class="s1">&#39;4&#39;</span><span class="p">:</span><span class="s1">&#39;10&#39;</span> <span class="p">}</span>
+        
+        <span class="c1"># breal out image dates to convert </span>
+        <span class="n">dater</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([])</span>
+        <span class="n">dater</span><span class="p">[[</span><span class="s1">&#39;metric_year&#39;</span><span class="p">,</span><span class="s1">&#39;metric_period&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">metric_df</span><span class="o">.</span><span class="n">metric_date</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span><span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># set to first day of month of quarter</span>
+        <span class="n">metric_df</span><span class="p">[</span><span class="s2">&quot;metric_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">dater</span><span class="o">.</span><span class="n">metric_year</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">+</span>
+                                                  <span class="n">dater</span><span class="o">.</span><span class="n">metric_period</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">quarter_to_month</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                                                  <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y%m&#39;</span><span class="p">)</span>      
+    
+    <span class="k">if</span> <span class="n">metric_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;year_month&#39;</span><span class="p">:</span>
+        <span class="c1"># set to first day of month</span>
+        <span class="n">metric_df</span><span class="p">[</span><span class="s2">&quot;metric_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">metric_df</span><span class="o">.</span><span class="n">metric_date</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+                                                   <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y_%m&#39;</span><span class="p">)</span>       
+    
+    <span class="k">if</span> <span class="n">metric_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;year_week&#39;</span><span class="p">:</span>
+        <span class="c1"># set to monday of week</span>
+        <span class="n">metric_df</span><span class="p">[</span><span class="s2">&quot;metric_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">metric_df</span><span class="o">.</span><span class="n">metric_date</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_1&#39;</span><span class="p">,</span>
+                                                  <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y_%W_%w&#39;</span><span class="p">)</span>       
+
+    <span class="k">return</span>  <span class="n">metric_df</span></div>
+
+
+
+<div class="viewcode-block" id="get_nearest"><a class="viewcode-back" href="../../calc.html#timefraym.calc.get_nearest">[docs]</a><span class="k">def</span> <span class="nf">get_nearest</span><span class="p">(</span><span class="n">datetime_column</span><span class="p">,</span> <span class="n">date_2_match</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    finds the nearest date in datetime_column to date_2_match</span>
+<span class="sd">    </span>
+<span class="sd">    :param datetime_column:  column of pandas dataframe containing dates to be matched</span>
+<span class="sd">    :type datetime_column: character</span>
+<span class="sd">    </span>
+<span class="sd">    :param date_2_match:  datetime object to search for closest match</span>
+<span class="sd">    :type date_2_match: datetime</span>
+<span class="sd">           </span>
+<span class="sd">    :return: datetime object of the nearest match  </span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">datetime_column</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">date_2_match</span><span class="p">))</span></div>
+
+ 
+
+<div class="viewcode-block" id="get_nearest_past"><a class="viewcode-back" href="../../calc.html#timefraym.calc.get_nearest_past">[docs]</a><span class="k">def</span> <span class="nf">get_nearest_past</span><span class="p">(</span><span class="n">datetime_column</span><span class="p">,</span> <span class="n">date_2_match</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    finds the nearest preceeding date in datetime_column to date_2_match</span>
+<span class="sd">    </span>
+<span class="sd">    :param datetime_column:  column of pandas dataframe containing dates to be matched</span>
+<span class="sd">    :type datetime_column: character</span>
+<span class="sd">    :param date_2_match:  datetime object to search for closest match</span>
+<span class="sd">    :type date_2_match: datetime</span>
+
+<span class="sd">           </span>
+<span class="sd">    :return: datetime object of the nearest match  </span>
+<span class="sd">    </span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">datetime_column</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">date_2_match</span><span class="p">)</span> 
+                                       <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">date_2_match</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> 
+                                       <span class="k">else</span>  <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">date_2_match</span><span class="p">)</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">365</span><span class="p">))</span> </div>
+
+<div class="viewcode-block" id="get_nearest_past_group"><a class="viewcode-back" href="../../calc.html#timefraym.calc.get_nearest_past_group">[docs]</a><span class="k">def</span> <span class="nf">get_nearest_past_group</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> 
+                           <span class="n">group</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;point_date&#39;</span><span class="p">],</span> 
+                           <span class="n">datetime_column</span><span class="o">=</span><span class="s1">&#39;metric_date&#39;</span><span class="p">,</span> 
+                           <span class="n">date_2_match_column</span><span class="o">=</span><span class="s1">&#39;point_date&#39;</span><span class="p">):</span>
+    
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Applies get_nearest_past to find the nearest preceeding date in datetime_column to date_2_match_column</span>
+<span class="sd">    </span>
+<span class="sd">    :param df: dataframe containing remotely sensed data extracted by points</span>
+<span class="sd">    :type df: pandas dataframe</span>
+<span class="sd">    </span>
+<span class="sd">    :param group:  list containing names of columns to group by, typically done by point id</span>
+<span class="sd">    :type group: list</span>
+<span class="sd">    </span>
+<span class="sd">    :param datetime_column:  column of pandas dataframe containing dates to be matched</span>
+<span class="sd">    :type datetime_column: character</span>
+<span class="sd">    </span>
+<span class="sd">    :param date_2_match:  datetime object to search for closest match</span>
+<span class="sd">    :type date_2_match: datetime</span>
+
+<span class="sd">           </span>
+<span class="sd">    :return: rows of df that most closely preceed date_2_match  </span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">g</span><span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="n">datetime_column</span><span class="p">]</span><span class="o">==</span><span class="n">get_nearest_past</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">datetime_column</span><span class="p">],</span><span class="n">g</span><span class="p">[</span><span class="n">date_2_match_column</span><span class="p">][</span><span class="mi">0</span><span class="p">])]</span> <span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="extract_dt_raster_dt_point"><a class="viewcode-back" href="../../calc.html#timefraym.calc.extract_dt_raster_dt_point">[docs]</a><span class="k">def</span> <span class="nf">extract_dt_raster_dt_point</span><span class="p">(</span><span class="n">stats_dict</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> 
+                               <span class="n">dt_points</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">event_date</span><span class="o">=</span><span class="s1">&#39;event_date&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Uses date-time locations (points) to extract metrics of interest from raster files</span>
+<span class="sd">    for the appropriate date and location. Keeps closest preceeding raster value</span>
+<span class="sd">    to the point event date.</span>
+
+<span class="sd">    For instance, a point file containing the location and time of crop losses can be </span>
+<span class="sd">    linkned to rasters of minimum precipitation for the time period of the crop loss event. </span>
+
+<span class="sd">    :param stats_dict: contains extracted metric values created</span>
+<span class="sd">                        by calc_period_metrics. </span>
+<span class="sd">    :type stats_dict: dictionary</span>
+
+<span class="sd">    :param period: string indicating the time period from `stats` to be used.</span>
+<span class="sd">                    Can take values &#39;year&#39;, &#39;year_quarter&#39;, &#39;year_month&#39;, &#39;year_week&#39;</span>
+<span class="sd">    :type period: character</span>
+
+<span class="sd">    :param metric: string indicating the metric to be used. </span>
+<span class="sd">                    Can take values &#39;max&#39;,&#39;min&#39;,&#39;std&#39;,&#39;mean&#39;</span>
+<span class="sd">    :type metric: character</span>
+
+<span class="sd">    :param dt_points: dataframe containing x,y and datetime columns. Location and </span>
+<span class="sd">                    dates used for extracting raster metric data e.g. mean rainfall</span>
+<span class="sd">    :type dt_points: pandas dataframe</span>
+
+<span class="sd">    :param lat: string indicating column name of latitude, assuming same projection as </span>
+<span class="sd">                stats_dict input rasters</span>
+<span class="sd">    :type lat: character</span>
+
+<span class="sd">    :param lon: string indicating column name of longitude, assuming same projection as </span>
+<span class="sd">                stats_dict input rasters</span>
+<span class="sd">    :type lon: character</span>
+
+<span class="sd">    :param event_date: string indicating name of column containing datetime objects</span>
+<span class="sd">                holding the date of the point event</span>
+<span class="sd">    :type event_date: character</span>
+
+<span class="sd">    :return: pandas dataframe with date-time points and extracted raster metrics for that </span>
+<span class="sd">                    time period of interest</span>
+<span class="sd">                    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># get relevant raster stack &amp; point date time data</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">raster_data</span> <span class="o">=</span> <span class="n">stats_dict</span><span class="p">[</span><span class="n">period</span><span class="p">][</span><span class="n">metric</span><span class="p">]</span>
+
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stats_dict key error please check period and metric&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">dt_points</span><span class="p">[</span><span class="n">lat</span><span class="p">]</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">dt_points</span><span class="p">[</span><span class="n">lon</span><span class="p">]</span>
+        <span class="n">row_name</span> <span class="o">=</span> <span class="n">dt_points</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">dt_points</span><span class="p">[</span><span class="s1">&#39;event_date&#39;</span><span class="p">]</span> 
+        
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;check column names in dt_points&#39;</span><span class="p">)</span>
+
+    <span class="c1"># create empty dataframe to hold outputs</span>
+    <span class="n">Newdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([])</span>
+
+
+
+    <span class="c1">#extract points from rasters</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">ids</span><span class="p">,</span><span class="n">date</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">row_name</span><span class="p">,</span><span class="n">date</span><span class="p">):</span>
+        <span class="n">dsloc</span> <span class="o">=</span> <span class="n">raster_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="n">j</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span> 
+        <span class="n">DT</span> <span class="o">=</span> <span class="n">dsloc</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+
+        <span class="c1"># insert the name with your preferred column title:</span>
+        <span class="n">DT</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;point_id&quot;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="n">ids</span><span class="p">)</span>
+        <span class="n">DT</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;point_date&quot;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
+
+        <span class="n">Newdf</span> <span class="o">=</span> <span class="n">Newdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DT</span><span class="p">,</span><span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">Newdf</span><span class="p">[</span><span class="s1">&#39;metric_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Newdf</span><span class="o">.</span><span class="n">index</span>
+
+    <span class="c1"># indicator_metric name</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Newdf</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">metric</span>
+    <span class="n">Newdf</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">Newdf</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">name</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+    
+    <span class="c1"># add datetime column</span>
+    <span class="n">Newdf</span> <span class="o">=</span> <span class="n">parse_metric_dates</span><span class="p">(</span><span class="n">Newdf</span><span class="p">)</span>
+
+    <span class="c1"># calc difference between point and metric date</span>
+    <span class="n">Newdf</span><span class="p">[</span><span class="s1">&#39;timedelta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> <span class="n">Newdf</span><span class="p">[</span><span class="s1">&#39;point_date&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">Newdf</span><span class="p">[</span><span class="s1">&#39;metric_date&#39;</span><span class="p">]</span> <span class="p">)</span><span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">)</span>
+
+    <span class="c1"># keep metrics preceeding point date</span>
+    <span class="n">Newdf</span> <span class="o">=</span> <span class="n">Newdf</span><span class="p">[</span><span class="n">Newdf</span><span class="o">.</span><span class="n">timedelta</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># for each point keep minimum timedelta</span>
+    <span class="n">Newdf</span> <span class="o">=</span> <span class="n">Newdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">Newdf</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;point_id&#39;</span><span class="p">)[</span><span class="s1">&#39;timedelta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()]</span>
+    
+    <span class="n">Newdf</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;timedelta&#39;</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">Newdf</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, Michael Mann, Fraym.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

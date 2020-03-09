@@ -1,0 +1,19 @@
+ 
+Prep Module
+=====================================
+This module holds any functions used exclusively for data preperation and input.
+ 
+.. toctree::
+   :maxdepth: 3
+ 
+
+
+
+Functions
+==================
+ 
+.. automodule:: timefraym.prep
+    :members:
+
+
+ 

@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>timefraym.prep &#8212; TimeFraym 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/time-fraym-logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=fraymio&repo=TimeFraym&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../prep.html">Prep Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../prep.html#module-timefraym.prep">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../calc.html">Calculate Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../calc.html#module-timefraym.calc">Functions</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for timefraym.prep</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">prep.py : reads and prepares files for time series feature extraction </span>
+
+<span class="sd">author : mmann</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+ 
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">ntpath</span>
+
+
+
+
+
+
+<div class="viewcode-block" id="match_sort"><a class="viewcode-back" href="../../prep.html#timefraym.prep.match_sort">[docs]</a><span class="k">def</span> <span class="nf">match_sort</span><span class="p">(</span><span class="n">file_dir</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">glob_match</span><span class="o">=</span><span class="s1">&#39;MOD13A3_NDVI_20*&#39;</span><span class="p">):</span>
+    
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Completes glob matching and sorting of a file directory</span>
+<span class="sd">    </span>
+<span class="sd">    :param file_dir: Path to rasters readable by rasterio</span>
+<span class="sd">    :type file_dir: character</span>
+<span class="sd">    </span>
+<span class="sd">    :param glob_match: Glob pathname pattern e.g. &#39;MOD13A3_NDVI_20*&#39;</span>
+<span class="sd">    :type glob_match: character</span>
+<span class="sd">  </span>
+<span class="sd">    :return: sorted list of files </span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="n">glob_match</span><span class="p">))</span>  <span class="c1">#gather files </span>
+    <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span> <span class="c1"># put in ascending order </span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Examples found:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">files</span></div>
+
+
+<div class="viewcode-block" id="create_band_dataset"><a class="viewcode-back" href="../../prep.html#timefraym.prep.create_band_dataset">[docs]</a><span class="k">def</span> <span class="nf">create_band_dataset</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s1">&#39;NDVI&#39;</span> <span class="p">):</span><span class="c1"># if you want dask array, chunks={&#39;band&#39;: 1, &#39;x&#39;: 100, &#39;y&#39;: 100}):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A function to load bands into an xarray dataset </span>
+<span class="sd">    </span>
+<span class="sd">    :param file: Path to raster readable by rasterio</span>
+<span class="sd">    :type file: character</span>
+<span class="sd">    </span>
+<span class="sd">    :param band: Name of data product assigned to xarray data variable</span>
+<span class="sd">    :type band: character</span>
+<span class="sd">    </span>
+<span class="sd">    :return: xarray dataset</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="c1"># Each image is a dataset containing band</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_rasterio</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="c1">#, chunks=chunks)</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="s1">&#39;band&#39;</span><span class="p">)</span> <span class="c1"># convert band to data</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">ds</span></div>
+
+
+<div class="viewcode-block" id="create_date"><a class="viewcode-back" href="../../prep.html#timefraym.prep.create_date">[docs]</a><span class="k">def</span> <span class="nf">create_date</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Converts modis style filepath, extracts and converts to datetime object</span>
+<span class="sd">    </span>
+<span class="sd">    :param file: Path to raster with modis naming convension</span>
+<span class="sd">    :type file: character</span>
+<span class="sd">  </span>
+<span class="sd">    :return: datetime </span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">ntpath</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[0-9]</span><span class="si">{4}</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">file_name</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[0-9]</span><span class="si">{3}</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">file_name</span><span class="p">))</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">doy</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[0-9]</span><span class="si">{3}</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">file_name</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">year</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">doy</span><span class="p">,</span> <span class="s2">&quot;%Y_%j&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">month</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">file_name</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">day</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">file_name</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">day</span><span class="p">,</span> <span class="s2">&quot;%Y_%m_</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>       
+    <span class="k">return</span> <span class="n">date</span></div>
+    
+
+
+<div class="viewcode-block" id="dir_to_xarray"><a class="viewcode-back" href="../../prep.html#timefraym.prep.dir_to_xarray">[docs]</a><span class="k">def</span> <span class="nf">dir_to_xarray</span><span class="p">(</span><span class="n">file_dir</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">glob_match</span><span class="o">=</span><span class="s1">&#39;MOD13A3_NDVI_20*&#39;</span><span class="p">,</span> 
+                  <span class="n">description</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sensor&#39;</span><span class="p">:</span><span class="s1">&#39;MODIS&#39;</span><span class="p">,</span><span class="s1">&#39;product&#39;</span><span class="p">:</span><span class="s1">&#39;MOD13A3&#39;</span><span class="p">,</span><span class="s1">&#39;metric&#39;</span><span class="p">:</span><span class="s1">&#39;NDVI&#39;</span><span class="p">}):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Converts directory of file with modis naming convention to xarray </span>
+<span class="sd">    </span>
+<span class="sd">    :param file_dir: Path to dir of rasters with modis naming convension</span>
+<span class="sd">    :type file: character</span>
+<span class="sd">    :param glob_match: glob style file name string  e.g. &#39;MOD13A3_NDVI_20*&#39;</span>
+<span class="sd">    :type glob_match: character</span>
+<span class="sd">    :param description: dictionary specifying the sensor, product level, and metric </span>
+<span class="sd">    :type description: dictionary</span>
+<span class="sd">    </span>
+<span class="sd">    :return: xarray </span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">files</span> <span class="o">=</span> <span class="n">match_sort</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="n">glob_match</span><span class="p">)</span>  <span class="c1">#gather files </span>
+    
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">datasets</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_band_dataset</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+            <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_date</span><span class="p">(</span><span class="n">file</span><span class="p">))</span> 
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR loading, skipping acquistion!&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            
+    
+    <span class="n">xr_out</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">))</span>   
+
+    <span class="c1"># add product description </span>
+    <span class="n">xr_out</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">description</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dataset size (Gb): &#39;</span><span class="p">,</span> <span class="n">xr_out</span><span class="o">.</span><span class="n">nbytes</span><span class="o">/</span><span class="mf">1e9</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">xr_out</span>   </div>
+ 
+    
+
+<div class="viewcode-block" id="add_missing_data"><a class="viewcode-back" href="../../prep.html#timefraym.prep.add_missing_data">[docs]</a><span class="k">def</span> <span class="nf">add_missing_data</span><span class="p">(</span><span class="n">xr_obj</span><span class="p">,</span> <span class="n">file_dir</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">glob_match</span><span class="o">=</span><span class="s1">&#39;MOD13A3_NDVI_20*&#39;</span><span class="p">):</span>
+    
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Adds missing directory of file with modis naming convention to existing xarray </span>
+<span class="sd">    </span>
+<span class="sd">    :param file_dir: Path to dir of rasters with modis naming convension</span>
+<span class="sd">    :type file_dir: character</span>
+<span class="sd">    :param xr_obj: Existing xarray object to add rasters to </span>
+<span class="sd">    :type xr_obj: xarray object</span>
+<span class="sd">    :param glob_match: Glob style file name string </span>
+<span class="sd">    :type glob_match: character</span>
+
+<span class="sd">    :return: xarray  </span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">files</span> <span class="o">=</span> <span class="n">match_sort</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="n">glob_match</span><span class="p">)</span>  <span class="c1">#gather files </span>
+    
+    <span class="n">add_dates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">add_datasets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>           
+            <span class="c1"># generate datetime for file</span>
+            <span class="n">current_date</span> <span class="o">=</span> <span class="n">create_date</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        
+            <span class="c1">#add date &amp; data if current date isn&#39;t in xarray </span>
+            <span class="n">existing_dates</span> <span class="o">=</span> <span class="n">xr_obj</span><span class="o">.</span><span class="n">time</span>
+            
+            <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">current_date</span> <span class="ow">in</span> <span class="n">existing_dates</span><span class="o">.</span><span class="n">to_series</span><span class="p">()):</span>    
+                <span class="c1"># create lists to join to xarray </span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;adding...&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+                <span class="n">add_dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_date</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+                <span class="n">add_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_band_dataset</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+    
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR loading, skipping acquistion!&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    
+       
+    <span class="k">try</span><span class="p">:</span>    
+        <span class="c1"># concat add new images</span>
+        <span class="n">xr_new</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">add_datasets</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">add_dates</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">))</span>   
+        
+        <span class="c1"># concat to existing xarray</span>
+        <span class="n">xr_out</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">xr_obj</span><span class="p">,</span><span class="n">xr_new</span><span class="p">])</span>   
+    
+    
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        
+        <span class="c1"># if merge is not possible</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No missing dates added, returning original object&#39;</span><span class="p">)</span>    
+        
+        <span class="k">return</span><span class="p">(</span><span class="n">xr_obj</span><span class="p">)</span>            
+                
+    
+    <span class="k">return</span><span class="p">(</span><span class="n">xr_out</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, Michael Mann, Fraym.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

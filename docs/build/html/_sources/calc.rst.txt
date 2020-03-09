@@ -1,0 +1,20 @@
+ 
+Calculate Module
+=====================================
+
+This module holds any functions used for data extraction and summary statistics.
+ 
+.. toctree::
+   :maxdepth: 3
+ 
+
+
+
+Functions
+==================
+ 
+.. automodule:: timefraym.calc
+    :members:
+
+
+ 
