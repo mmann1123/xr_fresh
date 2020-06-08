@@ -601,7 +601,9 @@ def length(x, dim='time', **kwargs):
                        vectorize=True,
                        dask='parallelized',
                        output_dtypes=[int])
-     
+
+
+
 @set_property("fctype", "simple")
 def standard_deviation(x, dim='time', **kwargs):
     """
@@ -1144,6 +1146,7 @@ def rle(da: xr.DataArray, dim: str = "time", max_chunk: int = 1_000_000):
 
 npts_opt = 9000
 
+
 def longest_run(
     da: xr.DataArray, dim: str = "time", ufunc_1dim: Union[str, bool] = "auto"
 ):
@@ -1177,9 +1180,8 @@ def longest_run(
 
 
 
-def rle_1d(
-    arr: Union[int, float, bool, Sequence[Union[int, float, bool]]]
-) -> Tuple[np.array, np.array, np.array]:
+def rle_1d(arr: Union[int, float, bool, Sequence[Union[int, float, bool]]]
+           ) -> Tuple[np.array, np.array, np.array]:
     """Return the length, starting position and value of consecutive identical values.
     Parameters
     ----------

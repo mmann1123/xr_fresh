@@ -39,7 +39,9 @@ REQUIRED = [
     'xarray>=0.15.0',
     'bottleneck>=1.3.2',
     'xskillscore==0.0.12',
-    'pyproj>=2.4.2'#,
+    'pyproj>=2.4.2',
+    'bokeh>=2.0.0',
+    'gdal>=3.0.2'#,
    # 'xclim>=0.14.0'
 ]
 

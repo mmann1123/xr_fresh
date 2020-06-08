@@ -32,15 +32,16 @@ from numpy import where
 # 
 #%%
  
-search = r'F:\5year\aet_xr\aet_2012*.tif'
+search = r'/home/mmann1123/Dropbox/Ethiopia_data/PDSI/*.tif'
  
-with gw.open(search, band_names=['aet'],          ) as ds:
+with gw.open(search, band_names=['ppt'],          ) as ds:
 
     ds = ds.chunk((len(ds.time), 1, 250, 250))
-
+    ds.attrs['nodatavals'] =  (-9999,)
 print(ds)
 
 #print(rechunked.data)
+
 #%%time
 from dask.diagnostics import ProgressBar
 
@@ -49,7 +50,7 @@ client = Client()
 client
 
 print('go to http://localhost:8787/status for dask dashboard') 
-
+#%%
 
 res = []
 for name, func, args in [
@@ -91,14 +92,14 @@ for name, func, args in [
 
 
     with ProgressBar():
-        y = func(ds.sel(band='aet').persist(),**args)  #previously used .load() this is faster
+        y = func(ds.sel(band='ppt').persist(),**args)  #previously used .load() this is faster
         y.compute() 
-        y.coords['variable'] = "aet__" + name
+        y.coords['variable'] = "ppt__" + name
         res.append(y)
     
  
 F_C = xr.concat(res, dim='variable',)
-out = F_C.sel(variable="aet__" + name)
+out = F_C.sel(variable="ppt__" + name)
 out.plot.imshow()
 
 client.close()
@@ -114,11 +115,12 @@ client
 
 print('go to http://localhost:8787/status for dask dashboard') 
 #%%   THIS APPROACH SEEM MUCH SLOWER 
-ipython.magic("%%time")
+ 
 
+from itertools import chain
 
   
-mydict = { 'maximum':{} ,'quantile': {'q':"0.5"}}
+f_dict = { 'maximum':{} ,'quantile': {'q':"0.5"}}
  
 
 def _get_xr_attr(function_name):
@@ -126,13 +128,13 @@ def _get_xr_attr(function_name):
                    function_name)
 
 
-def _apply_fun_name(function_name, xr_data, band, args, **args):
+def _apply_fun_name(function_name, xr_data, band, args):
 
       out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),**args).compute()
-      out.coords['variable'] = band + "__" + function_name + 
+      out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items())))
       return out
 
-def extract_features(xr_data, feature_dict, band, na_rm = True, dim='variable',**args):
+def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable',**args):
 
     """
     Extract features from
@@ -146,7 +148,7 @@ def extract_features(xr_data, feature_dict, band, na_rm = True, dim='variable',*
 
     >>>  f_dict = { 'maximum':{} },'quantile': {'q':"0.5"}}
     >>>  features = extract_features(xr_data=ds,
-    >>>                     feature_dict=mydict,
+    >>>                     feature_dict=f_dict,
     >>>                     band='aet', 
     >>>                     na_rm = True)
 
@@ -172,26 +174,27 @@ def extract_features(xr_data, feature_dict, band, na_rm = True, dim='variable',*
     """
     
     
-    if na_rm:
-        nodataval = xr_data.attrs['nodatavals'][where(ds.band.values==band)[0][0]]
+    if na_rm is True:
+         nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
 
     features = [_apply_fun_name(function_name = funct,
                       xr_data=xr_data.where(xr_data.sel(band=band) != nodataval),
                       band= band, 
-                      args,
-                      **args)  for funct, args in feature_dict.items()]
+                      args=args)
+                for funct, args in feature_dict.items()]
 
     return xr.concat(features, dim)
 
 
-features = extract_features(xr_data=ds,
-                            feature_dict=mydict,
-                            band='aet', 
+features = extract_features2(xr_data=ds,
+                            feature_dict=f_dict,
+                            band='ppt', 
                             na_rm = True)
 
-out = features.sel(variable="aet__" + 'quantile')
+out = features.sel(variable="ppt__" + 'quantile__q_0.5')
 out.plot.imshow()
 
+ipython.magic("%%time")
 
 
 #%%
