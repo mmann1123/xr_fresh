@@ -120,8 +120,18 @@ print('go to http://localhost:8787/status for dask dashboard')
 from itertools import chain
 
   
-f_dict = { 'maximum':{} ,'quantile': {'q':"0.5"}}
+f_dict = { 'maximum':{} ,
+          'quantile': [{'q':"0.5"},{'q':'0.95'}]}
+
+f_dict = { 'maximum':{} ,
+          'quantile': [{'q':"0.5"},{'q':'0.95'}]}
  
+
+ 
+# should take this form:
+# "agg_linear_trend": [{"attr": 'slope', "chunk_len": 30, "f_agg": "min"},
+#                       {"attr": 'slope', "chunk_len": 30, "f_agg": "max"}],
+
 
 def _get_xr_attr(function_name):
     return getattr(xr_fresh.feature_generators.feature_calculators,
@@ -131,7 +141,7 @@ def _get_xr_attr(function_name):
 def _apply_fun_name(function_name, xr_data, band, args):
 
       out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),**args).compute()
-      out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items())))
+      out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items()))) # doesn't allow more than one parameter arg
       return out
 
 def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable',**args):
@@ -206,7 +216,7 @@ def _feature_arg_string(feature_dict):
         #item+'_'+value for item, value in args.items()
 
 
-_feature_arg_string(mydict)
+_feature_arg_string(f_dict)
 #%%
 
 [item+'_'+value for item, value in args.items() for funct, args.items() in feature_dict.items()]
