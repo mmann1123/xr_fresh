@@ -51,6 +51,7 @@ client
 
 print('go to http://localhost:8787/status for dask dashboard') 
 #%%
+from dask.diagnostics import ProgressBar
 
 res = []
 for name, func, args in [
@@ -102,7 +103,7 @@ F_C = xr.concat(res, dim='variable',)
 out = F_C.sel(variable="ppt__" + name)
 out.plot.imshow()
 
-client.close()
+#client.close()
 
 #%% use dictionary 
 
@@ -123,10 +124,12 @@ from itertools import chain
 f_dict = { 'maximum':{} ,
           'quantile': [{'q':"0.5"},{'q':'0.95'}]}
 
-f_dict = { 'maximum':{} ,
+f_dict = { #'maximum':{} ,
           'quantile': [{'q':"0.5"},{'q':'0.95'}]}
  
-
+f_dict = { #'maximum':{} ,
+          'quantile': {'q':"0.5"}}
+ 
  
 # should take this form:
 # "agg_linear_trend": [{"attr": 'slope', "chunk_len": 30, "f_agg": "min"},
@@ -183,15 +186,31 @@ def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable'
     
     """
     
+    fun_args = []
+    for funct, args in f_dict.items():
+        if  isinstance(args, list):
+            for arg in args:
+                fun_args.append({funct: arg})
+        else:
+            fun_args.append({funct: args})
     
     if na_rm is True:
-         nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
+        
+        nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
 
-    features = [_apply_fun_name(function_name = funct,
-                      xr_data=xr_data.where(xr_data.sel(band=band) != nodataval),
-                      band= band, 
-                      args=args)
-                for funct, args in feature_dict.items()]
+        features = [_apply_fun_name(function_name = funct,
+                          xr_data=xr_data.where(xr_data.sel(band=band) != nodataval),
+                          band= band, 
+                          args=args)
+                    for funct, args in feature_dict.items()]
+    
+    else:
+        
+        features = [_apply_fun_name(function_name = funct,
+                          xr_data=xr_data,
+                          band= band, 
+                          args=args)
+                    for funct, args in feature_dict.items()]
 
     return xr.concat(features, dim)
 
@@ -207,6 +226,54 @@ out.plot.imshow()
 ipython.magic("%%time")
 
 
+
+#%% possible solution 
+
+ 
+{'quantile': {'q':"0.5"}}
+
+f_dict = { 'maximum':{} ,
+          'quantile': [{'q':"0.5"},{'q':'0.95'}]}
+ 
+fun_args = []
+for funct, args in f_dict.items():
+    if  isinstance(args, list):
+        for arg in args:
+            fun_args.append({funct: arg})
+    else:
+        fun_args.append({funct: args})
+print(fun_args)
+
+def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable',*args):
+    
+    if na_rm is True:
+        
+        nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
+    
+        features = [_apply_fun_name(function_name = funct,
+                          xr_data=xr_data.where(xr_data.sel(band=band) != nodataval),
+                          band= band, 
+                          args=args)
+                    for funct, args in feature_dict.items()]
+    
+    else:
+        
+        features = [_apply_fun_name(function_name = funct,
+                          xr_data=xr_data,
+                          band= band, 
+                          args=args)
+                    for funct, args in feature_dict.items()]
+    
+    return xr.concat(features, dim)
+
+
+features = extract_features2(xr_data=ds,
+                        feature_dict=f_dict,
+                        band='ppt', 
+                        na_rm = True)
+
+out = features.sel(variable="ppt__" + 'quantile__q_0.5')
+out.plot.imshow()
 #%%
 matrix = [[j for j in range(5)] for i in range(5)] 
 
@@ -219,6 +286,13 @@ def _feature_arg_string(feature_dict):
 _feature_arg_string(f_dict)
 #%%
 
+a = np.array([1,2,3,4,5,6])
+
+np.mean(a)
+np.quantile(a,q=0.5)
+
+
+#%%
 [item+'_'+value for item, value in args.items() for funct, args.items() in feature_dict.items()]
             
 
