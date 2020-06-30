@@ -3,7 +3,7 @@
 tsraster/__pycache__
 examples/.ipynb_checkpoints
 .github/
-
+.vscode/
 .Rhistory
 
 .lock
