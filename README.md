@@ -23,6 +23,15 @@ pip install . e
 
 ```
 
+# Working Conda Env
+```
+conda create -n xrfresh python=3.7  cython numpy scipy libspatialindex zarr requests bottleneck sphinx xskillscore
+conda activate xrfresh
+sudo apt-get install libgdal-dev
+pip install git+https://github.com/jgrss/geowombat
+conda install bottleneck xskillscore spyder_     -c conda-forge
+
+```
 
 # Documentation
 
