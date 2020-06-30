@@ -1,6 +1,6 @@
 
 import logging
-
+import warnings
 import xarray as xr
 
 from xr_fresh.feature_generators import feature_calculators
@@ -10,20 +10,27 @@ _logger = logging.getLogger(__name__)
 from numpy import where
 
 
-
 def _get_xr_attr(function_name):
-    return getattr(feature_calculators,
+    return getattr(xr_fresh.feature_generators.feature_calculators,
                    function_name)
 
 
-def _apply_fun_name(function_name, xr_data, band, **args):
+def _apply_fun_name(function_name, xr_data, band, args):
 
       out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),**args).compute()
-      out.coords['variable'] = band + "__" + function_name  
+      out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items()))) # doesn't allow more than one parameter arg
       return out
+  
+def check_for_dictionary(arguments):
+     for func, args in f_dict.items():
+            if type(args) == list and len(args)==0:
+                warnings.warn(" Problem with feature_dict, should take the following form: f_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} Not all functions will be calculated")
+                print(''' Problem with feature_dict, should take the following form: 
+                      f_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} 
+                      ***Not all functions will be calculated***''')       
+    
 
-def extract_features(xr_data, feature_dict, band, na_rm = True, dim='variable',**args):
-
+def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable',*args):
     """
     Extract features from
 
@@ -34,9 +41,10 @@ def extract_features(xr_data, feature_dict, band, na_rm = True, dim='variable',*
     Examples
     ========
 
-    >>>  f_dict = { 'maximum':{} },'quantile': {'q':"0.5"}}
+    >>>  f_dict = { 'maximum':[{}] ,  
+                   'quantile': [{'q':"0.5"},{'q':'0.95'}]}
     >>>  features = extract_features(xr_data=ds,
-    >>>                     feature_dict=mydict,
+    >>>                     feature_dict=f_dict,
     >>>                     band='aet', 
     >>>                     na_rm = True)
 
@@ -59,17 +67,34 @@ def extract_features(xr_data, feature_dict, band, na_rm = True, dim='variable',*
     :return: The DataArray containing extracted features in `dim`.
     :rtype: xarray.DataArray
     
-    """
+    """    
+    check_for_dictionary(feature_dict)
     
+    nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
     
-    if na_rm:
-        nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
+    if na_rm is True:
 
-    # iterate across feature_dict elements and capture created features
-    features = [_apply_fun_name(function_name = funct,
-                      xr_data=xr_data.where(xr_data.sel(band=band) != nodataval),
-                      band= band, 
-                      **args)  
-                            for funct, args in feature_dict.items()]
+        features = [_apply_fun_name(function_name = func,
+                          xr_data=xr_data.where(xr_data.sel(band=band) != nodataval),
+                          band= band, 
+                          args= arg)
+                    for func, args in feature_dict.items() for arg in args]
+    else:
+        
+        features = [_apply_fun_name(function_name = func,
+                          xr_data=xr_data,
+                          band= band, 
+                          args= arg)
+                    for func, args in feature_dict.items() for arg in args]            
 
     return xr.concat(features, dim)
+
+    
+features = extract_features2(xr_data=ds,
+                            feature_dict=f_dict,
+                            band='ppt', 
+                            na_rm = True)
+
+out = features.sel(variable="ppt__" + 'quantile__q_0.5')
+out.plot.imshow()
+print(features)
