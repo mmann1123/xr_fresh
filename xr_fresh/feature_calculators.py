@@ -65,7 +65,7 @@ def absolute_sum_of_changes(X, dim='time', **kwargs):
 
 
 @set_property("fctype", "simple")
-def mean_abs_change(x, dim='time', **kwargs):
+def mean_abs_change(X, dim='time', **kwargs):
     """
     Returns the mean over the absolute differences between subsequent time series values which is
 
@@ -74,18 +74,18 @@ def mean_abs_change(x, dim='time', **kwargs):
         \\frac{1}{n} \\sum_{i=1,\\ldots, n-1} | x_{i+1} - x_{i}|
 
 
-    :param x: the time series to calculate the feature of
+    :param X: the time series to calculate the feature of
     :param dim: core dimension in xarray to apply across
-    :type x: xarray.DataArray
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
     
-    return np.abs(x.diff(dim)).mean(dim)
+    return np.abs(X.diff(dim)).mean(dim)
 
 
 @set_property("fctype", "simple")
-def mean_change(a , dim='time', **kwargs):
+def mean_change(X , dim='time', **kwargs):
     """
     Returns the mean over the differences between subsequent time series values which is
     
@@ -93,13 +93,13 @@ def mean_change(a , dim='time', **kwargs):
     
     \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
     
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
     func = lambda x: (x[:,:,-1] - x[:,:,0]) / (len(x) - 1) if len(x) > 1 else np.NaN
-    return xr.apply_ufunc(func, a,
+    return xr.apply_ufunc(func, X,
                            input_core_dims=[[dim]],
                            dask='parallelized',
                            output_dtypes=[float])
@@ -107,38 +107,38 @@ def mean_change(a , dim='time', **kwargs):
     
 
 @set_property("fctype", "simple")
-def variance_larger_than_standard_deviation(x, dim='time', **kwargs):
+def variance_larger_than_standard_deviation(X, dim='time', **kwargs):
     """
     Boolean variable denoting if the variance of x is greater than its standard deviation. Is equal to variance of x
     being larger than 1
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: bool
     """
-    y = x.var(dim)
+    y = X.var(dim)
     return y > np.sqrt(y)
 
  
     
 @set_property("fctype", "simple")
-def ratio_beyond_r_sigma(x, r=2, dim='time', **kwargs):
+def ratio_beyond_r_sigma(X, r=2, dim='time', **kwargs):
     """
     Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
     
-    return (np.abs(x - x.mean(dim)) > r * x.std(dim)).sum(dim)/len(x)
+    return (np.abs(X - X.mean(dim)) > r * X.std(dim)).sum(dim)/len(X)
 
 
  
 @set_property("fctype", "simple")
-def large_standard_deviation(x, r=2, dim='time', **kwargs):
+def large_standard_deviation(X, r=2, dim='time', **kwargs):
     """
     Boolean variable denoting if the standard dev of x is higher
     than 'r' times the range = difference between max and min of x.
@@ -150,22 +150,22 @@ def large_standard_deviation(x, r=2, dim='time', **kwargs):
 
     According to a rule of the thumb, the standard deviation should be a forth of the range of the values.
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :param r: the percentage of the range to compare with
     :type r: float
     :return: the value of this feature
     :return type: bool
     """
     
-    return x.std(dim) > (r * (x.max(dim) - x.min(dim)))
+    return X.std(dim) > (r * (X.max(dim) - X.min(dim)))
 
 
 
 
 
 @set_property("fctype", "simple")
-def symmetry_looking(x, r=0.1, dim='time', **kwargs):
+def symmetry_looking(X, r=0.1, dim='time', **kwargs):
     """
     Boolean variable denoting if the distribution of x *looks symmetric*. This is the case if
 
@@ -173,44 +173,44 @@ def symmetry_looking(x, r=0.1, dim='time', **kwargs):
 
         | mean(X)-median(X)| < r * (max(X)-min(X))
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :param r: the percentage of the range to compare with
     :type r: float
     :return: the value of this feature
     :return type: bool
     """
     
-    mean_median_difference = np.abs(x.mean(dim) - x.median(dim))
-    max_min_difference = x.max(dim) - x.min(dim)
+    mean_median_difference = np.abs(X.mean(dim) - X.median(dim))
+    max_min_difference = X.max(dim) - X.min(dim)
     return   mean_median_difference < (r * max_min_difference)
  
     
 
 @set_property("fctype", "simple")
-def sum_values(x, dim='time', **kwargs):
+def sum_values(X, dim='time', **kwargs):
     """
     Calculates the sum over the time series values
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
     
-    if len(x[dim]) == 0:
+    if len(X[dim]) == 0:
         return 0
-    return x.sum(dim)
+    return X.sum(dim)
 
 
 
-def autocorrelation(ds, lag=1, dim="time", return_p=False, **kwargs):
+def autocorrelation(X, lag=1, dim="time", return_p=False, **kwargs):
     from climpred.stats import autocorr
     """
     Calculated dim lagged correlation of a xr.Dataset.
     
     
-    :param ds : xarray dataset/dataarray time series
+    :param X : xarray dataset/dataarray time series
     :type x: xarray.DataArray
     :param dim : name of time dimension/dimension to autocorrelate over
     :type dim: str
@@ -224,10 +224,10 @@ def autocorrelation(ds, lag=1, dim="time", return_p=False, **kwargs):
     :return type: float
     """
     if return_p:
-        return autocorr(ds, lag=lag, dim=dim, return_p=return_p)[1]
+        return autocorr(X, lag=lag, dim=dim, return_p=return_p)[1]
         
     else:
-        return autocorr(ds, lag=lag, dim=dim, return_p=return_p)
+        return autocorr(X, lag=lag, dim=dim, return_p=return_p)
 
  
 
@@ -457,10 +457,10 @@ def pearson_r_p_value(a, b, dim = 'time',  skipna=False, **kwargs):
     )
     
 
-def autocorr(ds, lag=1, dim='time', return_p=True, **kwargs):
+def autocorr(X, lag=1, dim='time', return_p=True, **kwargs):
     """Calculate the lagged correlation of time series. Amended from xskillscore package
     Args:
-        ds (xarray object): Time series or grid of time series.
+        X (xarray object): Time series or grid of time series.
         lag (optional int): Number of time steps to lag correlate to.
         dim (optional str): Name of dimension to autocorrelate over.
         return_p (optional bool): If True, return correlation coefficients
@@ -469,16 +469,16 @@ def autocorr(ds, lag=1, dim='time', return_p=True, **kwargs):
         Pearson correlation coefficients.
         If return_p, also returns their associated p values.
     """
-    N = ds[dim].size
-    normal = ds.isel({dim: slice(0, N - lag)})
-    shifted = ds.isel({dim: slice(0 + lag, N)})
+    N = X[dim].size
+    normal = X.isel({dim: slice(0, N - lag)})
+    shifted = X.isel({dim: slice(0 + lag, N)})
     """
     xskillscore pearson_r looks for the dimensions to be matching, but we
     shifted them so they probably won't be. This solution doesn't work
     if the user provides a dataset without a coordinate for the main
     dimension, so we need to create a dummy dimension in that case.
     """
-    if dim not in list(ds.coords):
+    if dim not in list(X.coords):
         normal[dim] = np.arange(1, N)
     shifted[dim] = normal[dim]
     r = pearson_r(normal, shifted, dim)
@@ -491,7 +491,7 @@ def autocorr(ds, lag=1, dim='time', return_p=True, **kwargs):
     else:
         return r
  
-def cid_ce(x, normalize=True, dim='time', **kwargs):
+def ts_complexity_cid_ce(X, normalize=True, dim='time', **kwargs):
     """
     This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,
     valleys etc.). It calculates the value of
@@ -506,8 +506,8 @@ def cid_ce(x, normalize=True, dim='time', **kwargs):
     |  CID: an efficient complexity-invariant distance for time series.
     |  Data Mining and Knowledge Discovery 28.3 (2014): 634-669.
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :param normalize: should the time series be z-transformed?
     :type normalize: bool
 
@@ -516,21 +516,21 @@ def cid_ce(x, normalize=True, dim='time', **kwargs):
     """
     
     if normalize:
-        s = x.std(dim)
+        s = X.std(dim)
         #if s!=0:
-        x = (x - x.mean(dim))/s
+        X = (X - X.mean(dim))/s
         #else:
         #    return 0.0
 
-    x = x.diff(dim)
-    return np.sqrt(x.dot(x,dims=dim) ).fillna(0)
+    X = X.diff(dim)
+    return np.sqrt(X.dot(X,dims=dim) ).fillna(0)
 
  
 
 
 
 @set_property("fctype", "simple")
-def mean_second_derivative_central(a , dim='time', **kwargs):
+def mean_second_derivative_central(X , dim='time', **kwargs):
     """
     Returns the mean over the differences between subsequent time series values which is
     
@@ -538,30 +538,30 @@ def mean_second_derivative_central(a , dim='time', **kwargs):
     
     \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
     
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
     func = lambda x: (x[:,:,-1] - x[:,:,-2]  - x[:,:,1] + x[:,:,0]) / (2 * (len(x) - 2)) if len(x) > 2 else np.NaN
 
-    return xr.apply_ufunc(func, a,
+    return xr.apply_ufunc(func, X,
                            input_core_dims=[[dim]],
                            dask='parallelized',
                            output_dtypes=[float])
  
 
 @set_property("fctype", "simple")
-def median(x, dim='time', **kwargs):
+def median(X, dim='time', **kwargs):
     """
     Returns the median of x
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
-    return xr.apply_ufunc(np.mean, x,
+    return xr.apply_ufunc(np.mean, X,
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1},
                        dask='parallelized',
@@ -569,16 +569,16 @@ def median(x, dim='time', **kwargs):
 
  
 @set_property("fctype", "simple")
-def mean(x, dim='time', **kwargs):
+def mean(X, dim='time', **kwargs):
     """
-    Returns the mean of x
+    Returns the mean of X
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
-    return xr.apply_ufunc(np.mean, x,
+    return xr.apply_ufunc(np.mean, X,
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1},
                        dask='parallelized',
@@ -586,16 +586,16 @@ def mean(x, dim='time', **kwargs):
     
    
 @set_property("fctype", "simple")
-def length(x, dim='time', **kwargs):
+def length(X, dim='time', **kwargs):
     """
-    Returns the mean of x
+    Returns the mean of X
 
-    :param x: the time series to calculate thfunce feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate thfunce feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
-    return xr.apply_ufunc(np.size, x,
+    return xr.apply_ufunc(np.size, X,
                        input_core_dims=[[dim]],
                        kwargs={ },
                        vectorize=True,
@@ -605,17 +605,17 @@ def length(x, dim='time', **kwargs):
 
 
 @set_property("fctype", "simple")
-def standard_deviation(x, dim='time', **kwargs):
+def standard_deviation(X, dim='time', **kwargs):
     """
-    Returns the standard deviation of x
+    Returns the standard deviation of X
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
     
-    return xr.apply_ufunc(np.std, x,
+    return xr.apply_ufunc(np.std, X,
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1},
                        dask='parallelized',
@@ -623,16 +623,16 @@ def standard_deviation(x, dim='time', **kwargs):
 
 
 @set_property("fctype", "simple")
-def variance(x, dim='time', **kwargs):
+def variance(X, dim='time', **kwargs):
     """
-    Returns the variance of x
+    Returns the variance of X
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
-    return xr.apply_ufunc(np.var, x,
+    return xr.apply_ufunc(np.var, X,
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1},
                        dask='parallelized',
@@ -642,20 +642,20 @@ def variance(x, dim='time', **kwargs):
  
 
 @set_property("fctype", "simple")
-def skewness(x, dim='time', **kwargs):
+def skewness(X, dim='time', **kwargs):
     """
-    Returns the sample skewness of x (calculated with the adjusted Fisher-Pearson standardized
+    Returns the sample skewness of X (calculated with the adjusted Fisher-Pearson standardized
     moment coefficient G1). Normal value = 0, skewness > 0 means more weight in the left tail of 
     the distribution. 
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
     from scipy.stats import skew
 
-    return xr.apply_ufunc(skew, x,
+    return xr.apply_ufunc(skew, X,
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1},
                        dask='parallelized',
@@ -664,22 +664,22 @@ def skewness(x, dim='time', **kwargs):
    
     
 @set_property("fctype", "simple")
-def kurtosis(x, dim='time', fisher=False, **kwargs):
+def kurtosis(X, dim='time', fisher=False, **kwargs):
     from scipy.stats import kurtosis as kt
 
     """
-    Returns the kurtosis of x (calculated with the adjusted Fisher-Pearson standardized
+    Returns the kurtosis of X (calculated with the adjusted Fisher-Pearson standardized
     moment coefficient G2). If fisher = True, returns fishers definition centered on 0. 
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
-    :param x: If True, Fishers definition is used (normal =0), If False, Pearson's
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
+    :param X: If True, Fishers definition is used (normal =0), If False, Pearson's
             definition is used (normal = 3)
-    :type x: boolean
+    :type X: boolean
     :return: the value of this feature
     :return type: float
     """
-    return xr.apply_ufunc(kt, x,
+    return xr.apply_ufunc(kt, X,
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1,'fisher':fisher},
                        dask='parallelized',
@@ -740,61 +740,58 @@ def pearson_correlation(x, y, dim='time', **kwargs):
         
 
 @set_property("fctype", "simple")
-def longest_strike_below_mean(x, dim='time', **kwargs):
+def longest_strike_below_mean(X, dim='time', **kwargs):
     """
-    Returns the length of the longest consecutive subsequence in x that is smaller than the mean of x
+    Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: longest period below the mean pixel value
     :return type: float
     """
     
-     
-    #return rl.longest_run(x < mean(x))
-    return longest_run(x < mean(x))
+    return longest_run(X < mean(X))
 
 @set_property("fctype", "simple")
-def longest_strike_above_mean(x, dim='time', **kwargs):
+def longest_strike_above_mean(X, dim='time', **kwargs):
     """
-    Returns the length of the longest consecutive subsequence in x that is smaller than the mean of x
+    Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: longest period below the mean pixel value
     :return type: float
     """
 
      
-    #return rl.longest_run(x > mean(x)) 
-    return longest_run(x > mean(x)) 
+    return longest_run(X > mean(X)) 
 
 
 @set_property("fctype", "simple")
-def count_above_mean(x, dim='time', **kwargs):
+def count_above_mean(X, dim='time', **kwargs):
     """
-    Returns the number of values in x that are higher than the mean of x
+    Returns the number of values in X that are higher than the mean of X
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
 
-    return (x > x.mean(dim)).sum(dim)
+    return (X > X.mean(dim)).sum(dim)
 
 @set_property("fctype", "simple")
-def count_below_mean(x, dim='time', **kwargs):
+def count_below_mean(X, dim='time', **kwargs):
     """
-    Returns the number of values in x that are higher than the mean of x
+    Returns the number of values in X that are higher than the mean of X
 
-    :param x: the time series to calculate the feature of
-    :type x: xarray.DataArray
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
     :return: the value of this feature
     :return type: float
     """
 
-    return (x < x.mean(dim)).sum(dim)
+    return (X < X.mean(dim)).sum(dim)
 
 
 @set_property("fctype", "simple")
@@ -820,6 +817,7 @@ def last_doy_of_maximum(x,dim='time', band ='NDVI', **kwargs):
 
     # remove all but maximum values
     x_at_max = x.where(x.sel(band= band) == x.sel(band= band).max('time'))
+    
     #change output band value to match others 
     out = x_at_max.sel(band='doy').max('time')  
     out.band.values = np.array(band, dtype='<U4')
@@ -827,7 +825,7 @@ def last_doy_of_maximum(x,dim='time', band ='NDVI', **kwargs):
     return out
 
 @set_property("fctype", "simple")
-def first_doy_of_maximum(x,dim='time', band ='NDVI', **kwargs):
+def first_doy_of_maximum(x,dim='time', band ='ppt', **kwargs):
     """
     Returns the first day of the year (doy) location of the maximum value of x.
     The position is calculated relatively to the length of x.
@@ -857,7 +855,7 @@ def first_doy_of_maximum(x,dim='time', band ='NDVI', **kwargs):
     return out
 
 @set_property("fctype", "simple")
-def last_doy_of_minimum(x,dim='time', band ='NDVI', **kwargs):
+def last_doy_of_minimum(x,dim='time', band ='ppt', **kwargs):
     """
     Returns the last day of the year (doy) location of the maximum value of x.
     The position is calculated relatively to the length of x.
@@ -888,7 +886,7 @@ def last_doy_of_minimum(x,dim='time', band ='NDVI', **kwargs):
 
 
 @set_property("fctype", "simple")
-def first_doy_of_minimum(x,dim='time', band ='NDVI', **kwargs):
+def first_doy_of_minimum(x,dim='time', band ='ppt', **kwargs):
     """
     Returns the first day of the year (doy) location of the maximum value of x.
     The position is calculated relatively to the length of x.
@@ -918,7 +916,7 @@ def first_doy_of_minimum(x,dim='time', band ='NDVI', **kwargs):
     return out
 
 @set_property("fctype", "simple")
-def ratio_value_number_to_time_series_length(x,dim='time', band ='NDVI', **kwargs):
+def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
     """
     Returns a factor which is 1 if all values in the time series occur only once,
     and below one if this is not the case.
@@ -931,10 +929,10 @@ def ratio_value_number_to_time_series_length(x,dim='time', band ='NDVI', **kwarg
     :return: the value of this feature
     :return type: float
     """
-    time_len = len(x )
+    time_len = len( X )
     func = lambda x: np.unique(x, 'time')[0].size / time_len
     
-    return xr.apply_ufunc(func, x,
+    return xr.apply_ufunc(func, X,
                        input_core_dims=[[dim]],
                        vectorize=True,
                        kwargs={ },
@@ -973,7 +971,7 @@ def _k_cor(x,y, pthres = 0.05, direction = True, **kwargs):
       return 0  
 
 
-def kendall_time_correlation(x, dim='time', direction = True, **kwargs):
+def kendall_time_correlation(X, dim='time', direction = True, **kwargs):
     """
     Returns the significance of a kendall tau test across all time periods in x.
     
@@ -993,11 +991,11 @@ def kendall_time_correlation(x, dim='time', direction = True, **kwargs):
 
     # x = Pixel value, y = a vector containing the date, dim == dimension
     
-    y = xr.DataArray(np.arange(len(x[dim]))+1, dims=dim,
-                 coords={dim: x[dim]})  
+    y = xr.DataArray(np.arange(len(X[dim]))+1, dims=dim,
+                 coords={dim: X[dim]})  
      
     return xr.apply_ufunc(
-        _k_cor, x , y,
+        _k_cor, X , y,
         input_core_dims=[[dim], [dim]],
         kwargs={'direction':direction},
         vectorize=True,  
@@ -1076,6 +1074,7 @@ def maximum(x,dim='time', **kwargs):
 
 @set_property("fctype", "simple")
 def minimum(x,dim='time', **kwargs):
+	
     """
     Calculates the lowest value of the time series x.
 
@@ -1089,6 +1088,7 @@ def minimum(x,dim='time', **kwargs):
 
 # from xclim https://github.com/Ouranosinc/xclim/blob/51123e0bbcaa5ad8882877f6905d9b285e63ddd9/xclim/run_length.py
 def get_npts(da: xr.DataArray) -> int:
+
     """Return the number of gridpoints in a DataArray.
         Parameters
         ----------

@@ -2,8 +2,9 @@
 import logging
 import warnings
 import xarray as xr
-
-from xr_fresh.feature_generators import feature_calculators
+from numpy import where
+from xr_fresh import feature_calculators
+from itertools import chain
 
 _logger = logging.getLogger(__name__)
 
@@ -11,26 +12,25 @@ from numpy import where
 
 
 def _get_xr_attr(function_name):
-    return getattr(xr_fresh.feature_generators.feature_calculators,
-                   function_name)
+    return getattr(feature_calculators,  function_name)
 
 
 def _apply_fun_name(function_name, xr_data, band, args):
 
-      out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),**args).compute()
-      out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items()))) # doesn't allow more than one parameter arg
+      out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),  **args).compute()
+      out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items())))  
       return out
   
 def check_for_dictionary(arguments):
-     for func, args in f_dict.items():
+     for func, args in arguments.items():
             if type(args) == list and len(args)==0:
-                warnings.warn(" Problem with feature_dict, should take the following form: f_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} Not all functions will be calculated")
+                warnings.warn(" Problem with feature_dict, should take the following form: feature_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} Not all functions will be calculated")
                 print(''' Problem with feature_dict, should take the following form: 
-                      f_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} 
+                      feature_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} 
                       ***Not all functions will be calculated***''')       
     
 
-def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable',*args):
+def extract_features(xr_data, feature_dict, band, na_rm = False, dim='variable',*args):
     """
     Extract features from
 
@@ -68,6 +68,8 @@ def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable'
     :rtype: xarray.DataArray
     
     """    
+    print('go to http://localhost:8787/status for dask dashboard') 
+    
     check_for_dictionary(feature_dict)
     
     nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
@@ -89,12 +91,4 @@ def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable'
 
     return xr.concat(features, dim)
 
-    
-features = extract_features2(xr_data=ds,
-                            feature_dict=f_dict,
-                            band='ppt', 
-                            na_rm = True)
-
-out = features.sel(variable="ppt__" + 'quantile__q_0.5')
-out.plot.imshow()
-print(features)
+     

@@ -120,7 +120,7 @@ print('go to http://localhost:8787/status for dask dashboard')
 #%%   THIS APPROACH SEEM MUCH SLOWER 
  
 
-from itertools import chain
+
 
   
 f_dict = { 'maximum':{} ,
