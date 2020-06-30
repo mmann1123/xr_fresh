@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xr_fresh.extractors &#8212; xr_fresh 0.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=fraymio&repo=TimeFraym&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for xr_fresh.extractors</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">where</span>
+<span class="kn">from</span> <span class="nn">xr_fresh</span> <span class="kn">import</span> <span class="n">feature_calculators</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">where</span>
+
+
+<span class="k">def</span> <span class="nf">_get_xr_attr</span><span class="p">(</span><span class="n">function_name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">feature_calculators</span><span class="p">,</span>  <span class="n">function_name</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_apply_fun_name</span><span class="p">(</span><span class="n">function_name</span><span class="p">,</span> <span class="n">xr_data</span><span class="p">,</span> <span class="n">band</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+
+      <span class="n">out</span> <span class="o">=</span> <span class="n">_get_xr_attr</span><span class="p">(</span><span class="n">function_name</span><span class="p">)(</span><span class="n">xr_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span><span class="o">.</span><span class="n">persist</span><span class="p">(),</span>  <span class="o">**</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+      <span class="n">out</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">+</span> <span class="s2">&quot;__&quot;</span> <span class="o">+</span> <span class="n">function_name</span> <span class="o">+</span><span class="s1">&#39;__&#39;</span><span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span>  
+      <span class="k">return</span> <span class="n">out</span>
+  
+<span class="k">def</span> <span class="nf">check_for_dictionary</span><span class="p">(</span><span class="n">arguments</span><span class="p">):</span>
+     <span class="k">for</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot; Problem with feature_dict, should take the following form: feature_dict = { &#39;maximum&#39;:[</span><span class="si">{}</span><span class="s2">] ,&#39;quantile&#39;: [{&#39;q&#39;:&#39;0.5&#39;},{&#39;q&#39;:&#39;0.95&#39;}]} Not all functions will be calculated&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;&#39; Problem with feature_dict, should take the following form: </span>
+<span class="s1">                      feature_dict = { &#39;maximum&#39;:[</span><span class="si">{}</span><span class="s1">] ,&#39;quantile&#39;: [{&#39;q&#39;:&#39;0.5&#39;},{&#39;q&#39;:&#39;0.95&#39;}]} </span>
+<span class="s1">                      ***Not all functions will be calculated***&#39;&#39;&#39;</span><span class="p">)</span>       
+    
+
+<div class="viewcode-block" id="extract_features"><a class="viewcode-back" href="../../extractors.html#xr_fresh.extractors.extract_features">[docs]</a><span class="k">def</span> <span class="nf">extract_features</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span> <span class="n">feature_dict</span><span class="p">,</span> <span class="n">band</span><span class="p">,</span> <span class="n">na_rm</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract features from</span>
+
+<span class="sd">    * a :class:`xarray.DataArray` containing a time series of rasters</span>
+
+<span class="sd">    A :class:`xarray.DataArray` with the calculated features will be returned a &#39;variable&#39;.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    ========</span>
+
+<span class="sd">    &gt;&gt;&gt;  f_dict = { &#39;maximum&#39;:[{}] ,  </span>
+<span class="sd">                   &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;},{&#39;q&#39;:&#39;0.95&#39;}]}</span>
+<span class="sd">    &gt;&gt;&gt;  features = extract_features(xr_data=ds,</span>
+<span class="sd">    &gt;&gt;&gt;                     feature_dict=f_dict,</span>
+<span class="sd">    &gt;&gt;&gt;                     band=&#39;aet&#39;, </span>
+<span class="sd">    &gt;&gt;&gt;                     na_rm = True)</span>
+
+<span class="sd">    :param xr_data: The xarray.DataArray with a time series of rasters to compute the features for.</span>
+<span class="sd">    :type xr_data: xarray.DataArray</span>
+
+<span class="sd">    :param feature_dict: mapping from feature calculator names to parameters. Only those names</span>
+<span class="sd">           which are keys in this dict will be calculated. See example above. </span>
+<span class="sd">    :type feature_dict: dict</span>
+
+<span class="sd">    :param band: The name of the variable to create feature for.</span>
+<span class="sd">    :type band: str</span>
+
+<span class="sd">    :param na_rm: If True (default), all missing values are masked using .attrs[&#39;nodatavals&#39;]</span>
+<span class="sd">    :type na_rm: bool</span>
+
+<span class="sd">    :param dim: The name of the dimension used to collect outputed features</span>
+<span class="sd">    :type dim: str</span>
+<span class="sd">    </span>
+<span class="sd">    :return: The DataArray containing extracted features in `dim`.</span>
+<span class="sd">    :rtype: xarray.DataArray</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;go to http://localhost:8787/status for dask dashboard&#39;</span><span class="p">)</span> 
+    
+    <span class="n">check_for_dictionary</span><span class="p">(</span><span class="n">feature_dict</span><span class="p">)</span>
+    
+    <span class="n">nodataval</span> <span class="o">=</span> <span class="n">xr_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;nodatavals&#39;</span><span class="p">][</span><span class="n">where</span><span class="p">(</span><span class="n">xr_data</span><span class="o">.</span><span class="n">band</span><span class="o">.</span><span class="n">values</span><span class="o">==</span><span class="n">band</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+    
+    <span class="k">if</span> <span class="n">na_rm</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">_apply_fun_name</span><span class="p">(</span><span class="n">function_name</span> <span class="o">=</span> <span class="n">func</span><span class="p">,</span>
+                          <span class="n">xr_data</span><span class="o">=</span><span class="n">xr_data</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xr_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nodataval</span><span class="p">),</span>
+                          <span class="n">band</span><span class="o">=</span> <span class="n">band</span><span class="p">,</span> 
+                          <span class="n">args</span><span class="o">=</span> <span class="n">arg</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">feature_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">_apply_fun_name</span><span class="p">(</span><span class="n">function_name</span> <span class="o">=</span> <span class="n">func</span><span class="p">,</span>
+                          <span class="n">xr_data</span><span class="o">=</span><span class="n">xr_data</span><span class="p">,</span>
+                          <span class="n">band</span><span class="o">=</span> <span class="n">band</span><span class="p">,</span> 
+                          <span class="n">args</span><span class="o">=</span> <span class="n">arg</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">feature_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>            
+
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
+
+     
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, Michael Mann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

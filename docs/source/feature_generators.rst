@@ -12,7 +12,7 @@ Calculate Feature Generators
 Functions
 ==================
  
-.. automodule:: xr_fresh.feature_generators.feature_calculators
+.. automodule:: xr_fresh.feature_calculators
     :members:
 
 

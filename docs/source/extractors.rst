@@ -13,7 +13,7 @@ Calculate Feature Generators
 Functions
 ==================
  
-.. automodule:: xr_fresh.feature_generators.extractors
+.. automodule:: xr_fresh.extractors
     :members:
 
 

@@ -14,6 +14,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -88,8 +89,45 @@
 <div class="toctree-wrapper compound">
 </div>
 </div>
-<div class="section" id="functions">
-<h1>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-xr_fresh.extractors">
+<span id="functions"></span><h1>Functions<a class="headerlink" href="#module-xr_fresh.extractors" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="xr_fresh.extractors.extract_features">
+<code class="sig-prename descclassname">xr_fresh.extractors.</code><code class="sig-name descname">extract_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xr_data</span></em>, <em class="sig-param"><span class="n">feature_dict</span></em>, <em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">na_rm</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'variable'</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors.html#extract_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.extractors.extract_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract features from</p>
+<ul class="simple">
+<li><p>a <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> containing a time series of rasters</p></li>
+</ul>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> with the calculated features will be returned a ‘variable’.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">f_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;maximum&#39;</span><span class="p">:[{}]</span> <span class="p">,</span>
+<span class="go">               &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;},{&#39;q&#39;:&#39;0.95&#39;}]}</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="n">features</span> <span class="o">=</span> <span class="n">extract_features</span><span class="p">(</span><span class="n">xr_data</span><span class="o">=</span><span class="n">ds</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                    <span class="n">feature_dict</span><span class="o">=</span><span class="n">f_dict</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                    <span class="n">band</span><span class="o">=</span><span class="s1">&#39;aet&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                    <span class="n">na_rm</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xr_data</strong> (<em>xarray.DataArray</em>) – The xarray.DataArray with a time series of rasters to compute the features for.</p></li>
+<li><p><strong>feature_dict</strong> (<em>dict</em>) – mapping from feature calculator names to parameters. Only those names
+which are keys in this dict will be calculated. See example above.</p></li>
+<li><p><strong>band</strong> (<em>str</em>) – The name of the variable to create feature for.</p></li>
+<li><p><strong>na_rm</strong> (<em>bool</em>) – If True (default), all missing values are masked using .attrs[‘nodatavals’]</p></li>
+<li><p><strong>dim</strong> (<em>str</em>) – The name of the dimension used to collect outputed features</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The DataArray containing extracted features in <cite>dim</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>xarray.DataArray</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 

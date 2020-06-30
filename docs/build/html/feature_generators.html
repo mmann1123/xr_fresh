@@ -14,6 +14,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -88,8 +89,839 @@
 <div class="toctree-wrapper compound">
 </div>
 </div>
-<div class="section" id="functions">
-<h1>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-xr_fresh.feature_calculators">
+<span id="functions"></span><h1>Functions<a class="headerlink" href="#module-xr_fresh.feature_calculators" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.abs_energy">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">abs_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#abs_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.abs_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the absolute energy of the time series which is the sum over the squared values</p>
+<div class="math notranslate nohighlight">
+\[E = \sum_{i=1,\ldots, n} x_i^2\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>dim</strong> – core dimension in xarray to apply across</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.absolute_sum_of_changes">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">absolute_sum_of_changes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#absolute_sum_of_changes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.absolute_sum_of_changes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the sum over the absolute value of consecutive changes in the series x</p>
+<div class="math notranslate nohighlight">
+\[\sum_{i=1, \ldots, n-1} \mid x_{i+1}- x_i \mid\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>dim</strong> – core dimension in xarray to apply across</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.autocorr">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">autocorr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">lag</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">return_p</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#autocorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.autocorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the lagged correlation of time series. Amended from xskillscore package
+:param X: Time series or grid of time series.
+:type X: xarray object
+:param lag: Number of time steps to lag correlate to.
+:type lag: optional int
+:param dim: Name of dimension to autocorrelate over.
+:type dim: optional str
+:param return_p: If True, return correlation coefficients</p>
+<blockquote>
+<div><p>and p values.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Pearson correlation coefficients.
+If return_p, also returns their associated p values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.count_above_mean">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">count_above_mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#count_above_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.count_above_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of values in X that are higher than the mean of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.count_below_mean">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">count_below_mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#count_below_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.count_below_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of values in X that are higher than the mean of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.first_doy_of_maximum">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">first_doy_of_maximum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">band</span><span class="o">=</span><span class="default_value">'ppt'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#first_doy_of_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.first_doy_of_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the first day of the year (doy) location of the maximum value of x.
+The position is calculated relatively to the length of x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.first_doy_of_minimum">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">first_doy_of_minimum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">band</span><span class="o">=</span><span class="default_value">'ppt'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#first_doy_of_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.first_doy_of_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the first day of the year (doy) location of the maximum value of x.
+The position is calculated relatively to the length of x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.get_npts">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">get_npts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">da</span><span class="p">:</span> <span class="n">xarray.core.dataarray.DataArray</span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#get_npts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.get_npts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of gridpoints in a DataArray.
+:param da: N-dimensional input array
+:type da: xarray.DataArray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Product of input DataArray coordinate sizes excluding the dimension ‘time’</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.kendall_time_correlation">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">kendall_time_correlation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">direction</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#kendall_time_correlation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.kendall_time_correlation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the significance of a kendall tau test across all time periods in x.</p>
+<p>If direction is True, return 1 for sigificant + time trend and -1 for
+significant - time trend.</p>
+<dl class="simple">
+<dt>Note: this function is slow. Please use dask see:</dt><dd><p><a class="reference external" href="https://examples.dask.org/xarray.html">https://examples.dask.org/xarray.html</a>
+<a class="reference external" href="https://xarray.pydata.org/en/stable/dask.html">https://xarray.pydata.org/en/stable/dask.html</a></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.large_standard_deviation">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">large_standard_deviation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">r</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#large_standard_deviation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.large_standard_deviation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean variable denoting if the standard dev of x is higher
+than ‘r’ times the range = difference between max and min of x.
+Hence it checks if</p>
+<div class="math notranslate nohighlight">
+\[std(x) &gt; r * (max(X)-min(X))\]</div>
+<p>According to a rule of the thumb, the standard deviation should be a forth of the range of the values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>r</strong> (<em>float</em>) – the percentage of the range to compare with</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.last_doy_of_maximum">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">last_doy_of_maximum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">band</span><span class="o">=</span><span class="default_value">'NDVI'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#last_doy_of_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.last_doy_of_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last day of the year (doy) location of the maximum value of x.
+The position is calculated relatively to the length of x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.last_doy_of_minimum">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">last_doy_of_minimum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">band</span><span class="o">=</span><span class="default_value">'ppt'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#last_doy_of_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.last_doy_of_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last day of the year (doy) location of the maximum value of x.
+The position is calculated relatively to the length of x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.length">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">length</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the mean of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate thfunce feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.longest_run">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">da</span><span class="p">:</span> <span class="n">xarray.core.dataarray.DataArray</span></em>, <em class="sig-param"><span class="n">dim</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">ufunc_1dim</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'auto'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length of the longest consecutive run of True values.
+:param da: N-dimensional array (boolean)
+:type da: xr.DataArray
+:param dim: Dimension along which to calculate consecutive run; Default: ‘time’.
+:type dim: str
+:param ufunc_1dim: Use the 1d ‘ufunc’ version of this function : default (auto) will attempt to select optimal</p>
+<blockquote>
+<div><p>usage based on number of data points.  Using 1D_ufunc=True is typically more efficient
+for dataarray with a small number of gridpoints.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Length of longest run of True values along dimension</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>N-dimensional array (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.longest_run_1d">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run_1d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>bool<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run_1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length of the longest consecutive run of identical values.
+:param arr: Input array (bool)
+:type arr: Sequence[bool]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Length of longest run.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.longest_run_ufunc">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run_ufunc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>bool<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; &lt;function apply_ufunc at 0x7f615ac8a3b0&gt;<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run_ufunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run_ufunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dask-parallel version of longest_run_1d, ie the maximum number of consecutive true values in
+array.
+:param x: Input array (bool)
+:type x: Sequence[bool]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>out</strong> – A function operating along the time dimension of a dask-array.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>func</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.longest_strike_above_mean">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_strike_above_mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_strike_above_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_strike_above_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>longest period below the mean pixel value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.longest_strike_below_mean">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_strike_below_mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_strike_below_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_strike_below_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>longest period below the mean pixel value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.maximum">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">maximum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the highest value of the time series x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.mean">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the mean of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.mean_abs_change">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">mean_abs_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#mean_abs_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.mean_abs_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the mean over the absolute differences between subsequent time series values which is</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{n} \sum_{i=1,\ldots, n-1} | x_{i+1} - x_{i}|\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>dim</strong> – core dimension in xarray to apply across</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.mean_change">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">mean_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#mean_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.mean_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the mean over the differences between subsequent time series values which is</p>
+<div class="math notranslate nohighlight">
+\[\]</div>
+<p>frac{1}{n-1} sum_{i=1,ldots, n-1}  x_{i+1} - x_{i} = frac{1}{n-1} (x_{n} - x_{1})</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.mean_second_derivative_central">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">mean_second_derivative_central</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#mean_second_derivative_central"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.mean_second_derivative_central" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the mean over the differences between subsequent time series values which is</p>
+<div class="math notranslate nohighlight">
+\[\]</div>
+<p>frac{1}{n-1} sum_{i=1,ldots, n-1}  x_{i+1} - x_{i} = frac{1}{n-1} (x_{n} - x_{1})</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.median">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">median</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#median"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.median" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the median of x</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.minimum">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">minimum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the lowest value of the time series x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.pearson_correlation">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">pearson_correlation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#pearson_correlation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.pearson_correlation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the pearsons correlation of two xarray objects, which
+must have the same dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>y</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.pearson_r">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">pearson_r</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">skipna</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#pearson_r"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.pearson_r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pearson’s correlation coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>xarray.Dataset</em><em> or </em><em>xarray.DataArray</em>) – Labeled array(s) over which to apply the function.</p></li>
+<li><p><strong>b</strong> (<em>xarray.Dataset</em><em> or </em><em>xarray.DataArray</em>) – Labeled array(s) over which to apply the function.</p></li>
+<li><p><strong>dim</strong> (<em>str</em><em>, </em><em>list</em>) – The dimension(s) to apply the correlation along.</p></li>
+<li><p><strong>weights</strong> (<em>xarray.Dataset</em><em> or </em><em>xarray.DataArray</em>) – Weights matching dimensions of <code class="docutils literal notranslate"><span class="pre">dim</span></code> to apply during the function.
+If None, an array of ones will be applied (i.e., no weighting).</p></li>
+<li><p><strong>skipna</strong> (<em>bool</em>) – If True, skip NaNs when computing function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pearson’s correlation coefficient.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>xarray.DataArray or xarray.Dataset</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">xarray.apply_ufunc()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.stats.pearsonr()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">xskillscore.core.np_deterministic._pearson_r()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">Reference()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">---------()</span></code></p>
+<dl class="simple">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">https()</span></code></dt><dd><p>//en.wikipedia.org/wiki/Pearson_correlation_coefficient</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.pearson_r_p_value">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">pearson_r_p_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">skipna</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#pearson_r_p_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.pearson_r_p_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>2-tailed p-value associated with pearson’s correlation coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>xarray.Dataset</em><em> or </em><em>xarray.DataArray</em>) – Labeled array(s) over which to apply the function.</p></li>
+<li><p><strong>b</strong> (<em>xarray.Dataset</em><em> or </em><em>xarray.DataArray</em>) – Labeled array(s) over which to apply the function.</p></li>
+<li><p><strong>dim</strong> (<em>str</em><em>, </em><em>list</em>) – The dimension(s) to apply the correlation along.</p></li>
+<li><p><strong>weights</strong> (<em>xarray.Dataset</em><em> or </em><em>xarray.DataArray</em>) – Weights matching dimensions of <code class="docutils literal notranslate"><span class="pre">dim</span></code> to apply during the function.
+If None, an array of ones will be applied (i.e., no weighting).</p></li>
+<li><p><strong>skipna</strong> (<em>bool</em>) – If True, skip NaNs when computing function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>2-tailed p-value of Pearson’s correlation coefficient.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>xarray.Dataset or xarray.DataArray</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">xarray.apply_ufunc()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.stats.pearsonr()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">xskillscore.core.np_deterministic._pearson_r_p_value()</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.quantile">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">quantile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">q</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#quantile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.quantile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the q quantile of x. This is the value of x greater than q% of the ordered values from x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>q</strong> (<em>float</em>) – the quantile to calculate [0,1]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.ratio_beyond_r_sigma">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">ratio_beyond_r_sigma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">r</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#ratio_beyond_r_sigma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.ratio_beyond_r_sigma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.ratio_value_number_to_time_series_length">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">ratio_value_number_to_time_series_length</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#ratio_value_number_to_time_series_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.ratio_value_number_to_time_series_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a factor which is 1 if all values in the time series occur only once,
+and below one if this is not the case.
+In principle, it just returns</p>
+<blockquote>
+<div><p># unique values / # values</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.rle_1d">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">rle_1d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>bool<span class="p">, </span>Sequence<span class="p">[</span>Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>bool<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Tuple[&lt;built-in function array&gt;, &lt;built-in function array&gt;, &lt;built-in function array&gt;]<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#rle_1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.rle_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length, starting position and value of consecutive identical values.
+:param arr: Array of values to be parsed.
+:type arr: Sequence[Union[int, float, bool]]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>values</strong> (<em>np.array</em>) – The values taken by arr over each run</p></li>
+<li><p><strong>run lengths</strong> (<em>np.array</em>) – The length of each run</p></li>
+<li><p><strong>start position</strong> (<em>np.array</em>) – The starting index of each run</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rle_1d</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">(array([1, 2, 3]), array([2, 4, 6]), array([0, 2, 6]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.set_property">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">set_property</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#set_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.set_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns a decorator that sets the property key of the function to value</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.skewness">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">skewness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#skewness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.skewness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the sample skewness of X (calculated with the adjusted Fisher-Pearson standardized
+moment coefficient G1). Normal value = 0, skewness &gt; 0 means more weight in the left tail of
+the distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.spearman_correlation">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">spearman_correlation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#spearman_correlation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.spearman_correlation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the spearmans correlation of two xarray objects, which
+must have the same dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>y</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.standard_deviation">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">standard_deviation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#standard_deviation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.standard_deviation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the standard deviation of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.sum_values">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">sum_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#sum_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.sum_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the sum over the time series values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.symmetry_looking">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">symmetry_looking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">r</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#symmetry_looking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.symmetry_looking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean variable denoting if the distribution of x <em>looks symmetric</em>. This is the case if</p>
+<div class="math notranslate nohighlight">
+\[| mean(X)-median(X)| &lt; r * (max(X)-min(X))\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>r</strong> (<em>float</em>) – the percentage of the range to compare with</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.ts_complexity_cid_ce">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">ts_complexity_cid_ce</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#ts_complexity_cid_ce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.ts_complexity_cid_ce" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,
+valleys etc.). It calculates the value of</p>
+<div class="math notranslate nohighlight">
+\[\sqrt{ \sum_{i=0}^{n-2lag} ( x_{i} - x_{i+1})^2 }\]</div>
+<p class="rubric">References</p>
+<div class="line-block">
+<div class="line">[1] Batista, Gustavo EAPA, et al (2014).</div>
+<div class="line">CID: an efficient complexity-invariant distance for time series.</div>
+<div class="line">Data Mining and Knowledge Discovery 28.3 (2014): 634-669.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>normalize</strong> (<em>bool</em>) – should the time series be z-transformed?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.variance">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">variance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the variance of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.variance_larger_than_standard_deviation">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">variance_larger_than_standard_deviation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#variance_larger_than_standard_deviation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.variance_larger_than_standard_deviation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean variable denoting if the variance of x is greater than its standard deviation. Is equal to variance of x
+being larger than 1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
 </div>
 
 
