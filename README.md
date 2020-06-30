@@ -29,7 +29,7 @@ conda create -n xrfresh python=3.7  cython numpy scipy libspatialindex zarr requ
 conda activate xrfresh
 sudo apt-get install libgdal-dev
 pip install git+https://github.com/jgrss/geowombat
-conda install bottleneck xskillscore spyder_     -c conda-forge
+conda install bottleneck xskillscore spyder   -c conda-forge
 
 ```
 
