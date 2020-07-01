@@ -14,11 +14,7 @@ from xr_fresh.extractors import extract_features
 from glob import glob
 from datetime import datetime
 import matplotlib.pyplot as plt
-
 from xr_fresh.utils import * 
-
-
- 
 import logging
 import warnings
 import xarray as xr
@@ -26,10 +22,10 @@ from numpy import where
 from xr_fresh import feature_calculators
 from itertools import chain
 from geowombat.backends import concat as gw_concat
-
 _logger = logging.getLogger(__name__)
-
 from numpy import where
+from xr_fresh.utils import xarray_to_rasterio
+
 
 def _get_xr_attr(function_name):
     return getattr(feature_calculators,  function_name)
@@ -109,9 +105,12 @@ def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable'
                           args= arg)
                     for func, args in feature_dict.items() for arg in args]            
     out = xr.concat( features , dim)
-    out.attrs = xr_data.attrs
     
-    return  out 
+    # set as gw obj    
+    out = out.gw.match_data(xr_data,  
+                                band_names=  out['variable'].values.tolist())
+    
+    return out 
 
  
 
@@ -129,17 +128,17 @@ with gw.open(sorted(glob(f"{pdsi_files}/pdsi*tif")),
                  
     ds = ds.chunk((len(ds.time), 1, 250, 250))
     ds.attrs['nodatavals'] =  (-9999,)
-    print(ds)
     
-
-features = extract_features2(xr_data=ds,
-                            feature_dict=f_dict,
-                            band='ppt', 
-                            na_rm = True)
+    
+    features = extract_features2(xr_data=ds,
+                                feature_dict=f_dict,
+                                band='ppt', 
+                                na_rm = True)
  
 out = features[0]
 out.gw.imshow()
-xarray_to_rasterio_by_band(features,output_prefix='/home/mmann1123/Desktop/out_', dim='variable')
+xarray_to_rasterio(features,'/home/mmann1123/Desktop/', postfix='test')
+#xarray_to_rasterio_by_band(features,output_prefix='/home/mmann1123/Desktop/out_', dim='variable')
 
 
 

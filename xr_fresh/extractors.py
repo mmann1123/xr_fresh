@@ -88,9 +88,11 @@ def extract_features(xr_data, feature_dict, band, na_rm = False, dim='variable',
                           band= band, 
                           args= arg)
                     for func, args in feature_dict.items() for arg in args]            
-
     out = xr.concat( features , dim)
-    out.attrs = xr_data.attrs
     
-    return  out 
-     
+    # set as gw obj    
+    out = out.gw.match_data(xr_data,  
+                                band_names=  out['variable'].values.tolist())
+    
+    return out 
+
