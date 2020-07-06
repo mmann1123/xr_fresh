@@ -27,90 +27,90 @@ from numpy import where
 from xr_fresh.utils import xarray_to_rasterio
 
 
-def _get_xr_attr(function_name):
-    return getattr(feature_calculators,  function_name)
+# def _get_xr_attr(function_name):
+#     return getattr(feature_calculators,  function_name)
 
 
-def _apply_fun_name(function_name, xr_data, band, args):
+# def _apply_fun_name(function_name, xr_data, band, args):
 
-      out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),  **args).compute()
-      out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items())))  
-      return out
+#       out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),  **args).compute()
+#       out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items())))  
+#       return out
   
-def check_for_dictionary(arguments):
-     for func, args in arguments.items():
-            if type(args) == list and len(args)==0:
-                warnings.warn(" Problem with feature_dict, should take the following form: feature_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} Not all functions will be calculated")
-                print(''' Problem with feature_dict, should take the following form: 
-                      feature_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} 
-                      ***Not all functions will be calculated***''')       
+# def check_for_dictionary(arguments):
+#      for func, args in arguments.items():
+#             if type(args) == list and len(args)==0:
+#                 warnings.warn(" Problem with feature_dict, should take the following form: feature_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} Not all functions will be calculated")
+#                 print(''' Problem with feature_dict, should take the following form: 
+#                       feature_dict = { 'maximum':[{}] ,'quantile': [{'q':'0.5'},{'q':'0.95'}]} 
+#                       ***Not all functions will be calculated***''')       
     
 
-def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable',*args):
-    """
-    Extract features from
+# def extract_features2(xr_data, feature_dict, band, na_rm = False, dim='variable',*args):
+#     """
+#     Extract features from
 
-    * a :class:`xarray.DataArray` containing a time series of rasters
+#     * a :class:`xarray.DataArray` containing a time series of rasters
 
-    A :class:`xarray.DataArray` with the calculated features will be returned a 'variable'.
+#     A :class:`xarray.DataArray` with the calculated features will be returned a 'variable'.
 
-    Examples
-    ========
+#     Examples
+#     ========
 
-    >>>  f_dict = { 'maximum':[{}] ,  
-                   'quantile': [{'q':"0.5"},{'q':'0.95'}]}
-    >>>  features = extract_features(xr_data=ds,
-    >>>                     feature_dict=f_dict,
-    >>>                     band='aet', 
-    >>>                     na_rm = True)
+#     >>>  f_dict = { 'maximum':[{}] ,  
+#                    'quantile': [{'q':"0.5"},{'q':'0.95'}]}
+#     >>>  features = extract_features(xr_data=ds,
+#     >>>                     feature_dict=f_dict,
+#     >>>                     band='aet', 
+#     >>>                     na_rm = True)
 
-    :param xr_data: The xarray.DataArray with a time series of rasters to compute the features for.
-    :type xr_data: xarray.DataArray
+#     :param xr_data: The xarray.DataArray with a time series of rasters to compute the features for.
+#     :type xr_data: xarray.DataArray
 
-    :param feature_dict: mapping from feature calculator names to parameters. Only those names
-           which are keys in this dict will be calculated. See example above. 
-    :type feature_dict: dict
+#     :param feature_dict: mapping from feature calculator names to parameters. Only those names
+#            which are keys in this dict will be calculated. See example above. 
+#     :type feature_dict: dict
 
-    :param band: The name of the variable to create feature for.
-    :type band: str
+#     :param band: The name of the variable to create feature for.
+#     :type band: str
 
-    :param na_rm: If True (default), all missing values are masked using .attrs['nodatavals']
-    :type na_rm: bool
+#     :param na_rm: If True (default), all missing values are masked using .attrs['nodatavals']
+#     :type na_rm: bool
 
-    :param dim: The name of the dimension used to collect outputed features
-    :type dim: str
+#     :param dim: The name of the dimension used to collect outputed features
+#     :type dim: str
     
-    :return: The DataArray containing extracted features in `dim`.
-    :rtype: xarray.DataArray
+#     :return: The DataArray containing extracted features in `dim`.
+#     :rtype: xarray.DataArray
     
-    """    
-    print('go to http://localhost:8787/status for dask dashboard') 
+#     """    
+#     print('go to http://localhost:8787/status for dask dashboard') 
     
-    check_for_dictionary(feature_dict)
+#     check_for_dictionary(feature_dict)
     
-    nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
+#     nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
     
-    if na_rm is True:
+#     if na_rm is True:
 
-        features = [_apply_fun_name(function_name = func,
-                          xr_data=xr_data.where(xr_data.sel(band=band) != nodataval),
-                          band= band, 
-                          args= arg)
-                    for func, args in feature_dict.items() for arg in args]
-    else:
+#         features = [_apply_fun_name(function_name = func,
+#                           xr_data=xr_data.where(xr_data.sel(band=band) != nodataval),
+#                           band= band, 
+#                           args= arg)
+#                     for func, args in feature_dict.items() for arg in args]
+#     else:
         
-        features = [_apply_fun_name(function_name = func,
-                          xr_data=xr_data,
-                          band= band, 
-                          args= arg)
-                    for func, args in feature_dict.items() for arg in args]            
-    out = xr.concat( features , dim)
+#         features = [_apply_fun_name(function_name = func,
+#                           xr_data=xr_data,
+#                           band= band, 
+#                           args= arg)
+#                     for func, args in feature_dict.items() for arg in args]            
+#     out = xr.concat( features , dim)
     
-    # set as gw obj    
-    out = out.gw.match_data(xr_data,  
-                                band_names=  out['variable'].values.tolist())
+#     # set as gw obj    
+#     out = out.gw.match_data(xr_data,  
+#                                 band_names=  out['variable'].values.tolist())
     
-    return out 
+#     return out 
 
  
 
@@ -130,7 +130,7 @@ with gw.open(sorted(glob(f"{pdsi_files}/pdsi*tif")),
     ds.attrs['nodatavals'] =  (-9999,)
     
     
-    features = extract_features2(xr_data=ds,
+    features = extract_features(xr_data=ds,
                                 feature_dict=f_dict,
                                 band='ppt', 
                                 na_rm = True)
