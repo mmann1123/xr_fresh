@@ -24,7 +24,7 @@ def set_property(key, value):
     return decorate_func
 
 
-
+@set_property("fctype", "ufunc")
 def abs_energy(X,dim='time', **kwargs):
     """
     Returns the absolute energy of the time series which is the sum over the squared values
@@ -84,7 +84,7 @@ def mean_abs_change(X, dim='time', **kwargs):
     return np.abs(X.diff(dim)).mean(dim)
 
 
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def mean_change(X , dim='time', **kwargs):
     """
     Returns the mean over the differences between subsequent time series values which is
@@ -351,7 +351,7 @@ def _pearson_r_p_value(a, b, axis, skipna, **kwargs):
     return res
 
 
-
+@set_property("fctype", "ufunc")
 def pearson_r(a, b, dim='time',  skipna=False, **kwargs):
     """
     Pearson's correlation coefficient.
@@ -407,6 +407,7 @@ def pearson_r(a, b, dim='time',  skipna=False, **kwargs):
     
      
 
+@set_property("fctype", "ufunc")
 def pearson_r_p_value(a, b, dim = 'time',  skipna=False, **kwargs):
     """
     2-tailed p-value associated with pearson's correlation coefficient.
@@ -457,6 +458,7 @@ def pearson_r_p_value(a, b, dim = 'time',  skipna=False, **kwargs):
     )
     
 
+@set_property("fctype", "simple")
 def autocorr(X, lag=1, dim='time', return_p=True, **kwargs):
     """Calculate the lagged correlation of time series. Amended from xskillscore package
     Args:
@@ -490,7 +492,8 @@ def autocorr(X, lag=1, dim='time', return_p=True, **kwargs):
         return p
     else:
         return r
- 
+
+@set_property("fctype", "simple")
 def ts_complexity_cid_ce(X, normalize=True, dim='time', **kwargs):
     """
     This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,
@@ -529,7 +532,7 @@ def ts_complexity_cid_ce(X, normalize=True, dim='time', **kwargs):
 
 
 
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def mean_second_derivative_central(X , dim='time', **kwargs):
     """
     Returns the mean over the differences between subsequent time series values which is
@@ -551,7 +554,7 @@ def mean_second_derivative_central(X , dim='time', **kwargs):
                            output_dtypes=[float])
  
 
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def median(X, dim='time', **kwargs):
     """
     Returns the median of x
@@ -568,7 +571,7 @@ def median(X, dim='time', **kwargs):
                        output_dtypes=[float])
 
  
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def mean(X, dim='time', **kwargs):
     """
     Returns the mean of X
@@ -585,7 +588,7 @@ def mean(X, dim='time', **kwargs):
                        output_dtypes=[float])
     
    
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def length(X, dim='time', **kwargs):
     """
     Returns the mean of X
@@ -604,7 +607,7 @@ def length(X, dim='time', **kwargs):
 
 
 
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def standard_deviation(X, dim='time', **kwargs):
     """
     Returns the standard deviation of X
@@ -622,7 +625,7 @@ def standard_deviation(X, dim='time', **kwargs):
                        output_dtypes=[float])
 
 
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def variance(X, dim='time', **kwargs):
     """
     Returns the variance of X
@@ -641,7 +644,7 @@ def variance(X, dim='time', **kwargs):
 
  
 
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def skewness(X, dim='time', **kwargs):
     """
     Returns the sample skewness of X (calculated with the adjusted Fisher-Pearson standardized
@@ -663,7 +666,7 @@ def skewness(X, dim='time', **kwargs):
 
    
     
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def kurtosis(X, dim='time', fisher=False, **kwargs):
     from scipy.stats import kurtosis as kt
 
@@ -687,7 +690,7 @@ def kurtosis(X, dim='time', fisher=False, **kwargs):
 
 
 
-
+@set_property("fctype", "ufunc")
 def spearman_correlation(x, y, dim='time', **kwargs):
     """
     Returns the spearmans correlation of two xarray objects, which 
@@ -712,6 +715,7 @@ def spearman_correlation(x, y, dim='time', **kwargs):
         dask='parallelized',
         output_dtypes=[float])
 
+@set_property("fctype", "ufunc")
 def pearson_correlation(x, y, dim='time', **kwargs):
     """
     Returns the pearsons correlation of two xarray objects, which 
@@ -915,7 +919,7 @@ def first_doy_of_minimum(x,dim='time', band ='ppt', **kwargs):
 
     return out
 
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
     """
     Returns a factor which is 1 if all values in the time series occur only once,
@@ -941,6 +945,7 @@ def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
     
     
     
+@set_property("fctype", "simple")
 def _k_cor(x,y, pthres = 0.05, direction = True, **kwargs):
     """
     Uses the scipy stats module to calculate a Kendall correlation test
@@ -971,6 +976,7 @@ def _k_cor(x,y, pthres = 0.05, direction = True, **kwargs):
       return 0  
 
 
+@set_property("fctype", "ufunc")
 def kendall_time_correlation(X, dim='time', direction = True, **kwargs):
     """
     Returns the significance of a kendall tau test across all time periods in x.
@@ -1004,6 +1010,7 @@ def kendall_time_correlation(X, dim='time', direction = True, **kwargs):
 
 
  
+@set_property("fctype", "ufunc")
 def linear_time_trend(x, param="slope", dim='time', **kwargs):
     from scipy.stats import linregress
 
@@ -1087,6 +1094,7 @@ def minimum(x,dim='time', **kwargs):
 
 
 # from xclim https://github.com/Ouranosinc/xclim/blob/51123e0bbcaa5ad8882877f6905d9b285e63ddd9/xclim/run_length.py
+@set_property("fctype", "simple")
 def get_npts(da: xr.DataArray) -> int:
 
     """Return the number of gridpoints in a DataArray.
@@ -1108,6 +1116,7 @@ def get_npts(da: xr.DataArray) -> int:
     return npts
 
 
+@set_property("fctype", "simple")
 def rle(da: xr.DataArray, dim: str = "time", max_chunk: int = 1_000_000):
     n = len(da[dim])
     i = xr.DataArray(np.arange(da[dim].size), dims=dim).chunk({"time": 1})
@@ -1147,6 +1156,7 @@ def rle(da: xr.DataArray, dim: str = "time", max_chunk: int = 1_000_000):
 npts_opt = 9000
 
 
+@set_property("fctype", "simple")
 def longest_run(
     da: xr.DataArray, dim: str = "time", ufunc_1dim: Union[str, bool] = "auto"
 ):
@@ -1180,6 +1190,7 @@ def longest_run(
 
 
 
+@set_property("fctype", "simple")
 def rle_1d(arr: Union[int, float, bool, Sequence[Union[int, float, bool]]]
            ) -> Tuple[np.array, np.array, np.array]:
     """Return the length, starting position and value of consecutive identical values.
@@ -1216,7 +1227,8 @@ def rle_1d(arr: Union[int, float, bool, Sequence[Union[int, float, bool]]]
     pos = np.cumsum(np.append(0, rl))[:-1]  # positions
     return ia[i], rl, pos 
 
-def longest_run_1d(arr: Sequence[bool]) -> int:
+
+def _longest_run_1d(arr: Sequence[bool]) -> int:
     """Return the length of the longest consecutive run of identical values.
     Parameters
     ----------
@@ -1231,7 +1243,7 @@ def longest_run_1d(arr: Sequence[bool]) -> int:
     return np.where(v, rl, 0).max()
 
 
-
+@set_property("fctype", "ufunc")
 def longest_run_ufunc(x: Sequence[bool]) -> xr.apply_ufunc:
     """Dask-parallel version of longest_run_1d, ie the maximum number of consecutive true values in
     array.
@@ -1245,7 +1257,7 @@ def longest_run_ufunc(x: Sequence[bool]) -> xr.apply_ufunc:
       A function operating along the time dimension of a dask-array.
     """
     return xr.apply_ufunc(
-        longest_run_1d,
+        _longest_run_1d,
         x,
         input_core_dims=[["time"]],
         vectorize=True,

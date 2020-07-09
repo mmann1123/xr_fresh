@@ -14,6 +14,20 @@ def xarray_to_rasterio(X, path='', postfix='', bands=None):
     
     Writes xarray bands to disk by band
 
+
+    Examples
+    ========
+
+    >>>  f_dict = { 'maximum':[{}] ,  
+                   'quantile': [{'q':"0.5"},{'q':'0.95'}]}
+    >>>  features = extract_features(xr_data=ds,
+    >>>                     feature_dict=f_dict,
+    >>>                     band='aet', 
+    >>>                     na_rm = True)
+    >>>  xarray_to_rasterio(features,'/home/mmann1123/Desktop/', postfix='test')
+
+    
+    
     :param X: xarray to write 
     :type X:  xarray.DataArray
     :param path: file destination path

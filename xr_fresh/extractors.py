@@ -15,9 +15,9 @@ def _get_xr_attr(function_name):
     return getattr(feature_calculators,  function_name)
 
 
-def _apply_fun_name(function_name, xr_data, band, args):
+def _apply_fun_name(function_name, xr_data, band,workers, args):
 
-      out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),  **args).compute()
+      out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute() # .persist(),  **args).compute()#num_workers=workers)
       out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items())))  
       return out
   
@@ -30,7 +30,7 @@ def check_for_dictionary(arguments):
                       ***Not all functions will be calculated***''')       
     
 
-def extract_features(xr_data, feature_dict, band, na_rm = False, dim='variable',*args):
+def extract_features(xr_data, feature_dict, band, na_rm = False, dim='variable',workers = 8 , *args):
     """
     Extract features from
 
@@ -72,13 +72,15 @@ def extract_features(xr_data, feature_dict, band, na_rm = False, dim='variable',
     
     check_for_dictionary(feature_dict)
     
-    nodataval = xr_data.attrs['nodatavals'][where(xr_data.band.values==band)[0][0]]
     
     if na_rm is True:
+
+        nodataval = xr_data.attrs['nodatavals']#[where(xr_data.band.values==band)[0][0]]
 
         features = [_apply_fun_name(function_name = func,
                           xr_data=xr_data.where(xr_data.sel(band=band) != nodataval),
                           band= band, 
+                          workers = workers,
                           args= arg)
                     for func, args in feature_dict.items() for arg in args]
     else:
@@ -86,6 +88,7 @@ def extract_features(xr_data, feature_dict, band, na_rm = False, dim='variable',
         features = [_apply_fun_name(function_name = func,
                           xr_data=xr_data,
                           band= band, 
+                          workers = workers,
                           args= arg)
                     for func, args in feature_dict.items() for arg in args]            
     out = xr.concat( features , dim)
