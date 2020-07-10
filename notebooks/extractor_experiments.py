@@ -117,7 +117,7 @@ with gw.open(sorted(glob(f"{pdsi_files}/pdsi*tif")),
 
            out = out.gw.match_data(xr_data,  
                                 band_names=  out['variable'].values.tolist())
-           xarray_to_rasterio(out, path=filepath     )
+           xarray_to_rasterio(out, path=filepath , postfix=postfix    )
 
 #     features = extract_features(xr_data=ds,
 #                                 feature_dict=f_dict,
