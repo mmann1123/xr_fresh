@@ -8,6 +8,7 @@ from typing import Tuple
 from typing import Union
 from warnings import warn
 import logging
+from pandas import to_datetime
 
 logging.captureWarnings(True)
 
@@ -118,7 +119,7 @@ def variance_larger_than_standard_deviation(X, dim='time', **kwargs):
     :return type: bool
     """
     y = X.var(dim)
-    return y > np.sqrt(y)
+    return (y > np.sqrt(y)).astype(np.int32)
 
  
     
@@ -158,7 +159,7 @@ def large_standard_deviation(X, r=2, dim='time', **kwargs):
     :return type: bool
     """
     
-    return X.std(dim) > (r * (X.max(dim) - X.min(dim)))
+    return (X.std(dim) > (r * (X.max(dim) - X.min(dim)))).astype(np.int32)
 
 
 
@@ -183,7 +184,7 @@ def symmetry_looking(X, r=0.1, dim='time', **kwargs):
     
     mean_median_difference = np.abs(X.mean(dim) - X.median(dim))
     max_min_difference = X.max(dim) - X.min(dim)
-    return   mean_median_difference < (r * max_min_difference)
+    return   (mean_median_difference < (r * max_min_difference)).astype(np.int32)
  
     
 
@@ -600,10 +601,10 @@ def length(X, dim='time', **kwargs):
     """
     return xr.apply_ufunc(np.size, X,
                        input_core_dims=[[dim]],
-                       kwargs={ },
+                       kwargs={ 'axis': -1},
                        vectorize=True,
                        dask='parallelized',
-                       output_dtypes=[int])
+                       output_dtypes=[np.int32])
 
 
 
@@ -782,7 +783,7 @@ def count_above_mean(X, dim='time', **kwargs):
     :return type: float
     """
 
-    return (X > X.mean(dim)).sum(dim)
+    return ((X > X.mean(dim)).sum(dim)).astype(np.int32)
 
 @set_property("fctype", "simple")
 def count_below_mean(X, dim='time', **kwargs):
@@ -795,7 +796,7 @@ def count_below_mean(X, dim='time', **kwargs):
     :return type: float
     """
 
-    return (X < X.mean(dim)).sum(dim)
+    return ((X < X.mean(dim)).sum(dim)).astype(np.int32)
 
 
 @set_property("fctype", "simple")
@@ -809,7 +810,6 @@ def last_doy_of_maximum(x,dim='time', band ='NDVI', **kwargs):
     :return: the value of this feature
     :return type: int
     """
-    from pandas import to_datetime
     # create doy array to match x
     dates = np.array([int(to_datetime(i).strftime('%j')) for i in x[dim].values])
     shp = x.shape
@@ -839,7 +839,7 @@ def first_doy_of_maximum(x,dim='time', band ='ppt', **kwargs):
     :return: the value of this feature
     :return type: int
     """
-    from pandas import to_datetime
+    
     # create doy array to match x
     dates = np.array([int(to_datetime(i).strftime('%j')) for i in x[dim].values])
     shp = x.shape
@@ -869,7 +869,7 @@ def last_doy_of_minimum(x,dim='time', band ='ppt', **kwargs):
     :return: the value of this feature
     :return type: int
     """
-    from pandas import to_datetime
+
     # create doy array to match x
     dates = np.array([int(to_datetime(i).strftime('%j')) for i in x[dim].values])
     shp = x.shape
@@ -900,7 +900,7 @@ def first_doy_of_minimum(x,dim='time', band ='ppt', **kwargs):
     :return: the value of this feature
     :return type: int
     """
-    from pandas import to_datetime
+
     # create doy array to match x
     dates = np.array([int(to_datetime(i).strftime('%j')) for i in x[dim].values])
     shp = x.shape

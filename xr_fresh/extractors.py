@@ -4,9 +4,12 @@ import warnings
 import xarray as xr
 from numpy import where
 from xr_fresh import feature_calculators
+from xr_fresh.utils import xarray_to_rasterio
 from itertools import chain
 from os.path import expanduser
 from os.path import join as path_join
+from dask.distributed import progress
+
 
 _logger = logging.getLogger(__name__)
 
@@ -19,8 +22,15 @@ def _get_xr_attr(function_name):
 
 def _apply_fun_name(function_name, xr_data, band, args):
     # apply function for large objects lazy
-    out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute() # .persist(),  **args).compute()#num_workers=workers)
-    out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items())))  
+    print('Extracting:  '+ function_name)
+    # pbar = ProgressBar()
+    # pbar.register()
+    out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute()
+    #progress(out)  
+    #out.compute() 
+    
+    out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items()))) 
+    # pbar.unregister() 
     return out
   
 
@@ -72,7 +82,7 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
 
     :param na_rm: If True (default), all missing values are masked using .attrs['nodatavals']
     :type na_rm: bool
-    
+
     :param filepath: If not none, assuming xarrays being used, writes each feature to filepath 
     :type filepath: str
 
@@ -89,14 +99,16 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
 
     check_dictionary(feature_dict)
     
+    # improvement: check cluster status, have attribute "persist" for setting
+    # persistence of small in memory objects. 
+    # if Cluster.type = 'large_object', no persist
 
     if na_rm is True:
-        print('removing NAN')
         nodataval = xr_data.attrs['nodatavals']#[where(xr_data.band.values==band)[0][0]]
         xr_data=xr_data.where(xr_data.sel(band=band) != nodataval)
 
+
     if filepath != None:
-        print('# large memory objects write out ')
         for func, args in feature_dict.items():
 
             feature = [_apply_fun_name(function_name = func,
@@ -109,13 +121,17 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
 
             feature = feature.gw.match_data(xr_data,  
                                     band_names=  feature['variable'].values.tolist())
-                                    
+            
+            
+            out = feature[0]
+            out.gw.imshow()
+            
+                        
             xarray_to_rasterio(feature, path=filepath , postfix=postfix    )
 
-        return None
+        return feature
 
     else:
-        print('# NOT large memory objects write out ')
 
         features = [_apply_fun_name_persist(function_name = func,
                         xr_data=xr_data ,
@@ -130,3 +146,5 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
                                     band_names=  features['variable'].values.tolist())
 
         return features 
+
+

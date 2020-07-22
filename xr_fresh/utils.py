@@ -8,8 +8,27 @@ Created on Tue Jun 30 15:34:47 2020
 import numpy as np
 import rasterio
 import os.path
- 
-def xarray_to_rasterio(X, path='', postfix='', bands=None):
+import geowombat as gw
+import _pickle as cPickle
+
+
+
+def save_pickle(obj, filename):
+    with open(filename, 'wb') as output:  # Overwrites any existing file.
+        cPickle.dump(obj, output) 
+
+
+def read_pickle(path):
+    with open(path, 'rb') as file:
+        try:
+            while True:
+                return  cPickle.load(file)
+        except EOFError:
+            pass
+#return pickle.load( open( "save.p", "rb" ) )
+
+
+def xarray_to_rasterio(xr_data, path='', postfix='', bands=None):
     """
     
     Writes xarray bands to disk by band
@@ -28,8 +47,8 @@ def xarray_to_rasterio(X, path='', postfix='', bands=None):
 
     
     
-    :param X: xarray to write 
-    :type X:  xarray.DataArray
+    :param xr_data: xarray to write 
+    :type xr_data:  xarray.DataArray
     :param path: file destination path
     :type path:  str
     :param output_postfix: text to append to back of written image
@@ -39,67 +58,22 @@ def xarray_to_rasterio(X, path='', postfix='', bands=None):
     
     """
     
-    
-    if bands == None:
-        
-        for x in X['band'].values.tolist():
-            filename = os.path.join(path, x + postfix+ '.tif')
-            X.sel(band=x).gw.to_raster(filename)
-                  
-    else:
-        
-        for x in bands:
-            filename = os.path.join(path, x + postfix+ '.tif')
-            X.sel(band=x).gw.to_aster(filename)
+    try:
+        if bands == None:
+            
+            for band in xr_data['band'].values.tolist():
+                filename = os.path.join(path, band + postfix+ '.tif')
+                xr_data.sel(band=band).gw.to_raster(filename)
+                    
+        else:
+            
+            for band in bands:
+                filename = os.path.join(path, band + postfix+ '.tif')
+                xr_data.sel(band=band).gw.to_aster(filename)
+    except:
+        print('Error writing')
+                    
+        for band in xr_data['band'].values.tolist():
+            filename = os.path.join(path, band + postfix+ '.pkl')                    
+            save_pickle( xr_data.sel(band=band), filename )
                  
-                  
- 
-# def xarray_to_rasterio_by_band(xa, path='',output_postfix='', dim='time', date_format='%Y-%m-%d'):
-#     for i in range(len(xa[dim])):
-#         #args = {dim: i}
-#         data = xa[i].values
-#         index_value = xa[i][dim].values
-
-#         if type(index_value) is np.datetime64:
-#             formatted_index = pd.to_datetime(index_value).strftime(date_format)
-#         else:
-#             formatted_index = str(index_value)
-
-#         filename = os.path.join(path, formatted_index + output_postfix+ '.tif')
-#         #xarray_to_rasterio(data, filename)
-#         print('Exported %s' % formatted_index)
-    
-#         xa = xa.load()
-    
-#         if len(xa.shape) == 2:
-#             count = 1
-#             height = xa.shape[0]
-#             width = xa.shape[1]
-#             band_indicies = 1
-#         else:
-#             count = 1 #xa.shape[0]
-#             height = xa.shape[1]
-#             width = xa.shape[2]
-#             band_indicies = 1#np.arange(count) + 1    
-    
-    
-#         processed_attrs = {}
-    
-#         try:
-#             val = xa.attrs['affine']
-#             processed_attrs['affine'] = rasterio.Affine.from_gdal(*val)
-#         except KeyError:
-#             pass
-
-#         try:
-#             val = xa.attrs['crs']
-#             processed_attrs['crs'] = rasterio.crs.CRS.from_string(val)
-#         except KeyError:
-#             pass
-    
-#         with rasterio.open(filename, 'w',
-#                            driver='GTiff',
-#                            height=height, width=width,
-#                            dtype=str(xa.dtype), count=count,
-#                            **processed_attrs) as dst:
-#             dst.write(data, band_indicies)
