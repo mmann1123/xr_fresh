@@ -9,36 +9,33 @@ from itertools import chain
 from os.path import expanduser
 from os.path import join as path_join
 from dask.distributed import progress
+from dask.diagnostics import ProgressBar
 
-
-_logger = logging.getLogger(__name__)
+# _logger = logging.getLogger(__name__)
 
 from numpy import where
 
+def _stringr(notstring):    
+    '_'.join(str(notstring))
 
 def _get_xr_attr(function_name):
     return getattr(feature_calculators,  function_name)
 
-
 def _apply_fun_name(function_name, xr_data, band, args):
     # apply function for large objects lazy
     print('Extracting:  '+ function_name)
-    # pbar = ProgressBar()
-    # pbar.register()
     out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute()
-    #progress(out)  
-    #out.compute() 
     
-    out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items()))) 
-    # pbar.unregister() 
+    out.coords['variable'] = band + "__" + function_name+'__' +'_'.join(map(str, chain.from_iterable(args.items()))) 
     return out
   
 
-def _apply_fun_name_persist(function_name, xr_data, band, args):
-    # apply function for small objects persist 
-    out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),  **args).compute() #num_workers=workers)
-    out.coords['variable'] = band + "__" + function_name +'__'+ '_'.join(map(str, chain.from_iterable(args.items())))  
-    return out
+# def _apply_fun_name_persist(function_name, xr_data, band, args):
+
+#     # apply function for small objects persist 
+#     out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),  **args).compute() #num_workers=workers)
+#     out.coords['variable'] = band + "__" + function_name+'__' +'_'.join(map(str, chain.from_iterable(args.items()))) 
+#     return out
 
 
 def check_dictionary(arguments):
@@ -52,7 +49,7 @@ def check_dictionary(arguments):
 
 def extract_features(xr_data, feature_dict, band, na_rm = False, 
                     filepath=None, postfix=None,
-                    dim='variable',  *args):
+                    dim='variable', persist=False,  *args):
     """
     Extract features from
 
@@ -92,11 +89,13 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
     :param dim: The name of the dimension used to collect outputed features
     :type dim: str
     
+    :param persist: (optional) If xr_data can easily fit in memory, set to True, if not keep False
+    :type persist: bool
+    
     :return: The DataArray containing extracted features in `dim`.
     :rtype: xarray.DataArray
     
     """    
-
     check_dictionary(feature_dict)
     
     # improvement: check cluster status, have attribute "persist" for setting
@@ -104,44 +103,49 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
     # if Cluster.type = 'large_object', no persist
 
     if na_rm is True:
-        nodataval = xr_data.attrs['nodatavals']#[where(xr_data.band.values==band)[0][0]]
+        nodataval = xr_data.attrs['nodatavals'] 
         xr_data=xr_data.where(xr_data.sel(band=band) != nodataval)
 
+    if persist:
+        print('IMPORTANT: Persisting pulling all data into memory')
+        xr_data = xr_data.persist()
 
     if filepath != None:
         for func, args in feature_dict.items():
 
+
+                
             feature = [_apply_fun_name(function_name = func,
                             xr_data=xr_data,
                             band= band, 
                             args= arg)
                                     for arg in args]
-
+                
             feature = xr.concat( feature , dim)
 
             feature = feature.gw.match_data(xr_data,  
                                     band_names=  feature['variable'].values.tolist())
             
-            
             out = feature[0]
             out.gw.imshow()
             
-                        
-            xarray_to_rasterio(feature, path=filepath , postfix=postfix    )
+            xarray_to_rasterio(feature, path=filepath , postfix=postfix )
 
-        return feature
+        return None
 
     else:
+        if persist:
+            xr_data = xr_data.persist()
 
-        features = [_apply_fun_name_persist(function_name = func,
-                        xr_data=xr_data ,
-                        band= band, 
-                        args= arg)
-                    for func, args in feature_dict.items() for arg in args]
-    
+            features = [_apply_fun_name(function_name = func,
+                            xr_data=xr_data ,
+                            band= band, 
+                            args= arg)
+                        for func, args in feature_dict.items() for arg in args]
+            
+            
         features = xr.concat( features , dim)
         
-        # set as gw obj    
         features = features.gw.match_data(xr_data,  
                                     band_names=  features['variable'].values.tolist())
 

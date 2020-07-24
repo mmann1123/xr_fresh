@@ -1,5 +1,6 @@
 from dask.distributed import Client, LocalCluster
 from multiprocessing import cpu_count
+import os
 
 
 class Cluster(object):
@@ -42,20 +43,12 @@ class Cluster(object):
         >>>                   processes=False)
 
 
-    Avoid Oversubscribing Threads
-
-    By default Dask will run as many concurrent tasks as you have logical cores. It assumes that each task will consume 
-    about one core. However, many array-computing libraries are themselves multi-threaded, which can cause contention 
-    and low performance. In particular the BLAS/LAPACK libraries that back most of NumPy’s linear algebra routines are 
-    often multi-threaded, and need to be told to use only one thread explicitly. You can do this with the following 
-    environment variables (using bash export command below, but this may vary depending on your operating system).
-
-    export OMP_NUM_THREADS=1
-    export MKL_NUM_THREADS=1
-    export OPENBLAS_NUM_THREADS=1
-
-    You need to run this before you start your Python process for it to take effect.
-
+       When do I use workers versus threads? This probably depends on the problem being executed. If the computation 
+       task is mainly performing many reads at the chunk level (i.e., I/O bound) and the chunk-level process is 
+       relatively simple (i.e., the worker is not spending much time on each chunk) or the process can release the GIL, 
+       more n_threads might be more efficient. If the chunk-level computation is complex (i.e., CPU bound) and is the 
+       main bottleneck, more n_workers might be more efficient. See Dask single-machine for more details about threads 
+       vs. processes.
 
     """
 
@@ -75,8 +68,8 @@ class Cluster(object):
 
 
     def start_small_object(self):
-        self.cluster = LocalCluster(n_workers=1,
-            threads_per_worker=int(cpu_count()),
+        self.cluster = LocalCluster(n_workers=3,
+            threads_per_worker=int(cpu_count()/3),
             processes=False,
             **self.kwargs)
         self.client = Client(self.cluster)
@@ -93,6 +86,10 @@ class Cluster(object):
          which is not affected by Python's Global Interpreter Lock (GIL). 
          Rasterio also releases GIL https://rasterio.readthedocs.io/en/latest/topics/concurrency.html
         '''
+        
+        os.system('export OMP_NUM_THREADS=1')
+        os.system('export MKL_NUM_THREADS=1')
+        os.system('export OPENBLAS_NUM_THREADS=1')
 
         self.cluster = LocalCluster(n_workers=1,
             threads_per_worker=int(cpu_count()),
@@ -100,6 +97,27 @@ class Cluster(object):
             **self.kwargs)
         self.client = Client(self.cluster)
         self.type = 'large_object'
+
+        print(self.client)
+        print('go to http://localhost:8787/status for dask dashboard')
+
+    def start_large_IO_object(self):
+        ''' Using few processes and many threads per process is good if you are doing mostly
+         numeric workloads, such as are common in Numpy, Pandas, and Scikit-Learn code, 
+         which is not affected by Python's Global Interpreter Lock (GIL). 
+         Rasterio also releases GIL https://rasterio.readthedocs.io/en/latest/topics/concurrency.html
+        '''
+        
+        os.system('export OMP_NUM_THREADS=1')
+        os.system('export MKL_NUM_THREADS=1')
+        os.system('export OPENBLAS_NUM_THREADS=1')
+
+        self.cluster = LocalCluster(#n_workers=3,
+            #threads_per_worker=4,
+            processes=True,
+            **self.kwargs)
+        self.client = Client(self.cluster)
+        self.type = 'large_IO_object'
 
         print(self.client)
         print('go to http://localhost:8787/status for dask dashboard')

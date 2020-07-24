@@ -205,30 +205,30 @@ def sum_values(X, dim='time', **kwargs):
 
 
 
-def autocorrelation(X, lag=1, dim="time", return_p=False, **kwargs):
-    from climpred.stats import autocorr
-    """
-    Calculated dim lagged correlation of a xr.Dataset.
+# def autocorrelation(X, lag=1, dim="time", return_p=True, **kwargs):
+#     from climpred.stats import autocorr
+#     """
+#     Calculated dim lagged correlation of a xr.Dataset.
     
     
-    :param X : xarray dataset/dataarray time series
-    :type x: xarray.DataArray
-    :param dim : name of time dimension/dimension to autocorrelate over
-    :type dim: str
-    :param return_p : boolean (default False)
-            if false, return just the correlation coefficient.
-            if true, return both the correlation coefficient and p-value.
-    :type return_p: boolean
-    :return: the value of this feature
-            r : Pearson correlation coefficient
-            p : (if return_p True) p-value
-    :return type: float
-    """
-    if return_p:
-        return autocorr(X, lag=lag, dim=dim, return_p=return_p)[1]
+#     :param X : xarray dataset/dataarray time series
+#     :type x: xarray.DataArray
+#     :param dim : name of time dimension/dimension to autocorrelate over
+#     :type dim: str
+#     :param return_p : boolean (default False)
+#             if false, return just the correlation coefficient.
+#             if true, return both the correlation coefficient and p-value.
+#     :type return_p: boolean
+#     :return: the value of this feature
+#             r : Pearson correlation coefficient
+#             p : (if return_p True) p-value
+#     :return type: float
+#     """
+#     if return_p:
+#         return autocorr(X, lag=lag, dim=dim, return_p=return_p)[1]
         
-    else:
-        return autocorr(X, lag=lag, dim=dim, return_p=return_p)
+#     else:
+#         return autocorr(X, lag=lag, dim=dim, return_p=return_p)
 
  
 
@@ -529,8 +529,62 @@ def ts_complexity_cid_ce(X, normalize=True, dim='time', **kwargs):
     X = X.diff(dim)
     return np.sqrt(X.dot(X,dims=dim) ).fillna(0)
 
- 
+# def _ts_complexity_cid_ce(X,normalize):
+#     if normalize:
+#         ##s = X.std(dim)
+#         ##if s!=0:
+#         #X = (X - X.mean(dim))/(X.std(dim))
+#          X = (lambda X, dim: (X - X.mean(dim))/(X.std(dim)))(X,'time')
+#         ##else:
+#         ##    return 0.0
 
+#     X = X.diff('time')
+    
+#     # return np.sqrt(X.dot(X,dims=dim) ).fillna(0)
+#     return np.sqrt(X.dot(X,dims='time') ).fillna(0)
+ 
+# @set_property("fctype", "simple")
+# def ts_complexity_cid_ce(X, normalize=True, dim='time', **kwargs):
+#     """
+#     This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,
+#     valleys etc.). It calculates the value of
+
+#     .. math::
+
+#         \\sqrt{ \\sum_{i=0}^{n-2lag} ( x_{i} - x_{i+1})^2 }
+
+#     .. rubric:: References
+
+#     |  [1] Batista, Gustavo EAPA, et al (2014).
+#     |  CID: an efficient complexity-invariant distance for time series.
+#     |  Data Mining and Knowledge Discovery 28.3 (2014): 634-669.
+
+#     :param X: the time series to calculate the feature of
+#     :type X: xarray.DataArray
+#     :param normalize: should the time series be z-transformed?
+#     :type normalize: bool
+
+#     :return: the value of this feature
+#     :return type: float
+#     """
+
+#     return xr.apply_ufunc(_ts_complexity_cid_ce, X,
+#                             input_core_dims=[[dim]],
+#                             kwargs={'normalize':normalize  },
+#                             dask='parallelized',
+#                              vectorize=True,
+#                             output_dtypes=[float])
+ 
+    # time_len = len( X )
+    # func = lambda x: np.unique(x, 'time')[0].size / time_len
+    
+    # return xr.apply_ufunc(func, X,
+    #                    input_core_dims=[[dim]],
+    #                    vectorize=True,
+    #                    kwargs={ },
+    #                    dask='parallelized',
+    #                    output_dtypes=[float])
+    
 
 
 @set_property("fctype", "ufunc")
@@ -683,11 +737,12 @@ def kurtosis(X, dim='time', fisher=False, **kwargs):
     :return: the value of this feature
     :return type: float
     """
+    
     return xr.apply_ufunc(kt, X,
-                       input_core_dims=[[dim]],
-                       kwargs={'axis': -1,'fisher':fisher},
-                       dask='parallelized',
-                       output_dtypes=[float])
+                            input_core_dims=[[dim]],
+                            kwargs={'axis': -1,'fisher':fisher},
+                            dask='parallelized',
+                            output_dtypes=[float])
 
 
 
@@ -943,7 +998,7 @@ def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
                        dask='parallelized',
                        output_dtypes=[float])
     
-    
+ 
     
 @set_property("fctype", "simple")
 def _k_cor(x,y, pthres = 0.05, direction = True, **kwargs):
