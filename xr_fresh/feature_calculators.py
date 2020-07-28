@@ -107,8 +107,7 @@ def mean_change(X , dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    length= len(x)
-    func = lambda x: (x[:,:,-1] - x[:,:,0]) / (length - 1) if length > 1 else np.NaN
+    func = lambda x: (x[:,:,-1] - x[:,:,0]) / (len(x) - 1)  
     return xr.apply_ufunc(func, X,
                            input_core_dims=[[dim]],
                            dask='parallelized',
@@ -1110,6 +1109,48 @@ def linear_time_trend(x, param="slope", dim='time', **kwargs):
         dask='parallelized',
         output_dtypes=[float])
  
+
+
+def _timereg2(x, t, param  ):
+    
+    linReg = linregress(x=t, y=x)
+    
+    return getattr(linReg, ["slope",'rvalue']) 
+ 
+    
+@set_property("fctype", "ufunc")
+def linear_time_trend2(x, param="slope", dim='time', **kwargs):
+    
+
+    """
+    Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to
+    length of the time series minus one.
+    This feature assumes the signal to be uniformly sampled. It will not use the time stamps to fit the model.
+    The parameters control which of the characteristics are returned.
+
+    Possible extracted attributes are "pvalue", "rvalue", "intercept", "slope", "stderr", see the documentation of
+    linregress for more information.
+
+    :param x: the time series to calculate the feature of
+    :type x:  xarray.DataArray
+    :param param: contains text of the attribute name of the regression model
+    :type param: list
+    :return: the value of this feature
+    :return type: int
+    """
+    
+    t = xr.DataArray(np.arange(len(x[dim]))+1, dims=dim,
+             coords={dim: x[dim]})
+    
+    return xr.apply_ufunc( _timereg, x , t,
+        input_core_dims=[[dim], [dim]],
+        kwargs={ 'param':param},
+        vectorize=True,  
+        dask='parallelized',
+        output_dtypes=[[float],[float]],
+        output_core_dims=[[dim],[dim]])
+
+
 
 @set_property("fctype", "simple")
 def quantile(x, q, dim='time', **kwargs):
