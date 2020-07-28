@@ -31,10 +31,9 @@ def set_property(key, value):
     return decorate_func
 
 
- 
 
 
-@set_property("fctype", "simple")
+@set_property("fctype", "ufunc")
 def abs_energy(X,dim='time', **kwargs):
     """
     Returns the absolute energy of the time series which is the sum over the squared values
@@ -49,10 +48,11 @@ def abs_energy(X,dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-
-    return pow(X,2).sum(dim)
- 
-     
+        
+    return xr.apply_ufunc(lambda x: pow(x,2), X,
+                          dask='parallelized', 
+                          output_dtypes=[float]).sum(dim)
+  
 
 @set_property("fctype", "simple")
 def absolute_sum_of_changes(X, dim='time', **kwargs):
@@ -1081,6 +1081,7 @@ def _timereg(x, t, param  ):
 @set_property("fctype", "ufunc")
 def linear_time_trend(x, param="slope", dim='time', **kwargs):
     
+    # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
 
     """
     Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to
@@ -1103,55 +1104,13 @@ def linear_time_trend(x, param="slope", dim='time', **kwargs):
              coords={dim: x[dim]})
     
     return xr.apply_ufunc( _timereg, x , t,
-        input_core_dims=[[dim], [dim]],
-        kwargs={ 'param':param},
-        vectorize=True,  
-        dask='parallelized',
-        output_dtypes=[float])
+                            input_core_dims=[[dim], [dim]],
+                            kwargs={ 'param':param},
+                            vectorize=True,  
+                            dask='parallelized',
+                            output_dtypes=[float])
  
-
-
-def _timereg2(x, t, param  ):
-    
-    linReg = linregress(x=t, y=x)
-    
-    return getattr(linReg, ["slope",'rvalue']) 
  
-    
-@set_property("fctype", "ufunc")
-def linear_time_trend2(x, param="slope", dim='time', **kwargs):
-    
-
-    """
-    Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to
-    length of the time series minus one.
-    This feature assumes the signal to be uniformly sampled. It will not use the time stamps to fit the model.
-    The parameters control which of the characteristics are returned.
-
-    Possible extracted attributes are "pvalue", "rvalue", "intercept", "slope", "stderr", see the documentation of
-    linregress for more information.
-
-    :param x: the time series to calculate the feature of
-    :type x:  xarray.DataArray
-    :param param: contains text of the attribute name of the regression model
-    :type param: list
-    :return: the value of this feature
-    :return type: int
-    """
-    
-    t = xr.DataArray(np.arange(len(x[dim]))+1, dims=dim,
-             coords={dim: x[dim]})
-    
-    return xr.apply_ufunc( _timereg, x , t,
-        input_core_dims=[[dim], [dim]],
-        kwargs={ 'param':param},
-        vectorize=True,  
-        dask='parallelized',
-        output_dtypes=[[float],[float]],
-        output_core_dims=[[dim],[dim]])
-
-
-
 @set_property("fctype", "simple")
 def quantile(x, q, dim='time', **kwargs):
 
