@@ -49,8 +49,8 @@ def abs_energy(X,dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-        
-    return (X**2).sum(dim) 
+
+    return ss(X) #(X**2).sum(dim) 
 
 
 @set_property("fctype", "simple")
@@ -106,8 +106,8 @@ def mean_change(X , dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
-    func = lambda x: (x[:,:,-1] - x[:,:,0]) / (len(x) - 1) if len(x) > 1 else np.NaN
+    length= len(x)
+    func = lambda x: (x[:,:,-1] - x[:,:,0]) / (length - 1) if length > 1 else np.NaN
     return xr.apply_ufunc(func, X,
                            input_core_dims=[[dim]],
                            dask='parallelized',
