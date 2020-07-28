@@ -112,8 +112,6 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
 
     if filepath != None:
         for func, args in feature_dict.items():
-
-
                 
             feature = [_apply_fun_name(function_name = func,
                             xr_data=xr_data,
@@ -137,13 +135,13 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
         if persist:
             xr_data = xr_data.persist()
 
-            features = [_apply_fun_name(function_name = func,
-                            xr_data=xr_data ,
-                            band= band, 
-                            args= arg)
-                        for func, args in feature_dict.items() for arg in args]
-            
-            
+        features = [_apply_fun_name(function_name = func,
+                        xr_data=xr_data ,
+                        band= band, 
+                        args= arg)
+                    for func, args in feature_dict.items() for arg in args]
+        
+        
         features = xr.concat( features , dim)
         
         features = features.gw.match_data(xr_data,  
