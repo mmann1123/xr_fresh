@@ -142,11 +142,14 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
                     for func, args in feature_dict.items() for arg in args]
         
         
+        
         features = xr.concat( features , dim)
         
         features = features.gw.match_data(xr_data,  
                                     band_names=  features['variable'].values.tolist())
-
+        out = features[0]
+        out.gw.imshow()
+        
         return features 
 
 

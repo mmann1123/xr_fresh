@@ -50,8 +50,9 @@ def abs_energy(X,dim='time', **kwargs):
     :return type: float
     """
 
-    return ss(X) #(X**2).sum(dim) 
-
+    return pow(X,2).sum(dim)
+ 
+     
 
 @set_property("fctype", "simple")
 def absolute_sum_of_changes(X, dim='time', **kwargs):
