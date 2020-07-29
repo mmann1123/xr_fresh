@@ -20,7 +20,8 @@ Indices and tables
 
 * :doc:`xr_fresh.feature_calculators`
 * :doc:`xr_fresh.extractors`
-
+* :doc:`xr_fresh.backends`
+* :doc:`xr_fresh.utils`
 
 .. toctree::
    :maxdepth: 1

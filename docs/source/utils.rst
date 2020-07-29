@@ -1,7 +1,7 @@
  
-Prep Module
+Utilities for reading and writing
 =====================================
-This module holds any functions used exclusively for data preperation and input.
+
  
 .. toctree::
    :maxdepth: 3
@@ -9,10 +9,11 @@ This module holds any functions used exclusively for data preperation and input.
 
 
 
+
 Functions
 ==================
  
-.. automodule:: timefraym.prep
+.. automodule:: xr_fresh.utils
     :members:
 
 

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculate Feature Generators &#8212; xr_fresh 0.0.0 documentation</title>
+    <title>Utilities for reading and writing &#8212; xr_fresh 0.0.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -84,21 +84,19 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="calculate-feature-generators">
-<h1>Calculate Feature Generators<a class="headerlink" href="#calculate-feature-generators" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="utilities-for-reading-and-writing">
+<h1>Utilities for reading and writing<a class="headerlink" href="#utilities-for-reading-and-writing" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
 </div>
-<div class="section" id="module-xr_fresh.extractors">
-<span id="functions"></span><h1>Functions<a class="headerlink" href="#module-xr_fresh.extractors" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-xr_fresh.utils">
+<span id="functions"></span><h1>Functions<a class="headerlink" href="#module-xr_fresh.utils" title="Permalink to this headline">¶</a></h1>
+<p>Created on Tue Jun 30 15:34:47 2020</p>
+<p>&#64;author: <a class="reference external" href="https://github.com/robintw/XArrayAndRasterio/blob/master/rasterio_to_xarray.py">https://github.com/robintw/XArrayAndRasterio/blob/master/rasterio_to_xarray.py</a></p>
 <dl class="py function">
-<dt id="xr_fresh.extractors.extract_features">
-<code class="sig-prename descclassname">xr_fresh.extractors.</code><code class="sig-name descname">extract_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xr_data</span></em>, <em class="sig-param"><span class="n">feature_dict</span></em>, <em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">na_rm</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">filepath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">postfix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'variable'</span></em>, <em class="sig-param"><span class="n">persist</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors.html#extract_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.extractors.extract_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract features from</p>
-<ul class="simple">
-<li><p>a <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> containing a time series of rasters</p></li>
-</ul>
-<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> with the calculated features will be returned a ‘variable’.</p>
+<dt id="xr_fresh.utils.xarray_to_rasterio">
+<code class="sig-prename descclassname">xr_fresh.utils.</code><code class="sig-name descname">xarray_to_rasterio</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xr_data</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">postfix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">bands</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#xarray_to_rasterio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.utils.xarray_to_rasterio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes xarray bands to disk by band</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">f_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;maximum&#39;</span><span class="p">:[{}]</span> <span class="p">,</span>
 <span class="go">               &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;},{&#39;q&#39;:&#39;0.95&#39;}]}</span>
@@ -106,27 +104,17 @@
 <span class="gp">&gt;&gt;&gt; </span>                    <span class="n">feature_dict</span><span class="o">=</span><span class="n">f_dict</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                    <span class="n">band</span><span class="o">=</span><span class="s1">&#39;aet&#39;</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                    <span class="n">na_rm</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="n">xarray_to_rasterio</span><span class="p">(</span><span class="n">features</span><span class="p">,</span><span class="s1">&#39;/home/mmann1123/Desktop/&#39;</span><span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xr_data</strong> (<em>xarray.DataArray</em>) – The xarray.DataArray with a time series of rasters to compute the features for.</p></li>
-<li><p><strong>feature_dict</strong> (<em>dict</em>) – mapping from feature calculator names to parameters. Only those names
-which are keys in this dict will be calculated. See example above.</p></li>
-<li><p><strong>band</strong> (<em>str</em>) – The name of the variable to create feature for.</p></li>
-<li><p><strong>na_rm</strong> (<em>bool</em>) – If True (default), all missing values are masked using .attrs[‘nodatavals’]</p></li>
-<li><p><strong>filepath</strong> (<em>str</em>) – If not none, assuming xarrays being used, writes each feature to filepath</p></li>
-<li><p><strong>postfix</strong> (<em>str</em>) – If filepath not none, appends postfix to the end of the feature name</p></li>
-<li><p><strong>dim</strong> (<em>str</em>) – The name of the dimension used to collect outputed features</p></li>
-<li><p><strong>persist</strong> (<em>bool</em>) – (optional) If xr_data can easily fit in memory, set to True, if not keep False</p></li>
+<li><p><strong>xr_data</strong> (<em>xarray.DataArray</em>) – xarray to write</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – file destination path</p></li>
+<li><p><strong>output_postfix</strong> (<em>list</em>) – text to append to back of written image</p></li>
+<li><p><strong>output_postfix</strong> – list of character strings or locations of band names, if None all bands are written</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The DataArray containing extracted features in <cite>dim</cite>.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>xarray.DataArray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -148,7 +136,7 @@ which are keys in this dict will be calculated. See example above.</p></li>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/extractors.rst.txt"
+      <a href="_sources/utils.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

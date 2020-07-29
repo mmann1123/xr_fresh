@@ -41,7 +41,7 @@
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=fraymio&repo=TimeFraym&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=mmann1123&repo=xr_fresh&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -97,6 +97,13 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">to_datetime</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">linregress</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">skew</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">special</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">kurtosis</span> <span class="k">as</span> <span class="n">kt</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">kendalltau</span>
+<span class="kn">from</span> <span class="nn">bottleneck</span> <span class="kn">import</span> <span class="n">nanmean</span><span class="p">,</span> <span class="n">nanmedian</span><span class="p">,</span> <span class="n">nanmin</span><span class="p">,</span> <span class="n">nanmax</span><span class="p">,</span> <span class="n">nansum</span><span class="p">,</span> <span class="n">nanstd</span><span class="p">,</span> <span class="n">nanvar</span><span class="p">,</span> <span class="n">anynan</span><span class="p">,</span> <span class="n">ss</span>
 
 <span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
@@ -114,7 +121,9 @@
 
 
 
-<div class="viewcode-block" id="abs_energy"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.abs_energy">[docs]</a><span class="k">def</span> <span class="nf">abs_energy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="abs_energy"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.abs_energy">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">abs_energy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the absolute energy of the time series which is the sum over the squared values</span>
 
@@ -128,11 +137,11 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
-                          <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
-                          <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
-                          <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ord&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span>
-                          <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span></div>
+        
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">X</span><span class="p">,</span>
+                          <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span> 
+                          <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span></div>
+  
 
 <div class="viewcode-block" id="absolute_sum_of_changes"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.absolute_sum_of_changes">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">absolute_sum_of_changes</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -173,7 +182,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="mean_change"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.mean_change">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="mean_change"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.mean_change">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">mean_change</span><span class="p">(</span><span class="n">X</span> <span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the mean over the differences between subsequent time series values which is</span>
@@ -187,7 +196,7 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[:,:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[:,:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  
     <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
                            <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
                            <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
@@ -207,7 +216,7 @@
 <span class="sd">    :return type: bool</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
 
  
     
@@ -247,7 +256,7 @@
 <span class="sd">    :return type: bool</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dim</span><span class="p">)))</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dim</span><span class="p">))))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
 
 
 
@@ -272,7 +281,7 @@
     
     <span class="n">mean_median_difference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
     <span class="n">max_min_difference</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
-    <span class="k">return</span>   <span class="n">mean_median_difference</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="n">max_min_difference</span><span class="p">)</span></div>
+    <span class="k">return</span>   <span class="p">(</span><span class="n">mean_median_difference</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="n">max_min_difference</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
  
     
 
@@ -293,34 +302,33 @@
 
 
 
-<span class="k">def</span> <span class="nf">autocorrelation</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">return_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">climpred.stats</span> <span class="kn">import</span> <span class="n">autocorr</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculated dim lagged correlation of a xr.Dataset.</span>
-<span class="sd">    </span>
-<span class="sd">    </span>
-<span class="sd">    :param X : xarray dataset/dataarray time series</span>
-<span class="sd">    :type x: xarray.DataArray</span>
-<span class="sd">    :param dim : name of time dimension/dimension to autocorrelate over</span>
-<span class="sd">    :type dim: str</span>
-<span class="sd">    :param return_p : boolean (default False)</span>
-<span class="sd">            if false, return just the correlation coefficient.</span>
-<span class="sd">            if true, return both the correlation coefficient and p-value.</span>
-<span class="sd">    :type return_p: boolean</span>
-<span class="sd">    :return: the value of this feature</span>
-<span class="sd">            r : Pearson correlation coefficient</span>
-<span class="sd">            p : (if return_p True) p-value</span>
-<span class="sd">    :return type: float</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">return_p</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">autocorr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="n">lag</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">return_p</span><span class="o">=</span><span class="n">return_p</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1"># def autocorrelation(X, lag=1, dim=&quot;time&quot;, return_p=True, **kwargs):</span>
+<span class="c1">#     from climpred.stats import autocorr</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Calculated dim lagged correlation of a xr.Dataset.</span>
+    
+    
+<span class="c1">#     :param X : xarray dataset/dataarray time series</span>
+<span class="c1">#     :type x: xarray.DataArray</span>
+<span class="c1">#     :param dim : name of time dimension/dimension to autocorrelate over</span>
+<span class="c1">#     :type dim: str</span>
+<span class="c1">#     :param return_p : boolean (default False)</span>
+<span class="c1">#             if false, return just the correlation coefficient.</span>
+<span class="c1">#             if true, return both the correlation coefficient and p-value.</span>
+<span class="c1">#     :type return_p: boolean</span>
+<span class="c1">#     :return: the value of this feature</span>
+<span class="c1">#             r : Pearson correlation coefficient</span>
+<span class="c1">#             p : (if return_p True) p-value</span>
+<span class="c1">#     :return type: float</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     if return_p:</span>
+<span class="c1">#         return autocorr(X, lag=lag, dim=dim, return_p=return_p)[1]</span>
         
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">autocorr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="n">lag</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">return_p</span><span class="o">=</span><span class="n">return_p</span><span class="p">)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         return autocorr(X, lag=lag, dim=dim, return_p=return_p)</span>
 
  
 
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">special</span>
 
 
 <span class="k">def</span> <span class="nf">_get_numpy_funcs</span><span class="p">(</span><span class="n">skipna</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -329,7 +337,7 @@
 <span class="sd">    Returns sum and mean if skipna is False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">skipna</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span>
+        <span class="k">return</span> <span class="n">nansum</span><span class="p">,</span> <span class="n">nanmean</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span>
     
@@ -440,9 +448,12 @@
     <span class="k">return</span> <span class="n">res</span>
 
 
-
-<div class="viewcode-block" id="pearson_r"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.pearson_r">[docs]</a><span class="k">def</span> <span class="nf">pearson_r</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>  <span class="n">skipna</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="pearson_r"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.pearson_r">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">pearson_r</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>  <span class="n">skipna</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    use corr from xarray  https://github.com/pydata/xarray/blob/master/xarray/core/computation.py</span>
+<span class="sd">    </span>
 <span class="sd">    Pearson&#39;s correlation coefficient.</span>
 
 <span class="sd">    Parameters</span>
@@ -488,7 +499,7 @@
         <span class="n">_pearson_r</span><span class="p">,</span>
         <span class="n">a</span><span class="p">,</span>
         <span class="n">b</span><span class="p">,</span>
-        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">new_dim</span><span class="p">]</span> <span class="p">,</span> <span class="p">[</span><span class="n">new_dim</span><span class="p">]],</span> <span class="c1">#, [new_dim]],</span>
+        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">new_dim</span><span class="p">]</span> <span class="p">,</span> <span class="p">[</span><span class="n">new_dim</span><span class="p">]],</span>  
         <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;skipna&#39;</span><span class="p">:</span> <span class="n">skipna</span><span class="p">},</span>
         <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
         <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
@@ -496,7 +507,8 @@
     
      
 
-<div class="viewcode-block" id="pearson_r_p_value"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.pearson_r_p_value">[docs]</a><span class="k">def</span> <span class="nf">pearson_r_p_value</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>  <span class="n">skipna</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">pearson_r_p_value</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>  <span class="n">skipna</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    2-tailed p-value associated with pearson&#39;s correlation coefficient.</span>
 
@@ -539,14 +551,15 @@
         <span class="n">_pearson_r_p_value</span><span class="p">,</span>
         <span class="n">a</span><span class="p">,</span>
         <span class="n">b</span><span class="p">,</span>
-        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">new_dim</span><span class="p">]</span> <span class="p">,</span> <span class="p">[</span><span class="n">new_dim</span><span class="p">]],</span> <span class="c1">#, [new_dim]],</span>
+        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">new_dim</span><span class="p">]</span> <span class="p">,</span> <span class="p">[</span><span class="n">new_dim</span><span class="p">]],</span> 
         <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;skipna&#39;</span><span class="p">:</span> <span class="n">skipna</span><span class="p">},</span>
         <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
         <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
     
 
-<div class="viewcode-block" id="autocorr"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.autocorr">[docs]</a><span class="k">def</span> <span class="nf">autocorr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">return_p</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="autocorr"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.autocorr">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">autocorr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">return_p</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculate the lagged correlation of time series. Amended from xskillscore package</span>
 <span class="sd">    Args:</span>
 <span class="sd">        X (xarray object): Time series or grid of time series.</span>
@@ -558,6 +571,7 @@
 <span class="sd">        Pearson correlation coefficients.</span>
 <span class="sd">        If return_p, also returns their associated p values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
     <span class="n">normal</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">isel</span><span class="p">({</span><span class="n">dim</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="n">lag</span><span class="p">)})</span>
     <span class="n">shifted</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">isel</span><span class="p">({</span><span class="n">dim</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">lag</span><span class="p">,</span> <span class="n">N</span><span class="p">)})</span>
@@ -579,8 +593,9 @@
         <span class="k">return</span> <span class="n">p</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">r</span></div>
- 
-<div class="viewcode-block" id="ts_complexity_cid_ce"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.ts_complexity_cid_ce">[docs]</a><span class="k">def</span> <span class="nf">ts_complexity_cid_ce</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ts_complexity_cid_ce"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.ts_complexity_cid_ce">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">ts_complexity_cid_ce</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,</span>
 <span class="sd">    valleys etc.). It calculates the value of</span>
@@ -614,11 +629,65 @@
     <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">dims</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
+<span class="c1"># def _ts_complexity_cid_ce(X,normalize):</span>
+<span class="c1">#     if normalize:</span>
+<span class="c1">#         ##s = X.std(dim)</span>
+<span class="c1">#         ##if s!=0:</span>
+<span class="c1">#         #X = (X - X.mean(dim))/(X.std(dim))</span>
+<span class="c1">#          X = (lambda X, dim: (X - X.mean(dim))/(X.std(dim)))(X,&#39;time&#39;)</span>
+<span class="c1">#         ##else:</span>
+<span class="c1">#         ##    return 0.0</span>
+
+<span class="c1">#     X = X.diff(&#39;time&#39;)</span>
+    
+<span class="c1">#     # return np.sqrt(X.dot(X,dims=dim) ).fillna(0)</span>
+<span class="c1">#     return np.sqrt(X.dot(X,dims=&#39;time&#39;) ).fillna(0)</span>
  
+<span class="c1"># @set_property(&quot;fctype&quot;, &quot;simple&quot;)</span>
+<span class="c1"># def ts_complexity_cid_ce(X, normalize=True, dim=&#39;time&#39;, **kwargs):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,</span>
+<span class="c1">#     valleys etc.). It calculates the value of</span>
+
+<span class="c1">#     .. math::</span>
+
+<span class="c1">#         \\sqrt{ \\sum_{i=0}^{n-2lag} ( x_{i} - x_{i+1})^2 }</span>
+
+<span class="c1">#     .. rubric:: References</span>
+
+<span class="c1">#     |  [1] Batista, Gustavo EAPA, et al (2014).</span>
+<span class="c1">#     |  CID: an efficient complexity-invariant distance for time series.</span>
+<span class="c1">#     |  Data Mining and Knowledge Discovery 28.3 (2014): 634-669.</span>
+
+<span class="c1">#     :param X: the time series to calculate the feature of</span>
+<span class="c1">#     :type X: xarray.DataArray</span>
+<span class="c1">#     :param normalize: should the time series be z-transformed?</span>
+<span class="c1">#     :type normalize: bool</span>
+
+<span class="c1">#     :return: the value of this feature</span>
+<span class="c1">#     :return type: float</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+
+<span class="c1">#     return xr.apply_ufunc(_ts_complexity_cid_ce, X,</span>
+<span class="c1">#                             input_core_dims=[[dim]],</span>
+<span class="c1">#                             kwargs={&#39;normalize&#39;:normalize  },</span>
+<span class="c1">#                             dask=&#39;parallelized&#39;,</span>
+<span class="c1">#                              vectorize=True,</span>
+<span class="c1">#                             output_dtypes=[float])</span>
+ 
+    <span class="c1"># time_len = len( X )</span>
+    <span class="c1"># func = lambda x: np.unique(x, &#39;time&#39;)[0].size / time_len</span>
+    
+    <span class="c1"># return xr.apply_ufunc(func, X,</span>
+    <span class="c1">#                    input_core_dims=[[dim]],</span>
+    <span class="c1">#                    vectorize=True,</span>
+    <span class="c1">#                    kwargs={ },</span>
+    <span class="c1">#                    dask=&#39;parallelized&#39;,</span>
+    <span class="c1">#                    output_dtypes=[float])</span>
+    
 
 
-
-<div class="viewcode-block" id="mean_second_derivative_central"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.mean_second_derivative_central">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="mean_second_derivative_central"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.mean_second_derivative_central">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">mean_second_derivative_central</span><span class="p">(</span><span class="n">X</span> <span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the mean over the differences between subsequent time series values which is</span>
@@ -640,7 +709,7 @@
                            <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span></div>
  
 
-<div class="viewcode-block" id="median"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.median">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="median"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.median">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">median</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the median of x</span>
@@ -650,14 +719,14 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">nanmedian</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
                        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
                        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span>
                        <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
                        <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span></div>
 
  
-<div class="viewcode-block" id="mean"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.mean">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="mean"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.mean">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the mean of X</span>
@@ -667,14 +736,14 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">nanmean</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
                        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
                        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span>
                        <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
                        <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span></div>
     
    
-<div class="viewcode-block" id="length"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.length">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="length"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.length">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the mean of X</span>
@@ -682,18 +751,18 @@
 <span class="sd">    :param X: the time series to calculate thfunce feature of</span>
 <span class="sd">    :type X: xarray.DataArray</span>
 <span class="sd">    :return: the value of this feature</span>
-<span class="sd">    :return type: float</span>
+<span class="sd">    :return type: floatde</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
                        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
-                       <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span> <span class="p">},</span>
+                       <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span> <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span>
                        <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                        <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
-                       <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span></div>
+                       <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">])</span></div>
 
 
 
-<div class="viewcode-block" id="standard_deviation"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.standard_deviation">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="standard_deviation"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.standard_deviation">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">standard_deviation</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the standard deviation of X</span>
@@ -704,14 +773,14 @@
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">nanstd</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
                        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
                        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span>
                        <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
                        <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="variance"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.variance">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="variance"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.variance">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">variance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the variance of X</span>
@@ -721,7 +790,7 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">nanvar</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
                        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
                        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span>
                        <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
@@ -730,7 +799,7 @@
 
  
 
-<div class="viewcode-block" id="skewness"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.skewness">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="skewness"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.skewness">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">skewness</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the sample skewness of X (calculated with the adjusted Fisher-Pearson standardized</span>
@@ -742,19 +811,17 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">skew</span>
 
     <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">skew</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
                        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
-                       <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span>
+                       <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;nan_policy&#39;</span><span class="p">:</span><span class="s1">&#39;omit&#39;</span><span class="p">},</span>
                        <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
                        <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span></div>
 
    
     
-<span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="kurtosis"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.kurtosis">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">kurtosis</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">fisher</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">kurtosis</span> <span class="k">as</span> <span class="n">kt</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the kurtosis of X (calculated with the adjusted Fisher-Pearson standardized</span>
@@ -768,16 +835,17 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">kt</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
-                       <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
-                       <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;fisher&#39;</span><span class="p">:</span><span class="n">fisher</span><span class="p">},</span>
-                       <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
-                       <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span>
+                            <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">]],</span>
+                            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;fisher&#39;</span><span class="p">:</span><span class="n">fisher</span><span class="p">,</span><span class="s1">&#39;nan_policy&#39;</span><span class="p">:</span><span class="s1">&#39;omit&#39;</span><span class="p">},</span>
+                            <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
+                            <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span></div>
 
 
 
-
-<div class="viewcode-block" id="spearman_correlation"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.spearman_correlation">[docs]</a><span class="k">def</span> <span class="nf">spearman_correlation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="spearman_correlation"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.spearman_correlation">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">spearman_correlation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the spearmans correlation of two xarray objects, which </span>
 <span class="sd">    must have the same dimensions.</span>
@@ -801,7 +869,8 @@
         <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
         <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="pearson_correlation"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.pearson_correlation">[docs]</a><span class="k">def</span> <span class="nf">pearson_correlation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="pearson_correlation"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.pearson_correlation">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">pearson_correlation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the pearsons correlation of two xarray objects, which </span>
 <span class="sd">    must have the same dimensions.</span>
@@ -867,7 +936,7 @@
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">X</span> <span class="o">&gt;</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="p">((</span><span class="n">X</span> <span class="o">&gt;</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="count_below_mean"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.count_below_mean">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">count_below_mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -880,7 +949,7 @@
 <span class="sd">    :return type: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">X</span> <span class="o">&lt;</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="p">((</span><span class="n">X</span> <span class="o">&lt;</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="last_doy_of_maximum"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.last_doy_of_maximum">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
@@ -894,7 +963,6 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">to_datetime</span>
     <span class="c1"># create doy array to match x</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
     <span class="n">shp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
@@ -924,7 +992,7 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">to_datetime</span>
+    
     <span class="c1"># create doy array to match x</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
     <span class="n">shp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
@@ -954,7 +1022,7 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">to_datetime</span>
+
     <span class="c1"># create doy array to match x</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
     <span class="n">shp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
@@ -985,7 +1053,7 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">to_datetime</span>
+
     <span class="c1"># create doy array to match x</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
     <span class="n">shp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
@@ -1004,7 +1072,7 @@
 
     <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="ratio_value_number_to_time_series_length"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.ratio_value_number_to_time_series_length">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="ratio_value_number_to_time_series_length"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.ratio_value_number_to_time_series_length">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">ratio_value_number_to_time_series_length</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a factor which is 1 if all values in the time series occur only once,</span>
@@ -1028,8 +1096,9 @@
                        <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
                        <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span></div>
     
+ 
     
-    
+<span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_k_cor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">pthres</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Uses the scipy stats module to calculate a Kendall correlation test</span>
@@ -1038,7 +1107,6 @@
 <span class="sd">    :pthres: Significance of the underlying test</span>
 <span class="sd">    :direction: output only direction as output (-1 &amp; 1)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">kendalltau</span>
     <span class="c1"># Check NA values</span>
     <span class="n">co</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">co</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># If fewer than 4 observations return -9999</span>
@@ -1060,7 +1128,8 @@
       <span class="k">return</span> <span class="mi">0</span>  
 
 
-<div class="viewcode-block" id="kendall_time_correlation"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.kendall_time_correlation">[docs]</a><span class="k">def</span> <span class="nf">kendall_time_correlation</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="kendall_time_correlation"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.kendall_time_correlation">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">kendall_time_correlation</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the significance of a kendall tau test across all time periods in x.</span>
 <span class="sd">    </span>
@@ -1091,10 +1160,17 @@
         <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
         <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span></div>
 
-
+<span class="k">def</span> <span class="nf">_timereg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">param</span>  <span class="p">):</span>
+    
+    <span class="n">linReg</span> <span class="o">=</span> <span class="n">linregress</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">linReg</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> 
  
+    
+<div class="viewcode-block" id="linear_time_trend"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.linear_time_trend">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">linear_time_trend</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="s2">&quot;slope&quot;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">linregress</span>
+    
+    <span class="c1"># look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to</span>
@@ -1112,26 +1188,18 @@
 <span class="sd">    :return: the value of this feature</span>
 <span class="sd">    :return type: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-     
+    
     <span class="n">t</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">dim</span><span class="p">]))</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span>
              <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="n">dim</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">dim</span><span class="p">]})</span>
     
-    <span class="k">def</span> <span class="nf">_timereg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">param</span>  <span class="p">):</span>
-
-        <span class="n">linReg</span> <span class="o">=</span> <span class="n">linregress</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
-        
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">linReg</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> 
-
-  
-     
     <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span> <span class="n">_timereg</span><span class="p">,</span> <span class="n">x</span> <span class="p">,</span> <span class="n">t</span><span class="p">,</span>
-        <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">],</span> <span class="p">[</span><span class="n">dim</span><span class="p">]],</span>
-        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span> <span class="s1">&#39;param&#39;</span><span class="p">:</span><span class="n">param</span><span class="p">},</span>
-        <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  
-        <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
-        <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span>
+                            <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="n">dim</span><span class="p">],</span> <span class="p">[</span><span class="n">dim</span><span class="p">]],</span>
+                            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span> <span class="s1">&#39;param&#39;</span><span class="p">:</span><span class="n">param</span><span class="p">},</span>
+                            <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  
+                            <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="p">,</span>
+                            <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span></div>
  
-
+ 
 <div class="viewcode-block" id="quantile"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.quantile">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">quantile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
@@ -1176,7 +1244,8 @@
 
 
 <span class="c1"># from xclim https://github.com/Ouranosinc/xclim/blob/51123e0bbcaa5ad8882877f6905d9b285e63ddd9/xclim/run_length.py</span>
-<div class="viewcode-block" id="get_npts"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.get_npts">[docs]</a><span class="k">def</span> <span class="nf">get_npts</span><span class="p">(</span><span class="n">da</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="get_npts"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.get_npts">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_npts</span><span class="p">(</span><span class="n">da</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 
     <span class="sd">&quot;&quot;&quot;Return the number of gridpoints in a DataArray.</span>
 <span class="sd">        Parameters</span>
@@ -1197,6 +1266,7 @@
     <span class="k">return</span> <span class="n">npts</span></div>
 
 
+<span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">rle</span><span class="p">(</span><span class="n">da</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">max_chunk</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000_000</span><span class="p">):</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">da</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">da</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">dims</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
@@ -1236,7 +1306,8 @@
 <span class="n">npts_opt</span> <span class="o">=</span> <span class="mi">9000</span>
 
 
-<div class="viewcode-block" id="longest_run"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.longest_run">[docs]</a><span class="k">def</span> <span class="nf">longest_run</span><span class="p">(</span>
+<div class="viewcode-block" id="longest_run"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.longest_run">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">longest_run</span><span class="p">(</span>
     <span class="n">da</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">ufunc_1dim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the length of the longest consecutive run of True values.</span>
@@ -1269,7 +1340,8 @@
 
 
 
-<div class="viewcode-block" id="rle_1d"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.rle_1d">[docs]</a><span class="k">def</span> <span class="nf">rle_1d</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]]</span>
+<div class="viewcode-block" id="rle_1d"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.rle_1d">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">rle_1d</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]]</span>
            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Return the length, starting position and value of consecutive identical values.</span>
 <span class="sd">    Parameters</span>
@@ -1305,7 +1377,8 @@
     <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rl</span><span class="p">))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># positions</span>
     <span class="k">return</span> <span class="n">ia</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">rl</span><span class="p">,</span> <span class="n">pos</span> </div>
 
-<div class="viewcode-block" id="longest_run_1d"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.longest_run_1d">[docs]</a><span class="k">def</span> <span class="nf">longest_run_1d</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+<span class="k">def</span> <span class="nf">_longest_run_1d</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Return the length of the longest consecutive run of identical values.</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1317,11 +1390,11 @@
 <span class="sd">      Length of longest run.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">v</span><span class="p">,</span> <span class="n">rl</span> <span class="o">=</span> <span class="n">rle_1d</span><span class="p">(</span><span class="n">arr</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">rl</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">rl</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
 
-
-<div class="viewcode-block" id="longest_run_ufunc"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.longest_run_ufunc">[docs]</a><span class="k">def</span> <span class="nf">longest_run_ufunc</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">:</span>
+<div class="viewcode-block" id="longest_run_ufunc"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.longest_run_ufunc">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;ufunc&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">longest_run_ufunc</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Dask-parallel version of longest_run_1d, ie the maximum number of consecutive true values in</span>
 <span class="sd">    array.</span>
 <span class="sd">    Parameters</span>
@@ -1334,7 +1407,7 @@
 <span class="sd">      A function operating along the time dimension of a dask-array.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span>
-        <span class="n">longest_run_1d</span><span class="p">,</span>
+        <span class="n">_longest_run_1d</span><span class="p">,</span>
         <span class="n">x</span><span class="p">,</span>
         <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">]],</span>
         <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1342,6 +1415,176 @@
         <span class="n">output_dtypes</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">],</span>
         <span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dpp"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.dpp">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">dpp</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">chunk</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html</span>
+<span class="sd">    Calculates the Diagnostic Potential Predictability (dpp)</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        DPP_{\\mathrm{unbiased}}(m) = \\frac{\\sigma^{2}_{m} -</span>
+<span class="sd">        \\frac{1}{m}\\cdot\\sigma^{2}}{\\sigma^{2}}</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Resplandy et al. 2015 and Seferian et al. 2018 calculate unbiased DPP</span>
+<span class="sd">        in a slightly different way: chunk=False.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ds (xr.DataArray): control simulation with time dimension as years.</span>
+<span class="sd">        dim (str): dimension to apply DPP on. Default: time.</span>
+<span class="sd">        m (optional int): separation time scale in years between predictable</span>
+<span class="sd">                          low-freq component and high-freq noise.</span>
+<span class="sd">        chunk (optional boolean): Whether chunking is applied. Default: True.</span>
+<span class="sd">                    If False, then uses Resplandy 2015 / Seferian 2018 method.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dpp (xr.DataArray): ds without time dimension.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        * Boer, G. J. “Long Time-Scale Potential Predictability in an Ensemble of</span>
+<span class="sd">          Coupled Climate Models.” Climate Dynamics 23, no. 1 (August 1, 2004):</span>
+<span class="sd">          29–44. https://doi.org/10/csjjbh.</span>
+<span class="sd">        * Resplandy, L., R. Séférian, and L. Bopp. “Natural Variability of CO2 and</span>
+<span class="sd">          O2 Fluxes: What Can We Learn from Centuries-Long Climate Models</span>
+<span class="sd">          Simulations?” Journal of Geophysical Research: Oceans 120, no. 1</span>
+<span class="sd">          (January 2015): 384–404. https://doi.org/10/f63c3h.</span>
+<span class="sd">        * Séférian, Roland, Sarah Berthet, and Matthieu Chevallier. “Assessing the</span>
+<span class="sd">          Decadal Predictability of Land and Ocean Carbon Uptake.” Geophysical</span>
+<span class="sd">          Research Letters, March 15, 2018. https://doi.org/10/gdb424.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_chunking</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">number_chunks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">chunk_length</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Separate data into chunks and reshapes chunks in a c dimension.</span>
+
+<span class="sd">        Specify either the number chunks or the length of chunks.</span>
+<span class="sd">        Needed for dpp.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ds (xr.DataArray): control simulation with time dimension as years.</span>
+<span class="sd">            dim (str): dimension to apply chunking to. Default: time</span>
+<span class="sd">            chunk_length (int): see dpp(m)</span>
+<span class="sd">            number_chunks (int): number of chunks in the return data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            c (xr.DataArray): chunked ds, but with additional dimension c.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">number_chunks</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">chunk_length</span><span class="p">:</span>
+            <span class="n">chunk_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="n">number_chunks</span><span class="p">)</span>
+            <span class="n">cmin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">number_chunks</span> <span class="ow">and</span> <span class="n">chunk_length</span><span class="p">:</span>
+            <span class="n">cmin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+            <span class="n">number_chunks</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="n">chunk_length</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;set number_chunks or chunk_length to True&#39;</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">({</span><span class="n">dim</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="n">cmin</span><span class="p">,</span> <span class="n">cmin</span> <span class="o">+</span> <span class="n">chunk_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)})</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+        <span class="n">c</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_chunks</span><span class="p">):</span>
+            <span class="n">c2</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
+                <span class="p">{</span><span class="n">dim</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="n">cmin</span> <span class="o">+</span> <span class="n">chunk_length</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="n">cmin</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">chunk_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)}</span>
+            <span class="p">)</span>
+            <span class="n">c2</span> <span class="o">=</span> <span class="n">c2</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+            <span class="n">c2</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">c2</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">c</span><span class="p">,</span> <span class="n">c2</span><span class="p">],</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">c</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>  <span class="c1"># Resplandy 2015, Seferian 2018</span>
+        <span class="n">s2v</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">rolling</span><span class="p">({</span><span class="n">dim</span><span class="p">:</span> <span class="n">m</span><span class="p">})</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+        <span class="n">s2</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>  <span class="c1"># Boer 2004 ppvf</span>
+        <span class="c1"># first chunk</span>
+        <span class="n">chunked_means</span> <span class="o">=</span> <span class="n">_chunking</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">chunk_length</span><span class="o">=</span><span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+        <span class="c1"># sub means in chunks</span>
+        <span class="n">chunked_deviations</span> <span class="o">=</span> <span class="n">_chunking</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">chunk_length</span><span class="o">=</span><span class="n">m</span><span class="p">)</span> <span class="o">-</span> <span class="n">chunked_means</span>
+        <span class="n">s2v</span> <span class="o">=</span> <span class="n">chunked_means</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+        <span class="n">s2e</span> <span class="o">=</span> <span class="n">chunked_deviations</span><span class="o">.</span><span class="n">var</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
+        <span class="n">s2</span> <span class="o">=</span> <span class="n">s2v</span> <span class="o">+</span> <span class="n">s2e</span>
+    <span class="n">dpp</span> <span class="o">=</span> <span class="p">(</span><span class="n">s2v</span> <span class="o">-</span> <span class="n">s2</span> <span class="o">/</span> <span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="o">/</span> <span class="n">s2</span>
+    <span class="k">return</span> <span class="n">dpp</span></div>
+
+
+
+<div class="viewcode-block" id="decorrelation_time"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.decorrelation_time">[docs]</a><span class="k">def</span> <span class="nf">decorrelation_time</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Calculate the decorrelaton time of a time series.</span>
+<span class="sd">https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html</span>
+<span class="sd">    .. math::</span>
+<span class="sd">        \\tau_{d} = 1 + 2 * \\sum_{k=1}^{r}(\\alpha_{k})^{k}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        da (xarray object): Time series.</span>
+<span class="sd">        r (optional int): Number of iterations to run the above formula.</span>
+<span class="sd">        dim (optional str): Time dimension for xarray object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Decorrelation time of time series.</span>
+
+<span class="sd">    Reference:</span>
+<span class="sd">        * Storch, H. v, and Francis W. Zwiers. Statistical Analysis in Climate</span>
+<span class="sd">          Research. Cambridge ; New York: Cambridge University Press, 1999.,</span>
+<span class="sd">          p.373</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">one</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">isel</span><span class="p">({</span><span class="n">dim</span><span class="p">:</span> <span class="mi">0</span><span class="p">}))</span>
+    <span class="n">one</span> <span class="o">=</span> <span class="n">one</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">isel</span><span class="p">({</span><span class="n">dim</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span><span class="o">.</span><span class="n">notnull</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">one</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">autocorr</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="o">**</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">)],</span> <span class="s1">&#39;it&#39;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s1">&#39;it&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="varweighted_mean_period"><a class="viewcode-back" href="../../feature_generators.html#xr_fresh.feature_calculators.varweighted_mean_period">[docs]</a><span class="k">def</span> <span class="nf">varweighted_mean_period</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the variance weighted mean period of time series based on</span>
+<span class="sd">    xrft.power_spectrum.</span>
+<span class="sd">    https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        P_{x} = \\frac{\\sum_k V(f_k,x)}{\\sum_k f_k  \\cdot V(f_k,x)}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        da (xarray object): input data including dim.</span>
+<span class="sd">        dim (optional str): Name of time dimension.</span>
+<span class="sd">        for **kwargs see xrft.power_spectrum</span>
+
+<span class="sd">    Reference:</span>
+<span class="sd">      * Branstator, Grant, and Haiyan Teng. “Two Limits of Initial-Value</span>
+<span class="sd">        Decadal Predictability in a CGCM.&quot; Journal of Climate 23, no. 23</span>
+<span class="sd">        (August 27, 2010): 6292-6311. https://doi.org/10/bwq92h.</span>
+
+<span class="sd">    See also:</span>
+<span class="sd">    https://xrft.readthedocs.io/en/latest/api.html#xrft.xrft.power_spectrum</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># set nans to 0</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;require xr.Dataset&#39;</span><span class="p">)</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="c1"># dim should be list</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="p">[</span><span class="n">dim</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="n">power_spectrum</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># take pos</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dim</span><span class="p">:</span>
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">ps</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ps</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;freq_</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># weighted average</span>
+    <span class="n">vwmp</span> <span class="o">=</span> <span class="n">ps</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dim</span><span class="p">:</span>
+        <span class="n">vwmp</span> <span class="o">=</span> <span class="n">vwmp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;freq_</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">vwmp</span> <span class="o">*</span> <span class="n">vwmp</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;freq_</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;freq_</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dim</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">vwmp</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;freq_</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">_spacing&#39;</span><span class="p">]</span>
+    <span class="c1"># try to copy coords</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">vwmp</span> <span class="o">=</span> <span class="n">copy_coords_from_to</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="n">vwmp</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t keep coords.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">vwmp</span></div>
 </pre></div>
 
           </div>
@@ -1354,7 +1597,7 @@
       &copy;2020, Michael Mann.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

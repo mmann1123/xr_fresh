@@ -41,7 +41,7 @@
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=fraymio&repo=TimeFraym&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=mmann1123&repo=xr_fresh&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -111,6 +111,7 @@
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -156,6 +157,7 @@
 If return_p, also returns their associated p values.</p>
 </dd>
 </dl>
+<p><em>This function is of type: simple</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -191,6 +193,78 @@ If return_p, also returns their associated p values.</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.decorrelation_time">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">decorrelation_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">da</span></em>, <em class="sig-param"><span class="n">r</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#decorrelation_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.decorrelation_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the decorrelaton time of a time series.
+<a class="reference external" href="https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html">https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html</a></p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\tau_{d} = 1 + 2 * \sum_{k=1}^{r}(\alpha_{k})^{k}\]</div>
+<dl class="simple">
+<dt>Args:</dt><dd><p>da (xarray object): Time series.
+r (optional int): Number of iterations to run the above formula.
+dim (optional str): Time dimension for xarray object.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Decorrelation time of time series.</p>
+</dd>
+<dt>Reference:</dt><dd><ul class="simple">
+<li><p>Storch, H. v, and Francis W. Zwiers. Statistical Analysis in Climate
+Research. Cambridge ; New York: Cambridge University Press, 1999.,
+p.373</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.dpp">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">dpp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ds</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">m</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">chunk</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#dpp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.dpp" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html">https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html</a>
+Calculates the Diagnostic Potential Predictability (dpp)</p>
+<div class="math notranslate nohighlight">
+\[DPP_{\mathrm{unbiased}}(m) = \frac{\sigma^{2}_{m} -
+\frac{1}{m}\cdot\sigma^{2}}{\sigma^{2}}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Resplandy et al. 2015 and Seferian et al. 2018 calculate unbiased DPP
+in a slightly different way: chunk=False.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<em>xr.DataArray</em>) – control simulation with time dimension as years.</p></li>
+<li><p><strong>dim</strong> (<em>str</em>) – dimension to apply DPP on. Default: time.</p></li>
+<li><p><strong>m</strong> (<em>optional int</em>) – separation time scale in years between predictable
+low-freq component and high-freq noise.</p></li>
+<li><p><strong>chunk</strong> (<em>optional boolean</em>) – Whether chunking is applied. Default: True.
+If False, then uses Resplandy 2015 / Seferian 2018 method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ds without time dimension.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dpp (xr.DataArray)</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Boer, G. J. “Long Time-Scale Potential Predictability in an Ensemble of
+Coupled Climate Models.” Climate Dynamics 23, no. 1 (August 1, 2004):
+29–44. <a class="reference external" href="https://doi.org/10/csjjbh">https://doi.org/10/csjjbh</a>.</p></li>
+<li><p>Resplandy, L., R. Séférian, and L. Bopp. “Natural Variability of CO2 and
+O2 Fluxes: What Can We Learn from Centuries-Long Climate Models
+Simulations?” Journal of Geophysical Research: Oceans 120, no. 1
+(January 2015): 384–404. <a class="reference external" href="https://doi.org/10/f63c3h">https://doi.org/10/f63c3h</a>.</p></li>
+<li><p>Séférian, Roland, Sarah Berthet, and Matthieu Chevallier. “Assessing the
+Decadal Predictability of Land and Ocean Carbon Uptake.” Geophysical
+Research Letters, March 15, 2018. <a class="reference external" href="https://doi.org/10/gdb424">https://doi.org/10/gdb424</a>.</p></li>
+</ul>
 <p><em>This function is of type: simple</em></p>
 </dd></dl>
 
@@ -235,17 +309,18 @@ The position is calculated relatively to the length of x.</p>
 <dl class="py function">
 <dt id="xr_fresh.feature_calculators.get_npts">
 <code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">get_npts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">da</span><span class="p">:</span> <span class="n">xarray.core.dataarray.DataArray</span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#get_npts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.get_npts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the number of gridpoints in a DataArray.
-:param da: N-dimensional input array
-:type da: xarray.DataArray</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Product of input DataArray coordinate sizes excluding the dimension ‘time’</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
+<dd><dl>
+<dt>Return the number of gridpoints in a DataArray.</dt><dd><dl class="simple">
+<dt>da<span class="classifier">xarray.DataArray</span></dt><dd><p>N-dimensional input array</p>
 </dd>
 </dl>
+<dl class="simple">
+<dt>int</dt><dd><p>Product of input DataArray coordinate sizes excluding the dimension ‘time’</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><em>This function is of type: simple</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -270,6 +345,30 @@ significant - time trend.</p>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
+<p><em>This function is of type: ufunc</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.kurtosis">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">kurtosis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">fisher</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#kurtosis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.kurtosis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the kurtosis of X (calculated with the adjusted Fisher-Pearson standardized
+moment coefficient G2). If fisher = True, returns fishers definition centered on 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>boolean</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>X</strong> – If True, Fishers definition is used (normal =0), If False, Pearson’s
+definition is used (normal = 3)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -348,54 +447,64 @@ The position is calculated relatively to the length of x.</p>
 <dd class="field-even"><p>the value of this feature</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p>floatde</p>
+</dd>
+</dl>
+<p><em>This function is of type: ufunc</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.linear_time_trend">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">linear_time_trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">param</span><span class="o">=</span><span class="default_value">'slope'</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#linear_time_trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.linear_time_trend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to
+length of the time series minus one.
+This feature assumes the signal to be uniformly sampled. It will not use the time stamps to fit the model.
+The parameters control which of the characteristics are returned.</p>
+<p>Possible extracted attributes are “pvalue”, “rvalue”, “intercept”, “slope”, “stderr”, see the documentation of
+linregress for more information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p></li>
+<li><p><strong>param</strong> (<em>list</em>) – contains text of the attribute name of the regression model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of this feature</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p><em>This function is of type: ufunc</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.longest_run">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">da</span><span class="p">:</span> <span class="n">xarray.core.dataarray.DataArray</span></em>, <em class="sig-param"><span class="n">dim</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">ufunc_1dim</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'auto'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Return the length of the longest consecutive run of True values.</dt><dd><dl class="simple">
+<dt>da<span class="classifier">xr.DataArray</span></dt><dd><p>N-dimensional array (boolean)</p>
+</dd>
+<dt>dim<span class="classifier">str</span></dt><dd><p>Dimension along which to calculate consecutive run; Default: ‘time’.</p>
+</dd>
+<dt>ufunc_1dim<span class="classifier">Union[str, bool]</span></dt><dd><p>Use the 1d ‘ufunc’ version of this function : default (auto) will attempt to select optimal
+usage based on number of data points.  Using 1D_ufunc=True is typically more efficient
+for dataarray with a small number of gridpoints.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>N-dimensional array (int)</dt><dd><p>Length of longest run of True values along dimension</p>
+</dd>
+</dl>
 </dd>
 </dl>
 <p><em>This function is of type: simple</em></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="xr_fresh.feature_calculators.longest_run">
-<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">da</span><span class="p">:</span> <span class="n">xarray.core.dataarray.DataArray</span></em>, <em class="sig-param"><span class="n">dim</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">ufunc_1dim</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'auto'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the length of the longest consecutive run of True values.
-:param da: N-dimensional array (boolean)
-:type da: xr.DataArray
-:param dim: Dimension along which to calculate consecutive run; Default: ‘time’.
-:type dim: str
-:param ufunc_1dim: Use the 1d ‘ufunc’ version of this function : default (auto) will attempt to select optimal</p>
-<blockquote>
-<div><p>usage based on number of data points.  Using 1D_ufunc=True is typically more efficient
-for dataarray with a small number of gridpoints.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Length of longest run of True values along dimension</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>N-dimensional array (int)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="xr_fresh.feature_calculators.longest_run_1d">
-<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run_1d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>bool<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run_1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run_1d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the length of the longest consecutive run of identical values.
-:param arr: Input array (bool)
-:type arr: Sequence[bool]</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Length of longest run.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt id="xr_fresh.feature_calculators.longest_run_ufunc">
-<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run_ufunc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>bool<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; &lt;function apply_ufunc at 0x7f615ac8a3b0&gt;<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run_ufunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run_ufunc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run_ufunc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>bool<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; xarray.core.computation.apply_ufunc<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run_ufunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run_ufunc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dask-parallel version of longest_run_1d, ie the maximum number of consecutive true values in
 array.
 :param x: Input array (bool)
@@ -408,6 +517,7 @@ array.
 <dd class="field-even"><p>func</p>
 </dd>
 </dl>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -479,7 +589,7 @@ array.
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p><em>This function is of type: simple</em></p>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -523,7 +633,7 @@ array.
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p><em>This function is of type: simple</em></p>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -544,7 +654,7 @@ array.
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p><em>This function is of type: simple</em></p>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -562,7 +672,7 @@ array.
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p><em>This function is of type: simple</em></p>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -602,12 +712,14 @@ must have the same dimensions.</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="xr_fresh.feature_calculators.pearson_r">
 <code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">pearson_r</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">skipna</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#pearson_r"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.pearson_r" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pearson’s correlation coefficient.</p>
+<dd><p>use corr from xarray  <a class="reference external" href="https://github.com/pydata/xarray/blob/master/xarray/core/computation.py">https://github.com/pydata/xarray/blob/master/xarray/core/computation.py</a></p>
+<p>Pearson’s correlation coefficient.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -634,34 +746,7 @@ If None, an array of ones will be applied (i.e., no weighting).</p></li>
 </dd>
 </dl>
 </div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="xr_fresh.feature_calculators.pearson_r_p_value">
-<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">pearson_r_p_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">skipna</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#pearson_r_p_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.pearson_r_p_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>2-tailed p-value associated with pearson’s correlation coefficient.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>xarray.Dataset</em><em> or </em><em>xarray.DataArray</em>) – Labeled array(s) over which to apply the function.</p></li>
-<li><p><strong>b</strong> (<em>xarray.Dataset</em><em> or </em><em>xarray.DataArray</em>) – Labeled array(s) over which to apply the function.</p></li>
-<li><p><strong>dim</strong> (<em>str</em><em>, </em><em>list</em>) – The dimension(s) to apply the correlation along.</p></li>
-<li><p><strong>weights</strong> (<em>xarray.Dataset</em><em> or </em><em>xarray.DataArray</em>) – Weights matching dimensions of <code class="docutils literal notranslate"><span class="pre">dim</span></code> to apply during the function.
-If None, an array of ones will be applied (i.e., no weighting).</p></li>
-<li><p><strong>skipna</strong> (<em>bool</em>) – If True, skip NaNs when computing function.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>2-tailed p-value of Pearson’s correlation coefficient.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>xarray.Dataset or xarray.DataArray</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><code class="xref py py-func docutils literal notranslate"><span class="pre">xarray.apply_ufunc()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.stats.pearsonr()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">xskillscore.core.np_deterministic._pearson_r_p_value()</span></code></p>
-</div>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -723,12 +808,12 @@ In principle, it just returns</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p><em>This function is of type: simple</em></p>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="xr_fresh.feature_calculators.rle_1d">
-<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">rle_1d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>bool<span class="p">, </span>Sequence<span class="p">[</span>Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>bool<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Tuple[&lt;built-in function array&gt;, &lt;built-in function array&gt;, &lt;built-in function array&gt;]<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#rle_1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.rle_1d" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">rle_1d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>bool<span class="p">, </span>Sequence<span class="p">[</span>Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>bool<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.array<span class="p">, </span>numpy.array<span class="p">, </span>numpy.array<span class="p">]</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#rle_1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.rle_1d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the length, starting position and value of consecutive identical values.
 :param arr: Array of values to be parsed.
 :type arr: Sequence[Union[int, float, bool]]</p>
@@ -748,6 +833,7 @@ In principle, it just returns</p>
 <span class="go">(array([1, 2, 3]), array([2, 4, 6]), array([0, 2, 6]))</span>
 </pre></div>
 </div>
+<p><em>This function is of type: simple</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -773,7 +859,7 @@ the distribution.</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p><em>This function is of type: simple</em></p>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -795,6 +881,7 @@ must have the same dimensions.</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -812,7 +899,7 @@ must have the same dimensions.</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p><em>This function is of type: simple</em></p>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -883,6 +970,7 @@ valleys etc.). It calculates the value of</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p><em>This function is of type: simple</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -900,7 +988,7 @@ valleys etc.). It calculates the value of</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p><em>This function is of type: simple</em></p>
+<p><em>This function is of type: ufunc</em></p>
 </dd></dl>
 
 <dl class="py function">
@@ -922,6 +1010,35 @@ being larger than 1</p>
 <p><em>This function is of type: simple</em></p>
 </dd></dl>
 
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.varweighted_mean_period">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">varweighted_mean_period</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">da</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#varweighted_mean_period"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.varweighted_mean_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the variance weighted mean period of time series based on
+xrft.power_spectrum.
+<a class="reference external" href="https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html">https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html</a></p>
+<div class="math notranslate nohighlight">
+\[P_{x} = \frac{\sum_k V(f_k,x)}{\sum_k f_k  \cdot V(f_k,x)}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>da</strong> (<em>xarray object</em>) – input data including dim.</p></li>
+<li><p><strong>dim</strong> (<em>optional str</em>) – Name of time dimension.</p></li>
+<li><p><strong>**kwargs see xrft.power_spectrum</strong> (<em>for</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Reference:</dt><dd><ul class="simple">
+<li><p>Branstator, Grant, and Haiyan Teng. “Two Limits of Initial-Value
+Decadal Predictability in a CGCM.” Journal of Climate 23, no. 23
+(August 27, 2010): 6292-6311. <a class="reference external" href="https://doi.org/10/bwq92h">https://doi.org/10/bwq92h</a>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>See also:
+<a class="reference external" href="https://xrft.readthedocs.io/en/latest/api.html#xrft.xrft.power_spectrum">https://xrft.readthedocs.io/en/latest/api.html#xrft.xrft.power_spectrum</a></p>
+</dd></dl>
+
 </div>
 
 
@@ -935,7 +1052,7 @@ being larger than 1</p>
       &copy;2020, Michael Mann.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
