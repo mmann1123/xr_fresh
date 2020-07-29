@@ -66,7 +66,8 @@ ds = ds.assign_coords(time = (pd.Series(ds.time.values)- pd.DateOffset(months=2)
 
 # start cluster
 cluster = Cluster()
-cluster.start_small_object()
+cluster.start_large_object()
+
  
 
 #extract growing season year month day 
