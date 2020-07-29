@@ -25,11 +25,44 @@ pip install . e
 
 # Working Conda Env
 ```
-conda create -n xrfresh python=3.7  cython numpy scipy libspatialindex zarr requests bottleneck sphinx xskillscore
-conda activate xrfresh
-sudo apt-get install libgdal-dev
-pip install git+https://github.com/jgrss/geowombat
-conda install bottleneck xskillscore spyder   -c conda-forge
+
+# - xr_fresh
+sudo apt install libspatialindex-dev libgdal-dev
+sudo echo '
+name: xr_fresh
+channels:
+- defaults
+- conda-forge
+
+dependencies:
+- python=3.7
+- cython
+- scipy
+- numpy
+- scandir
+- zarr
+- requests
+- libspatialindex
+- bottleneck
+#- sphinx
+- xskillscore
+- libgdal=2.3.3
+- gdal=2.3.3
+#- jupyter
+#- nb_conda
+- climpred
+- spyder
+ 
+- pip
+- pip:
+  - GDAL==2.3.3
+  - pip-tools
+  - git+https://github.com/jgrss/geowombat.git' > xr_fresh.yml
+
+conda env create -f xr_fresh.yml 
+conda activate xr_fresh
+python -c "import geowombat as gw;print(gw.__version__)"
+conda deactivate
 
 ```
 
