@@ -18,9 +18,6 @@ cd ./xr_fresh
 conda env create -f conda_environment.yml
 activate xr_fresh
 
-# install xr_fresh package
-pip install . e
-
 ```
 
 # Working Conda Env
