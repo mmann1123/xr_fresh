@@ -385,7 +385,7 @@ with gw.open(sorted(glob(file_glob)),
      
     #extract growing season year month day 
     features = extract_features(xr_data= ds,
-                                feature_dict={'linear_time_trend2': [{'param':"all"}] },
+                                feature_dict={'linear_time_trend': [{'param':"all"}] },
                                   # feature_dict={'mean': [{}] },
                                 band=band_name, 
                                 na_rm   = True,

@@ -31,7 +31,7 @@ def set_property(key, value):
     return decorate_func
 
 
-def _timereg2(x, t, param):
+def _timereg(x, t, param):
    
     linReg = linregress(x=t, y=x)
 
@@ -46,7 +46,7 @@ def _timereg2(x, t, param):
 
 
 @set_property("fctype", "ufunc")
-def linear_time_trend2(x, param="slope", dim='time', **kwargs):
+def linear_time_trend(x, param="slope", dim='time', **kwargs):
 
     """
     # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
@@ -74,7 +74,7 @@ def linear_time_trend2(x, param="slope", dim='time', **kwargs):
     
     if param == 'all':
         
-        out = xr.apply_ufunc( _timereg2, x , t,
+        out = xr.apply_ufunc( _timereg, x , t,
                             input_core_dims=[[dim], [dim]],
                             kwargs={ 'param':param},
                             vectorize=True,  

@@ -27,9 +27,9 @@ def _apply_fun_name(function_name, xr_data, band, args):
     out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute()        
     
     print(args)
-    if function_name == 'linear_time_trend2' and args == {'param': 'all'}:
+    if function_name == 'linear_time_trend' and args == {'param': 'all'}:
         #handle exception for regression 
-        out.coords['variable'] = ['intercept', 'slope','pvalue','rvalue']
+        out.coords['variable'] = [band + "__" + function_name+'__' +x for x in ['intercept', 'slope','pvalue','rvalue']]
         
     else:
         
