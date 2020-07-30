@@ -31,7 +31,73 @@ def set_property(key, value):
     return decorate_func
 
 
+def _timereg2(x, t, param):
+   
+    linReg = linregress(x=t, y=x)
 
+    if param != 'all':
+        return getattr(linReg, param)     
+    
+    else:
+        return np.stack((getattr(linReg, 'intercept'),
+                         getattr(linReg, 'slope'),
+                         getattr(linReg, 'pvalue'),
+                         getattr(linReg, 'rvalue') ), axis=-1)
+
+
+@set_property("fctype", "ufunc")
+def linear_time_trend2(x, param="slope", dim='time', **kwargs):
+
+    """
+    # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
+
+    Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to
+    length of the time series minus one.
+    This feature assumes the signal to be uniformly sampled. It will not use the time stamps to fit the model.
+    The parameters control which of the characteristics are returned.
+
+    Possible extracted attributes are "all", "pvalue", "rvalue", "intercept", "slope", "stderr", see the documentation of
+    linregress for more information.
+
+    :param x: the time series to calculate the feature of
+    :type x:  xarray.DataArray
+    :param param: contains text of the attribute name of the regression model
+    :type param: list
+    :return: the value of this feature
+    :return type: int
+    """
+    # try:
+            
+    t = xr.DataArray(np.arange(len(x[dim]))+1, dims=dim,
+            coords={dim: x[dim]})
+    
+    
+    if param == 'all':
+        
+        out = xr.apply_ufunc( _timereg2, x , t,
+                            input_core_dims=[[dim], [dim]],
+                            kwargs={ 'param':param},
+                            vectorize=True,  
+                            dask='parallelized',
+                            output_dtypes=[float],
+                            output_core_dims= [["variable"]],
+                            output_sizes={"variable": 4},
+                            keep_attrs= True 
+                            ).to_dataset(dim='variable').to_array()    
+    else:
+      
+        out = xr.apply_ufunc( _timereg2, x , t,
+                          input_core_dims=[[dim], [dim]],
+                          kwargs={ 'param':param},
+                          vectorize=True,  
+                          dask='parallelized',
+                          output_dtypes=[float],
+                              keep_attrs= True)
+    # except ValueError:
+    #     print('linear regression requires param of "all", "pvalue", "rvalue", "intercept", "slope", or "stderr" ')
+
+    
+    return out 
 
 @set_property("fctype", "ufunc")
 def abs_energy(X,dim='time', **kwargs):
@@ -51,7 +117,8 @@ def abs_energy(X,dim='time', **kwargs):
         
     return xr.apply_ufunc(lambda x: pow(x,2), X,
                           dask='parallelized', 
-                          output_dtypes=[float]).sum(dim)
+                          output_dtypes=[float],
+                                keep_attrs= True ).sum(dim)
   
 
 @set_property("fctype", "simple")
@@ -111,7 +178,8 @@ def mean_change(X , dim='time', **kwargs):
     return xr.apply_ufunc(func, X,
                            input_core_dims=[[dim]],
                            dask='parallelized',
-                           output_dtypes=[float])
+                           output_dtypes=[float],
+                                keep_attrs= True )
     
     
 
@@ -407,15 +475,15 @@ def pearson_r(a, b, dim='time',  skipna=False, **kwargs):
         new_dim = dim[0]
 
     return xr.apply_ufunc(
-        _pearson_r,
-        a,
-        b,
-        input_core_dims=[[new_dim] , [new_dim]],  
-        kwargs={'axis': -1, 'skipna': skipna},
-        dask='parallelized',
-        output_dtypes=[float],
-    )
-    
+                        _pearson_r,
+                        a,
+                        b,
+                        input_core_dims=[[new_dim] , [new_dim]],  
+                        kwargs={'axis': -1, 'skipna': skipna},
+                        dask='parallelized',
+                        output_dtypes=[float],
+                        keep_attrs= True   )
+                    
      
 
 @set_property("fctype", "ufunc")
@@ -459,14 +527,14 @@ def pearson_r_p_value(a, b, dim = 'time',  skipna=False, **kwargs):
         new_dim = dim[0]
 
     return xr.apply_ufunc(
-        _pearson_r_p_value,
-        a,
-        b,
-        input_core_dims=[[new_dim] , [new_dim]], 
-        kwargs={'axis': -1, 'skipna': skipna},
-        dask='parallelized',
-        output_dtypes=[float],
-    )
+                                _pearson_r_p_value,
+                                a,
+                                b,
+                                input_core_dims=[[new_dim] , [new_dim]], 
+                                kwargs={'axis': -1, 'skipna': skipna},
+                                dask='parallelized',
+                                output_dtypes=[float],
+                                keep_attrs= True  )
     
 
 @set_property("fctype", "simple")
@@ -617,7 +685,8 @@ def mean_second_derivative_central(X , dim='time', **kwargs):
     return xr.apply_ufunc(func, X,
                            input_core_dims=[[dim]],
                            dask='parallelized',
-                           output_dtypes=[float])
+                           output_dtypes=[float],
+                                keep_attrs= True )
  
 
 @set_property("fctype", "ufunc")
@@ -634,7 +703,8 @@ def median(X, dim='time', **kwargs):
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1},
                        dask='parallelized',
-                       output_dtypes=[float])
+                       output_dtypes=[float],
+                                keep_attrs= True )
 
  
 @set_property("fctype", "ufunc")
@@ -651,7 +721,8 @@ def mean(X, dim='time', **kwargs):
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1},
                        dask='parallelized',
-                       output_dtypes=[float])
+                       output_dtypes=[float],
+                                keep_attrs= True )
     
    
 @set_property("fctype", "ufunc")
@@ -669,7 +740,8 @@ def length(X, dim='time', **kwargs):
                        kwargs={ 'axis': -1},
                        vectorize=True,
                        dask='parallelized',
-                       output_dtypes=[np.int32])
+                       output_dtypes=[np.int32],
+                                keep_attrs= True )
 
 
 
@@ -688,7 +760,8 @@ def standard_deviation(X, dim='time', **kwargs):
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1},
                        dask='parallelized',
-                       output_dtypes=[float])
+                       output_dtypes=[float],
+                                keep_attrs= True )
 
 
 @set_property("fctype", "ufunc")
@@ -705,7 +778,8 @@ def variance(X, dim='time', **kwargs):
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1},
                        dask='parallelized',
-                       output_dtypes=[float])
+                       output_dtypes=[float],
+                                keep_attrs= True )
     
 
  
@@ -727,7 +801,8 @@ def skewness(X, dim='time', **kwargs):
                        input_core_dims=[[dim]],
                        kwargs={'axis': -1,'nan_policy':'omit'},
                        dask='parallelized',
-                       output_dtypes=[float])
+                       output_dtypes=[float],
+                                keep_attrs= True )
 
    
     
@@ -751,8 +826,14 @@ def kurtosis(X, dim='time', fisher=False, **kwargs):
                             input_core_dims=[[dim]],
                             kwargs={'axis': -1,'fisher':fisher,'nan_policy':'omit'},
                             dask='parallelized',
-                            output_dtypes=[float])
+                            output_dtypes=[float],
+                                keep_attrs= True )
 
+
+def _spearman_correlation_gufunc(x, y):
+    x_ranks = rankdata(x, axis=-1)
+    y_ranks = rankdata(y, axis=-1)
+    return pearson_correlation_gufunc(x_ranks, y_ranks)
 
 
 @set_property("fctype", "ufunc")
@@ -769,16 +850,12 @@ def spearman_correlation(x, y, dim='time', **kwargs):
     :return type: float
     """
     
-    def _spearman_correlation_gufunc(x, y):
-        x_ranks = rankdata(x, axis=-1)
-        y_ranks = rankdata(y, axis=-1)
-        return pearson_correlation_gufunc(x_ranks, y_ranks)
-    
     return xr.apply_ufunc(
         _spearman_correlation_gufunc, x, y,
         input_core_dims=[[dim], [dim]],
         dask='parallelized',
-        output_dtypes=[float])
+        output_dtypes=[float],
+                                keep_attrs= True )
 
 @set_property("fctype", "ufunc")
 def pearson_correlation(x, y, dim='time', **kwargs):
@@ -804,7 +881,8 @@ def pearson_correlation(x, y, dim='time', **kwargs):
         _pearson_correlation_gufunc, x, y,
         input_core_dims=[[dim], [dim]],
         dask='parallelized',
-        output_dtypes=[float])
+        output_dtypes=[float],
+                                keep_attrs= True)
     
         
 
@@ -1005,7 +1083,8 @@ def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
                        vectorize=True,
                        kwargs={ },
                        dask='parallelized',
-                       output_dtypes=[float])
+                       output_dtypes=[float],
+                                keep_attrs= True)
     
  
     
@@ -1069,46 +1148,48 @@ def kendall_time_correlation(X, dim='time', direction = True, **kwargs):
         kwargs={'direction':direction},
         vectorize=True,  
         dask='parallelized',
-        output_dtypes=[int])
+        output_dtypes=[float],
+                                keep_attrs= True)
 
-def _timereg(x, t, param  ):
+# def _timereg(x, t, param  ):
     
-    linReg = linregress(x=t, y=x)
+#     linReg = linregress(x=t, y=x)
     
-    return getattr(linReg, param) 
+#     return getattr(linReg, param) 
  
     
-@set_property("fctype", "ufunc")
-def linear_time_trend(x, param="slope", dim='time', **kwargs):
+# @set_property("fctype", "ufunc")
+# def linear_time_trend(x, param="slope", dim='time', **kwargs):
     
-    # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
+#     # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
 
-    """
-    Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to
-    length of the time series minus one.
-    This feature assumes the signal to be uniformly sampled. It will not use the time stamps to fit the model.
-    The parameters control which of the characteristics are returned.
+#     """
+#     Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to
+#     length of the time series minus one.
+#     This feature assumes the signal to be uniformly sampled. It will not use the time stamps to fit the model.
+#     The parameters control which of the characteristics are returned.
 
-    Possible extracted attributes are "pvalue", "rvalue", "intercept", "slope", "stderr", see the documentation of
-    linregress for more information.
+#     Possible extracted attributes are "pvalue", "rvalue", "intercept", "slope", "stderr", see the documentation of
+#     linregress for more information.
 
-    :param x: the time series to calculate the feature of
-    :type x:  xarray.DataArray
-    :param param: contains text of the attribute name of the regression model
-    :type param: list
-    :return: the value of this feature
-    :return type: int
-    """
+#     :param x: the time series to calculate the feature of
+#     :type x:  xarray.DataArray
+#     :param param: contains text of the attribute name of the regression model
+#     :type param: list
+#     :return: the value of this feature
+#     :return type: int
+#     """
     
-    t = xr.DataArray(np.arange(len(x[dim]))+1, dims=dim,
-             coords={dim: x[dim]})
+#     t = xr.DataArray(np.arange(len(x[dim]))+1, dims=dim,
+#              coords={dim: x[dim]})
     
-    return xr.apply_ufunc( _timereg, x , t,
-                            input_core_dims=[[dim], [dim]],
-                            kwargs={ 'param':param},
-                            vectorize=True,  
-                            dask='parallelized',
-                            output_dtypes=[float])
+#     return xr.apply_ufunc( _timereg, x , t,
+#                             input_core_dims=[[dim], [dim]],
+#                             kwargs={ 'param':param},
+#                             vectorize=True,  
+#                             dask='parallelized',
+#                             output_dtypes=[float],
+#                                 keep_attrs= True)
  
  
 @set_property("fctype", "simple")
@@ -1324,7 +1405,7 @@ def longest_run_ufunc(x: Sequence[bool]) -> xr.apply_ufunc:
         vectorize=True,
         dask="parallelized",
         output_dtypes=[np.int],
-        keep_attrs=True,
+        keep_attrs=True
     )
 
 

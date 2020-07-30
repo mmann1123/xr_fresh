@@ -2,18 +2,17 @@
 import logging
 import warnings
 import xarray as xr
-from numpy import where
+# from numpy import where
 from xr_fresh import feature_calculators
 from xr_fresh.utils import xarray_to_rasterio
 from itertools import chain
-from os.path import expanduser
-from os.path import join as path_join
-from dask.distributed import progress
-from dask.diagnostics import ProgressBar
+# from os.path import expanduser
+# from os.path import join as path_join
+# from dask.distributed import progress
+# from dask.diagnostics import ProgressBar
 
-# _logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
-from numpy import where
 
 def _stringr(notstring):    
     '_'.join(str(notstring))
@@ -24,10 +23,18 @@ def _get_xr_attr(function_name):
 def _apply_fun_name(function_name, xr_data, band, args):
     # apply function for large objects lazy
     print('Extracting:  '+ function_name)
-    #with ProgressBar:  
-    out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute()
     
-    out.coords['variable'] = band + "__" + function_name+'__' +'_'.join(map(str, chain.from_iterable(args.items()))) 
+    out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute()        
+    
+    print(args)
+    if function_name == 'linear_time_trend2' and args == {'param': 'all'}:
+        #handle exception for regression 
+        out.coords['variable'] = ['intercept', 'slope','pvalue','rvalue']
+        
+    else:
+        
+        out.coords['variable'] = band + "__" + function_name+'__' +'_'.join(map(str, chain.from_iterable(args.items())))     
+
     return out
 
 
@@ -140,10 +147,13 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
         
         features = xr.concat( features , dim)
         
+        print(features)
+        print(type(features))
+        
         features = features.gw.match_data(xr_data,  
                                     band_names=  features['variable'].values.tolist())
-        out = features[0]
-        out.gw.imshow()
+        # out = features[0]
+        # out.gw.imshow()
         
         return features 
 

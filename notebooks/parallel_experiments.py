@@ -249,12 +249,10 @@ def _timereg(x, t, param  ):
     
     linReg = linregress(x=t, y=x)
     
-    # return getattr(linReg, param) 
- 
-    # return (getattr(linReg, "slope") ,getattr(linReg, "intercept"))
-    return np.stack((getattr(linReg, "slope") ,getattr(linReg, "intercept")), axis=-1)
-    
-def linear_time_trend(x, param="slope", dim='time', **kwargs):
+    return np.stack((getattr(linReg, "intercept"),getattr(linReg, "slope") ,getattr(linReg, "pvalue"),getattr(linReg, "rvalue")), axis=-1)
+
+
+def linear_time_trend2(x, param="slope", dim='time', **kwargs):
     
     # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
 
@@ -278,15 +276,17 @@ def linear_time_trend(x, param="slope", dim='time', **kwargs):
     t = xr.DataArray(np.arange(len(x[dim]))+1, dims=dim,
              coords={dim: x[dim]})
     
-    return xr.apply_ufunc( _timereg, x , t,
+    out = xr.apply_ufunc( _timereg, x , t,
                             input_core_dims=[[dim], [dim]],
                             kwargs={ 'param':param},
                             vectorize=True,  
-                            #dask='parallelized',
-                            #output_dtypes=[float],
-                            output_core_dims= [["predictions"]]
-                            )
+                            dask='parallelized',
+                            output_dtypes=[float],
+                            output_core_dims= [["variable"]]#,
+                            # output_sizes = [[1]]
+                            ).to_dataset(dim='variable').to_array()
  
+    return out
 
 
 files = '/home/mmann1123/Dropbox/Ethiopia_data/PDSI'
@@ -306,7 +306,9 @@ with gw.open(sorted(glob(file_glob)),
                  
     ds = ds.chunk((len(ds.time), 1, 250, 250))
     ds.attrs['nodatavals'] =  (-9999,)
-    ds = ds.load()
+    
+    ds = ds.load() #avoids the ValueError: when using dask='parallelized' with apply_ufunc, output core dimensions not found on inputs must have explicitly set sizes with ``output_sizes``: frozenset({'variable'})
+    # but then not dask 
     
     # move dates back 2 months so year ends feb 29, so month range now May = month 3, feb of following year = month 12
     ds = ds.assign_coords(time = (pd.Series(ds.time.values)- pd.DateOffset(months=2)).values )
@@ -316,6 +318,88 @@ with gw.open(sorted(glob(file_glob)),
     cluster = Cluster()
     cluster.start_large_object()
      
-    a = linear_time_trend(ds).compute()
-    out = a.isel(predictions = 1)
-    out.gw.imshow()
+    a = linear_time_trend2(ds.sel(band='ppt')).compute()
+    a.coords['variable'] = ['intercept', 'slope','pvalue','rvalue']
+    #out = a.isel(variable = 1)
+    #out.gw.imshow()
+
+print(a)
+
+#%%
+
+
+import xarray as xr
+import geowombat as gw
+import os, sys
+sys.path.append('/home/mmann1123/Documents/github/xr_fresh/')
+from xr_fresh.feature_calculators import * 
+from xr_fresh.backends import Cluster
+from xr_fresh.extractors import extract_features
+from glob import glob
+from datetime import datetime
+import matplotlib.pyplot as plt
+from xr_fresh.utils import * 
+import logging
+import warnings
+import xarray as xr
+from numpy import where
+from xr_fresh import feature_calculators
+from itertools import chain
+from geowombat.backends import concat as gw_concat
+_logger = logging.getLogger(__name__)
+from numpy import where
+from xr_fresh.utils import xarray_to_rasterio
+import pandas as pd
+from pathlib import Path
+from geowombat.core.parallel import ParallelTask
+
+from numpy import where 
+
+  
+
+files = '/home/mmann1123/Dropbox/Ethiopia_data/PDSI'
+
+band_name = 'ppt'
+file_glob = f"{files}/pdsi*tif"
+strp_glob = f"{files}/pdsi_%Y%m.tif"
+
+dates = sorted(datetime.strptime(string, strp_glob)
+        for string in sorted(glob(file_glob)))
+ 
+
+# open xarray 
+with gw.open(sorted(glob(file_glob)), 
+              band_names=[band_name],
+              time_names = dates  ) as ds:
+                 
+    ds = ds.chunk((len(ds.time), 1, 250, 250))
+    ds.attrs['nodatavals'] =  (-9999,)
+    
+    
+    #ds.load()  avoids the ValueError: when using dask='parallelized' with apply_ufunc, output core dimensions not found on inputs must have explicitly set sizes with ``output_sizes``: frozenset({'variable'})
+    # but then not dask 
+    
+    # start cluster
+    cluster = Cluster()
+    cluster.start_large_object()
+     
+    #extract growing season year month day 
+    features = extract_features(xr_data= ds,
+                                feature_dict={'linear_time_trend2': [{'param':"all"}] },
+                                  # feature_dict={'mean': [{}] },
+                                band=band_name, 
+                                na_rm   = True,
+                                persist = True,
+                                filepath = '/home/mmann1123/Desktop',
+                                postfix = '_'+'year')
+    print(features)
+
+    cluster.close()
+
+
+# %%
+import inspect
+lines = inspect.getsource(linregress)
+print(lines)
+
+# %%
