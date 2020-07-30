@@ -11,29 +11,6 @@ import os.path
 import geowombat as gw
 import _pickle as cPickle
 
- 
-def abs_energy(X,dim='time', **kwargs):
-    """
-    Returns the absolute energy of the time series which is the sum over the squared values
-
-    .. math::
-
-        E = \\sum_{i=1,\\ldots, n} x_i^2
-
-    :param x: the time series to calculate the feature of
-    :param dim: core dimension in xarray to apply across
-    :type x: xarray.DataArray
-    :return: the value of this feature
-    :return type: float
-    """
-        
-    return xr.apply_ufunc(np.linalg.norm, 
-                          X,
-                          dask='parallelized',
-                          input_core_dims=[[dim]],
-                          kwargs={'ord': 2, 'axis': -1},
-                          output_dtypes=[float])**2
-
 
 def save_pickle(obj, filename):
     with open(filename, 'wb') as output:  # Overwrites any existing file.
@@ -85,13 +62,13 @@ def xarray_to_rasterio(xr_data, path='', postfix='', bands=None):
             
             for band in xr_data['band'].values.tolist():
                 filename = os.path.join(path, band + postfix+ '.tif')
-                xr_data.sel(band=band).gw.to_raster(filename)
+                xr_data.sel(band=band).gw.to_raster(filename, overwrite=True)
                     
         else:
             
             for band in bands:
                 filename = os.path.join(path, band + postfix+ '.tif')
-                xr_data.sel(band=band).gw.to_aster(filename)
+                xr_data.sel(band=band).gw.to_raster(filename, overwrite=True)
     except:
         print('Error writing')
                     

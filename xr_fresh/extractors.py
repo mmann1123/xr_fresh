@@ -24,18 +24,12 @@ def _get_xr_attr(function_name):
 def _apply_fun_name(function_name, xr_data, band, args):
     # apply function for large objects lazy
     print('Extracting:  '+ function_name)
+    #with ProgressBar:  
     out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute()
     
     out.coords['variable'] = band + "__" + function_name+'__' +'_'.join(map(str, chain.from_iterable(args.items()))) 
     return out
-  
 
-# def _apply_fun_name_persist(function_name, xr_data, band, args):
-
-#     # apply function for small objects persist 
-#     out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),  **args).compute() #num_workers=workers)
-#     out.coords['variable'] = band + "__" + function_name+'__' +'_'.join(map(str, chain.from_iterable(args.items()))) 
-#     return out
 
 
 def check_dictionary(arguments):
@@ -132,9 +126,10 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
         return None
 
     else:
+        # load in mem
         if persist:
-            xr_data = xr_data.persist()
-
+            xr_data = xr_data.persist() 
+            
         features = [_apply_fun_name(function_name = func,
                         xr_data=xr_data ,
                         band= band, 
