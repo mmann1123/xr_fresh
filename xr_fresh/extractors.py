@@ -119,6 +119,8 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
 
     >>>  f_dict = { 'maximum':[{}] ,  
                    'quantile': [{'q':"0.5"},{'q':'0.95'}]}
+    >>>  f_dict2 = { 'maximum':[{}] ,  
+                   'quantile': [{'q':"0.5", 'start_month':1, 'end_month':6}]}
     >>>  features = extract_features(xr_data=ds,
     >>>                     feature_dict=f_dict,
     >>>                     band='aet', 
@@ -128,7 +130,7 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
     :type xr_data: xarray.DataArray
 
     :param feature_dict: mapping from feature calculator names to parameters. Only those names
-           which are keys in this dict will be calculated. See example above. 
+           which are keys in this dict will be calculated. See examples above. 
     :type feature_dict: dict
 
     :param band: The name of the variable to create feature for.
