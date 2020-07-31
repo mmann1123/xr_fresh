@@ -13,28 +13,84 @@ from itertools import chain
 
 _logger = logging.getLogger(__name__)
 
+def _exists(var):
+     return var in globals()
 
+
+def _append_dict(join_dict, string='_'):
+    '''
+    creates strings from dictionary key and value pairs if dictionary exists 
+    
+    Parameters
+    ----------
+    join_dict : str
+        DESCRIPTION.
+    string : str, optional
+        DESCRIPTION. The default is '_'.
+
+    Returns
+    -------
+    TYPE str
+        string to join 
+
+    '''
+    
+    assert isinstance(join_dict, str)
+    if ~_exists(join_dict):
+        print('months dont exist')
+    
+    return '_' * _exists(join_dict) + \
+                            string.join(['_'.join(map(str, chain.from_iterable(globals()[join_dict].items()))) 
+                            if _exists(join_dict) else '' ])
+    
+    
 def _stringr(notstring):    
     '_'.join(str(notstring))
 
+
 def _get_xr_attr(function_name):
     return getattr(feature_calculators,  function_name)
+
+
+def _month_subset(xr_data, args):
+        # subset by month 
+        xr_data = xr_data.where( (xr_data['time.month'] >= args['start_month']) & 
+                                 (xr_data['time.month'] <= args['end_month']) , 
+                                 drop=True)
+        
+        months = {k: args[k] for k in args.keys() & {'start_month', 'end_month'}} 
+        
+        for x in ['end_month', 'start_month']: args.pop(x, None)  # remove unneeded args
+
+        return xr_data, args, months    
+
 
 def _apply_fun_name(function_name, xr_data, band, args):
     # apply function for large objects lazy
     print('Extracting:  '+ function_name)
     
+    global months  # required to check if exists w _exists
+
+    if 'start_month' and 'end_month' in args:
+        print('subsetting to month bounds')
+        xr_data, args, months = _month_subset(xr_data, args)
+    
+    print(months)
+
     out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute()        
     
-    print(args)
+
     if function_name == 'linear_time_trend' and args == {'param': 'all'}:
         #handle exception for regression 
-        out.coords['variable'] = [band + "__" + function_name+'__' +x for x in ['intercept', 'slope','pvalue','rvalue']]
+        out.coords['variable'] = [band + "__" + function_name+'__' + x + _append_dict(join_dict='months') for x in ['intercept'  , 'slope','pvalue','rvalue']]
         
     else:
         
-        out.coords['variable'] = band + "__" + function_name+'__' +'_'.join(map(str, chain.from_iterable(args.items())))     
-
+        out.coords['variable'] = band + "__" + function_name+'_'   + _append_dict(join_dict='args') + _append_dict(join_dict='months')     
+        # print(_append_dict(join_dict='months') )
+        # print(out)
+        
+    
     return out
 
 
@@ -119,7 +175,8 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
                             band= band, 
                             args= arg)
                                     for arg in args]
-                
+            print(feature)    
+            
             feature = xr.concat( feature , dim)
 
             feature = feature.gw.match_data(xr_data,  
