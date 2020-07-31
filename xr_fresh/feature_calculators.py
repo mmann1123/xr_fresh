@@ -14,7 +14,7 @@ from scipy.stats import skew
 from scipy import special
 from scipy.stats import kurtosis as kt
 from scipy.stats import kendalltau
-from bottleneck import nanmean, nanmedian, nanmin, nanmax, nansum, nanstd, nanvar, anynan, ss
+from bottleneck import nanmean, nanmedian, nanmin, nanmax, nansum, nanstd, nanvar, anynan, ss, allnan
 
 logging.captureWarnings(True)
 
@@ -31,18 +31,31 @@ def set_property(key, value):
     return decorate_func
 
 
-def _timereg(x, t, param):
-   
-    linReg = linregress(x=t, y=x)
-
-    if param != 'all':
-        return getattr(linReg, param)     
+def _timereg(Y, t, param):
     
-    else:
-        return np.stack((getattr(linReg, 'intercept'),
-                         getattr(linReg, 'slope'),
-                         getattr(linReg, 'pvalue'),
-                         getattr(linReg, 'rvalue') ), axis=-1)
+    # avoid all missing
+    if allnan(Y):
+        if param != 'all':
+            return np.NaN
+        else:
+            
+            return np.stack((np.NaN,
+                             np.NaN,
+                             np.NaN,
+                             np.NaN), axis=-1)
+        
+    else:                        
+        mask = ~np.isnan(t) & ~np.isnan(Y)
+        linReg = linregress(x=t[mask], y=Y[mask])
+    
+        if param != 'all':
+            return getattr(linReg, param)     
+        
+        else:
+            return np.stack((getattr(linReg, 'intercept'),
+                             getattr(linReg, 'slope'),
+                             getattr(linReg, 'pvalue'),
+                             getattr(linReg, 'rvalue') ), axis=-1)
 
 
 @set_property("fctype", "ufunc")
