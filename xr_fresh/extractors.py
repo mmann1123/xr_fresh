@@ -36,14 +36,12 @@ def _append_dict(join_dict, string='_'):
     '''
     
     assert isinstance(join_dict, str)
-    if ~_exists(join_dict):
-        print('months dont exist')
     
     return '_' * _exists(join_dict) + \
                             string.join(['_'.join(map(str, chain.from_iterable(globals()[join_dict].items()))) 
                             if _exists(join_dict) else '' ])
     
-    
+
 def _stringr(notstring):    
     '_'.join(str(notstring))
 
@@ -75,8 +73,7 @@ def _apply_fun_name(function_name, xr_data, band, args):
         print('subsetting to month bounds')
         xr_data, args, months = _month_subset(xr_data, args)
     
-    print(months)
-
+ 
     out = _get_xr_attr(function_name)(xr_data.sel(band=band),**args).compute()        
     
 
@@ -86,10 +83,7 @@ def _apply_fun_name(function_name, xr_data, band, args):
         
     else:
         
-        out.coords['variable'] = band + "__" + function_name+'_'   + _append_dict(join_dict='args') + _append_dict(join_dict='months')     
-        # print(_append_dict(join_dict='months') )
-        # print(out)
-        
+        out.coords['variable'] = band + "__" + function_name+'_'   + _append_dict(join_dict='args') + _append_dict(join_dict='months')             
     
     return out
 
@@ -177,7 +171,6 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
                             band= band, 
                             args= arg)
                                     for arg in args]
-            print(feature)    
             
             feature = xr.concat( feature , dim)
 
@@ -192,9 +185,6 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
         return None
 
     else:
-        # load in mem
-        if persist:
-            xr_data = xr_data.persist() 
             
         features = [_apply_fun_name(function_name = func,
                         xr_data=xr_data ,
@@ -206,14 +196,9 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
         
         features = xr.concat( features , dim)
         
-        print(features)
-        print(type(features))
-        
         features = features.gw.match_data(xr_data,  
                                     band_names=  features['variable'].values.tolist())
-        # out = features[0]
-        # out.gw.imshow()
-        
+
         return features 
 
 

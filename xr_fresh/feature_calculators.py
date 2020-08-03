@@ -15,6 +15,7 @@ from scipy import special
 from scipy.stats import kurtosis as kt
 from scipy.stats import kendalltau
 from bottleneck import nanmean, nanmedian, nanmin, nanmax, nansum, nanstd, nanvar, anynan, ss, allnan
+#from numba import jit
 
 logging.captureWarnings(True)
 
@@ -112,6 +113,7 @@ def linear_time_trend(x, param="slope", dim='time', **kwargs):
     
     return out 
 
+
 @set_property("fctype", "ufunc")
 def abs_energy(X,dim='time', **kwargs):
     """
@@ -133,7 +135,6 @@ def abs_energy(X,dim='time', **kwargs):
                           output_dtypes=[float],
                                 keep_attrs= True ).sum(dim)
   
-
 @set_property("fctype", "simple")
 def absolute_sum_of_changes(X, dim='time', **kwargs):
     """
@@ -151,7 +152,6 @@ def absolute_sum_of_changes(X, dim='time', **kwargs):
     """
     return np.abs(X.diff(dim)).sum(dim)
  
-
 
 @set_property("fctype", "simple")
 def mean_abs_change(X, dim='time', **kwargs):
@@ -211,7 +211,7 @@ def variance_larger_than_standard_deviation(X, dim='time', **kwargs):
     return (y > np.sqrt(y)).astype(np.int32)
 
  
-    
+
 @set_property("fctype", "simple")
 def ratio_beyond_r_sigma(X, r=2, dim='time', **kwargs):
     """
@@ -226,7 +226,6 @@ def ratio_beyond_r_sigma(X, r=2, dim='time', **kwargs):
     return (np.abs(X - X.mean(dim)) > r * X.std(dim)).sum(dim)/len(X)
 
 
- 
 @set_property("fctype", "simple")
 def large_standard_deviation(X, r=2, dim='time', **kwargs):
     """
@@ -253,7 +252,6 @@ def large_standard_deviation(X, r=2, dim='time', **kwargs):
 
 
 
-
 @set_property("fctype", "simple")
 def symmetry_looking(X, r=0.1, dim='time', **kwargs):
     """
@@ -276,7 +274,6 @@ def symmetry_looking(X, r=0.1, dim='time', **kwargs):
     return   (mean_median_difference < (r * max_min_difference)).astype(np.int32)
  
     
-
 @set_property("fctype", "simple")
 def sum_values(X, dim='time', **kwargs):
     """
@@ -1204,7 +1201,6 @@ def kendall_time_correlation(X, dim='time', direction = True, **kwargs):
 #                             output_dtypes=[float],
 #                                 keep_attrs= True)
  
- 
 @set_property("fctype", "simple")
 def quantile(x, q, dim='time', **kwargs):
 
@@ -1220,7 +1216,7 @@ def quantile(x, q, dim='time', **kwargs):
     """
     
     return x.quantile(q, dim).rename({'quantile':'band'})
-    
+  
 @set_property("fctype", "simple")
 def maximum(x,dim='time', **kwargs):
     """
@@ -1232,7 +1228,6 @@ def maximum(x,dim='time', **kwargs):
     :return type: float
     """
     return x.max(dim)
-
 
 @set_property("fctype", "simple")
 def minimum(x,dim='time', **kwargs):
