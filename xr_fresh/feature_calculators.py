@@ -14,8 +14,10 @@ from scipy.stats import skew
 from scipy import special
 from scipy.stats import kurtosis as kt
 from scipy.stats import kendalltau
-from bottleneck import nanmean, nanmedian, nanmin, nanmax, nansum, nanstd, nanvar, anynan, ss, allnan
+from bottleneck import nanmean, nanmedian, nansum, nanstd, nanvar, ss, allnan # nanmin, nanmax,anynan, 
 #from numba import jit, njit
+from numba import float64, int32, guvectorize
+
 
 logging.captureWarnings(True)
 
@@ -30,7 +32,6 @@ def set_property(key, value):
             func.__doc__ = func.__doc__ + "\n\n    *This function is of type: " + value + "*\n"
         return func
     return decorate_func
-
 
 
 @set_property("fctype", "ufunc")
@@ -52,7 +53,41 @@ def abs_energy(X,dim='time', **kwargs):
     return xr.apply_ufunc( lambda x: pow(x,2), X,
                           dask='parallelized', 
                           output_dtypes=[float],
-                                keep_attrs= True ).sum(dim)
+                          keep_attrs= True ).sum(dim)
+
+
+
+# def _abs_energy(x):
+
+#     return __abs_energy(x)
+
+
+# @guvectorize([(float64[:], float64[:])], "(n),(n) -> (n)(n)"  )
+# def __abs_energy(x, out): 
+
+#     out[:] = pow(x,2)
+    
+    
+# @set_property("fctype", "simple")
+# def abs_energy_fast(x, dim='time', **kwargs):
+
+#     """
+#     Ultrafast implimentation of np.nanpercentile.
+#     Calculates the 95th percentile of x. This is the value of x greater than 95% of the ordered values from x.
+
+#     :param x: the time series to calculate the feature of
+#     :type x:  xarray.DataArray
+#     :param q: the quantile to calculate [0,1]
+#     :type q: float
+#     :return: the value of this feature
+#     :return type: float
+#     """
+    
+#     return  xr.apply_ufunc(_abs_energy, x,
+#                            input_core_dims=[[dim]],
+#                            dask='parallelized',
+#                            output_dtypes=[float],
+#                            keep_attrs= True)#.sum(dim)
 
 
 
@@ -123,6 +158,7 @@ def count_above_mean(X, dim='time', **kwargs):
     """
 
     return ((X > X.mean(dim)).sum(dim)).astype(np.int32)
+
 
 @set_property("fctype", "simple")
 def count_below_mean(X, dim='time', **kwargs):
@@ -195,6 +231,7 @@ def doy_of_maximum_last(x,dim='time', band ='NDVI', **kwargs):
 
     return out
 
+
 @set_property("fctype", "simple")
 def doy_of_maximum_first(x,dim='time', band ='ppt', **kwargs):
     """
@@ -224,6 +261,7 @@ def doy_of_maximum_first(x,dim='time', band ='ppt', **kwargs):
     out.band.values = np.array(band, dtype='<U4')
     
     return out
+
 
 @set_property("fctype", "simple")
 def doy_of_minimum_last(x,dim='time', band ='ppt', **kwargs):
@@ -341,14 +379,14 @@ def kendall_time_correlation(X, dim='time', direction = True, **kwargs):
     y = xr.DataArray(np.arange(len(X[dim]))+1, dims=dim,
                  coords={dim: X[dim]})  
      
-    return xr.apply_ufunc(
-        _k_cor, X , y,
-        input_core_dims=[[dim], [dim]],
-        kwargs={'direction':direction},
-        vectorize=True,  
-        dask='parallelized',
-        output_dtypes=[float],
-                                keep_attrs= True)
+    return xr.apply_ufunc( _k_cor, X , y,
+                            input_core_dims=[[dim], [dim]],
+                            kwargs={'direction':direction},
+                            vectorize=True,  
+                            dask='parallelized',
+                            output_dtypes=[float],
+                            keep_attrs= True)
+
 
 @set_property("fctype", "ufunc")
 def kurtosis(X, dim='time', fisher=False, **kwargs):
@@ -371,7 +409,7 @@ def kurtosis(X, dim='time', fisher=False, **kwargs):
                             kwargs={'axis': -1,'fisher':fisher,'nan_policy':'omit'},
                             dask='parallelized',
                             output_dtypes=[float],
-                                keep_attrs= True )
+                            keep_attrs= True )
 
 
 @set_property("fctype", "simple")
@@ -398,7 +436,6 @@ def large_standard_deviation(X, r=2, dim='time', **kwargs):
     return (X.std(dim) > (r * (X.max(dim) - X.min(dim)))).astype(np.int32)
 
 
-
 @set_property("fctype", "ufunc")
 def length(X, dim='time', **kwargs):
     """
@@ -410,12 +447,12 @@ def length(X, dim='time', **kwargs):
     :return type: floatde
     """
     return xr.apply_ufunc(np.size, X,
-                       input_core_dims=[[dim]],
-                       kwargs={ 'axis': -1},
-                       vectorize=True,
-                       dask='parallelized',
-                       output_dtypes=[np.int32],
-                                keep_attrs= True )
+                           input_core_dims=[[dim]],
+                           kwargs={ 'axis': -1},
+                           vectorize=True,
+                           dask='parallelized',
+                           output_dtypes=[np.int32],
+                           keep_attrs= True )
 
 
 def _timereg(Y, t, param):
@@ -443,6 +480,7 @@ def _timereg(Y, t, param):
                              getattr(linReg, 'slope'),
                              getattr(linReg, 'pvalue'),
                              getattr(linReg, 'rvalue') ), axis=-1)
+        
         
 @set_property("fctype", "ufunc")
 def linear_time_trend(x, param="slope", dim='time', **kwargs):
@@ -473,23 +511,23 @@ def linear_time_trend(x, param="slope", dim='time', **kwargs):
     if param == 'all':
         
         out = xr.apply_ufunc( _timereg, x , t,
-                            input_core_dims=[[dim], [dim]],
-                            kwargs={ 'param':param},
-                            vectorize=True,  
-                            dask='parallelized',
-                            output_dtypes=[float],
-                            output_core_dims= [["variable"]],
-                            output_sizes={"variable": 4},
-                            keep_attrs= True 
-                            ).to_dataset(dim='variable').to_array()    
+                                input_core_dims=[[dim], [dim]],
+                                kwargs={ 'param':param},
+                                vectorize=True,  
+                                dask='parallelized',
+                                output_dtypes=[float],
+                                output_core_dims= [["variable"]],
+                                output_sizes={"variable": 4},
+                                keep_attrs= True 
+                                ).to_dataset(dim='variable').to_array()    
     else:
       
         out = xr.apply_ufunc( _timereg, x , t,
-                          input_core_dims=[[dim], [dim]],
-                          kwargs={ 'param':param},
-                          vectorize=True,  
-                          dask='parallelized',
-                          output_dtypes=[float],
+                              input_core_dims=[[dim], [dim]],
+                              kwargs={ 'param':param},
+                              vectorize=True,  
+                              dask='parallelized',
+                              output_dtypes=[float],
                               keep_attrs= True)
     
     return out 
@@ -580,15 +618,13 @@ def longest_run_ufunc(x: Sequence[bool]) -> xr.apply_ufunc:
     out : func
       A function operating along the time dimension of a dask-array.
     """
-    return xr.apply_ufunc(
-        _longest_run_1d,
-        x,
-        input_core_dims=[["time"]],
-        vectorize=True,
-        dask="parallelized",
-        output_dtypes=[np.int],
-        keep_attrs=True
-    )
+    return xr.apply_ufunc(  _longest_run_1d,
+                            x,
+                            input_core_dims=[["time"]],
+                            vectorize=True,
+                            dask="parallelized",
+                            output_dtypes=[np.int],
+                            keep_attrs=True)
 
 
 @set_property("fctype", "simple")
@@ -603,6 +639,7 @@ def longest_strike_below_mean(X, dim='time', **kwargs):
     """
     
     return longest_run(X < mean(X))
+
 
 @set_property("fctype", "simple")
 def longest_strike_above_mean(X, dim='time', **kwargs):
@@ -642,12 +679,11 @@ def mean(X, dim='time', **kwargs):
     :return type: float
     """
     return xr.apply_ufunc(nanmean, X,
-                       input_core_dims=[[dim]],
-                       kwargs={'axis': -1},
-                       dask='parallelized',
-                       output_dtypes=[float],
-                                keep_attrs= True )
-
+                           input_core_dims=[[dim]],
+                           kwargs={'axis': -1},
+                           dask='parallelized',
+                           output_dtypes=[float],
+                           keep_attrs= True )
 
 
 @set_property("fctype", "simple")
@@ -689,9 +725,8 @@ def mean_change(X , dim='time', **kwargs):
                            input_core_dims=[[dim]],
                            dask='parallelized',
                            output_dtypes=[float],
-                                keep_attrs= True )
+                           keep_attrs= True )
  
-
 
 @set_property("fctype", "ufunc")
 def mean_second_derivative_central(X , dim='time', **kwargs):
@@ -713,7 +748,7 @@ def mean_second_derivative_central(X , dim='time', **kwargs):
                            input_core_dims=[[dim]],
                            dask='parallelized',
                            output_dtypes=[float],
-                                keep_attrs= True )
+                           keep_attrs= True )
  
 
 @set_property("fctype", "ufunc")
@@ -728,11 +763,11 @@ def median(X, dim='time', **kwargs):
     """
         
     return xr.apply_ufunc(nanmedian, X,
-                       input_core_dims=[[dim]],
-                       kwargs={'axis': -1},
-                       dask='parallelized',
-                       output_dtypes=[float],
-                                keep_attrs= True )
+                           input_core_dims=[[dim]],
+                           kwargs={'axis': -1},
+                           dask='parallelized',
+                           output_dtypes=[float],
+                           keep_attrs= True )
 
 
 @set_property("fctype", "simple")
@@ -771,12 +806,11 @@ def pearson_correlation(x, y, dim='time', **kwargs):
     :return type: float
     """    
 
-    return xr.apply_ufunc(
-        _pearson_correlation_gufunc, x, y,
-        input_core_dims=[[dim], [dim]],
-        dask='parallelized',
-        output_dtypes=[float],
-                                keep_attrs= True)
+    return xr.apply_ufunc( _pearson_correlation_gufunc, x, y,
+                            input_core_dims=[[dim], [dim]],
+                            dask='parallelized',
+                            output_dtypes=[float],
+                            keep_attrs= True)
     
 
 def _get_bottleneck_funcs(skipna, **kwargs):
@@ -943,15 +977,14 @@ def pearson_r(a, b, dim='time',  skipna=False, **kwargs):
     else:
         new_dim = dim[0]
 
-    return xr.apply_ufunc(
-                        _pearson_r,
-                        a,
-                        b,
-                        input_core_dims=[[new_dim] , [new_dim]],  
-                        kwargs={'axis': -1, 'skipna': skipna},
-                        dask='parallelized',
-                        output_dtypes=[float],
-                        keep_attrs= True   )
+    return xr.apply_ufunc(_pearson_r,
+                            a,
+                            b,
+                            input_core_dims=[[new_dim] , [new_dim]],  
+                            kwargs={'axis': -1, 'skipna': skipna},
+                            dask='parallelized',
+                            output_dtypes=[float],
+                            keep_attrs= True )
                     
 
 @set_property("fctype", "ufunc")
@@ -1130,7 +1163,7 @@ def skewness(X, dim='time', **kwargs):
                        kwargs={'axis': -1,'nan_policy':'omit'},
                        dask='parallelized',
                        output_dtypes=[float],
-                                keep_attrs= True )
+                       keep_attrs= True )
 
 
 def _spearman_correlation_gufunc(x, y):
@@ -1154,10 +1187,10 @@ def spearman_correlation(x, y, dim='time', **kwargs):
     """
     
     return xr.apply_ufunc( _spearman_correlation_gufunc, x, y,
-                        input_core_dims=[[dim], [dim]],
-                        dask='parallelized',
-                        output_dtypes=[float],
-                        keep_attrs= True )
+                            input_core_dims=[[dim], [dim]],
+                            dask='parallelized',
+                            output_dtypes=[float],
+                            keep_attrs= True )
 
 
 @set_property("fctype", "ufunc")
@@ -1172,11 +1205,11 @@ def standard_deviation(X, dim='time', **kwargs):
     """
     
     return xr.apply_ufunc(nanstd, X,
-                       input_core_dims=[[dim]],
-                       kwargs={'axis': -1},
-                       dask='parallelized',
-                       output_dtypes=[float],
-                                keep_attrs= True )
+                           input_core_dims=[[dim]],
+                           kwargs={'axis': -1},
+                           dask='parallelized',
+                           output_dtypes=[float],
+                           keep_attrs= True )
 
 
 @set_property("fctype", "simple")
@@ -1263,11 +1296,11 @@ def variance(X, dim='time', **kwargs):
     :return type: float
     """
     return xr.apply_ufunc(nanvar, X,
-                       input_core_dims=[[dim]],
-                       kwargs={'axis': -1},
-                       dask='parallelized',
-                       output_dtypes=[float],
-                                keep_attrs= True )
+                           input_core_dims=[[dim]],
+                           kwargs={'axis': -1},
+                           dask='parallelized',
+                           output_dtypes=[float],
+                           keep_attrs= True )
  
 
 @set_property("fctype", "simple")
@@ -1286,11 +1319,40 @@ def variance_larger_than_standard_deviation(X, dim='time', **kwargs):
 
 
 
+# @set_property("fctype", "simple")
+# def quantile(x, q, skipna=True, dim='time', **kwargs):
+
+#     """
+#     Calculates the q quantile of x. This is the value of x greater than q% of the ordered values from x.
+
+#     :param x: the time series to calculate the feature of
+#     :type x:  xarray.DataArray
+#     :param q: the quantile to calculate [0,1]
+#     :type q: float
+#     :return: the value of this feature
+#     :return type: float
+#     """
+    
+#     return x.quantile(q, dim).rename({'quantile':'band'})
+  
+
+def _quantile(x,q):
+    
+    return __quantile(x, q)
+
+
+@guvectorize([(float64[:],float64[:], float64[:])], "(n), ()-> ()", nopython=True )
+def __quantile(x, q, out): 
+    
+    out[:] = np.nanpercentile(x,q) 
+    
+    
 @set_property("fctype", "simple")
 def quantile(x, q, dim='time', **kwargs):
 
     """
-    Calculates the q quantile of x. This is the value of x greater than q% of the ordered values from x.
+    Ultrafast implimentation of np.nanpercentile.
+    Calculates the 95th percentile of x. This is the value of x greater than 95% of the ordered values from x.
 
     :param x: the time series to calculate the feature of
     :type x:  xarray.DataArray
@@ -1300,8 +1362,14 @@ def quantile(x, q, dim='time', **kwargs):
     :return type: float
     """
     
-    return x.quantile(q, dim).rename({'quantile':'band'})
-  
+    return  xr.apply_ufunc(_quantile, x,
+                           input_core_dims=[[dim]],
+                           dask='parallelized',
+                           kwargs={'q': q },
+                           output_dtypes=[float],
+                           keep_attrs= True)
+
+
 
 @set_property("fctype", "ufunc")
 def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
@@ -1321,12 +1389,12 @@ def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
     func = lambda x: np.unique(x, 'time')[0].size / time_len
     
     return xr.apply_ufunc(func, X,
-                       input_core_dims=[[dim]],
-                       vectorize=True,
-                       kwargs={ },
-                       dask='parallelized',
-                       output_dtypes=[float],
-                                keep_attrs= True)
+                           input_core_dims=[[dim]],
+                           vectorize=True,
+                           kwargs={ },
+                           dask='parallelized',
+                           output_dtypes=[float],
+                           keep_attrs= True)
     
     
 
@@ -1369,7 +1437,6 @@ def rle(da: xr.DataArray, dim: str = "time", max_chunk: int = 1_000_000):
     return d
 
 
-
 @set_property("fctype", "simple")
 def rle_1d(arr: Union[int, float, bool, Sequence[Union[int, float, bool]]]
            ) -> Tuple[np.array, np.array, np.array]:
@@ -1406,8 +1473,6 @@ def rle_1d(arr: Union[int, float, bool, Sequence[Union[int, float, bool]]]
     rl = np.diff(np.append(-1, i))  # run lengths
     pos = np.cumsum(np.append(0, rl))[:-1]  # positions
     return ia[i], rl, pos 
-
-
 
 
 def varweighted_mean_period(da, dim='time', **kwargs):
@@ -1455,9 +1520,6 @@ def varweighted_mean_period(da, dim='time', **kwargs):
     except ValueError:
         warnings.warn("Couldn't keep coords.")
     return vwmp
-
-
-
 
 
 # def autocorrelation(X, lag=1, dim="time", return_p=True, **kwargs):
