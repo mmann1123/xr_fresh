@@ -15,7 +15,7 @@ from scipy import special
 from scipy.stats import kurtosis as kt
 from scipy.stats import kendalltau
 from bottleneck import nanmean, nanmedian, nansum, nanstd, nanvar, ss, allnan # nanmin, nanmax,anynan, 
-#from numba import jit, njit
+from numba import jit, njit
 from numba import float64, int32, guvectorize
 
 
@@ -57,37 +57,38 @@ def abs_energy(X,dim='time', **kwargs):
 
 
 
-# def _abs_energy(x):
+def _abs_energy(x):
 
-#     return __abs_energy(x)
+    return __abs_energy(x)
 
 
-# @guvectorize([(float64[:], float64[:])], "(n),(n) -> (n)(n)"  )
-# def __abs_energy(x, out): 
+@guvectorize([(float64[:], float64[:])], "(n) -> ()" , nopython=True )
+def __abs_energy(x, out): 
 
-#     out[:] = pow(x,2)
+    out[:] = np.sum(x**2, axis=-1)
     
     
-# @set_property("fctype", "simple")
-# def abs_energy_fast(x, dim='time', **kwargs):
+@set_property("fctype", "simple")
+def _abs_energy_slower(x, dim='time', **kwargs):
+    """
+    Not as fast as regular abs energy Returns the absolute energy of the time series which is the sum over the squared values
 
-#     """
-#     Ultrafast implimentation of np.nanpercentile.
-#     Calculates the 95th percentile of x. This is the value of x greater than 95% of the ordered values from x.
+    .. math::
 
-#     :param x: the time series to calculate the feature of
-#     :type x:  xarray.DataArray
-#     :param q: the quantile to calculate [0,1]
-#     :type q: float
-#     :return: the value of this feature
-#     :return type: float
-#     """
+        E = \\sum_{i=1,\\ldots, n} x_i^2
+
+    :param x: the time series to calculate the feature of
+    :param dim: core dimension in xarray to apply across
+    :type x: xarray.DataArray
+    :return: the value of this feature
+    :return type: float
+    """
     
-#     return  xr.apply_ufunc(_abs_energy, x,
-#                            input_core_dims=[[dim]],
-#                            dask='parallelized',
-#                            output_dtypes=[float],
-#                            keep_attrs= True)#.sum(dim)
+    return  xr.apply_ufunc(_abs_energy, x,
+                            input_core_dims=[[dim]],
+                            dask='parallelized',
+                            output_dtypes=[float],
+                            keep_attrs= True)#.sum(dim)
 
 
 
@@ -531,7 +532,9 @@ def linear_time_trend(x, param="slope", dim='time', **kwargs):
                               keep_attrs= True)
     
     return out 
- 
+
+
+
 
 # from xclim https://github.com/Ouranosinc/xclim/blob/51123e0bbcaa5ad8882877f6905d9b285e63ddd9/xclim/run_length.py
 @set_property("fctype", "simple")
