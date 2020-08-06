@@ -16,7 +16,7 @@ from scipy.stats import kurtosis as kt
 from scipy.stats import kendalltau
 from bottleneck import nanmean, nanmedian, nansum, nanstd, nanvar, ss, allnan # nanmin, nanmax,anynan, 
 #from numba import jit, njit
-from numba import float64, int32, guvectorize
+from numba import float64, float32, int32, int16, guvectorize, int64
 
 
 logging.captureWarnings(True)
@@ -685,6 +685,8 @@ def mean(X, dim='time', **kwargs):
                            output_dtypes=[float],
                            keep_attrs= True )
 
+ 
+
 
 @set_property("fctype", "simple")
 def mean_abs_change(X, dim='time', **kwargs):
@@ -1339,12 +1341,16 @@ def variance_larger_than_standard_deviation(X, dim='time', **kwargs):
 def _quantile(x,q):
     
     return __quantile(x, q)
-
-
-@guvectorize([(float64[:],float64[:], float64[:])], "(n), ()-> ()", nopython=True )
-def __quantile(x, q, out): 
+ 
+@guvectorize([(float64[:],float64[:], float64[:]),
+              (float32[:],float64[:], float64[:]),
+              (int16[:],float64[:], float64[:]),
+              (int32[:],float64[:], float64[:]),
+              (int64[:],float64[:], float64[:])], 
+             "(n), ()-> ()", nopython=True )
+def __quantile(x, q:float, out): 
     
-    out[:] = np.nanpercentile(x,q) 
+    out[:] = np.nanquantile(x,q) 
     
     
 @set_property("fctype", "simple")
@@ -1366,7 +1372,7 @@ def quantile(x, q, dim='time', **kwargs):
                            input_core_dims=[[dim]],
                            dask='parallelized',
                            kwargs={'q': q },
-                           output_dtypes=[float],
+                           output_dtypes=[np.float64],
                            keep_attrs= True)
 
 
