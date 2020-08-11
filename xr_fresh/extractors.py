@@ -177,8 +177,8 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
             feature = feature.gw.match_data(xr_data,  
                                     band_names=  feature['variable'].values.tolist())
             
-            out = feature[0]
-            out.gw.imshow()
+            # out = feature[0]
+            # out.gw.imshow()
             
             xarray_to_rasterio(feature, path=filepath , postfix=postfix )
 

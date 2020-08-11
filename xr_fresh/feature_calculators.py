@@ -60,13 +60,13 @@ def abs_energy(X,dim='time', **kwargs):
 
 def _abs_energy(x):
 
-    return __abs_energy(x)
+    return __abs_energy(x) 
 
 
 @guvectorize([(float64[:], float64[:])], "(n) -> ()" , nopython=True )
 def __abs_energy(x, out): 
 
-    out[:] = np.sum(x**2, axis=-1)
+    out[:] = np.sum(np.square(x))
     
     
 @set_property("fctype", "simple")
@@ -89,7 +89,7 @@ def _abs_energy_slower(x, dim='time', **kwargs):
                             input_core_dims=[[dim]],
                             dask='parallelized',
                             output_dtypes=[float],
-                            keep_attrs= True)#.sum(dim)
+                            keep_attrs= True) 
 
 
 
