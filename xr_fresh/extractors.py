@@ -16,23 +16,11 @@ _logger = logging.getLogger(__name__)
 def _exists(var):
      return var in globals()
 
+    # use of globals is problematic, applies to all 
 
 def _append_dict(join_dict, string='_'):
     '''
     creates strings from dictionary key and value pairs if dictionary exists 
-    
-    Parameters
-    ----------
-    join_dict : str
-        DESCRIPTION.
-    string : str, optional
-        DESCRIPTION. The default is '_'.
-
-    Returns
-    -------
-    TYPE str
-        string to join 
-
     '''
     
     assert isinstance(join_dict, str)
@@ -83,8 +71,9 @@ def _apply_fun_name(function_name, xr_data, band, args):
         
     else:
         
-        out.coords['variable'] = band + "__" + function_name+'_'   + _append_dict(join_dict='args') + _append_dict(join_dict='months')             
-    
+        # out.coords['variable'] = band + "__" + function_name+'_'   + _append_dict(join_dict='args') + _append_dict(join_dict='months')             
+        out.coords['variable'] = band + "__" + function_name+'_'   + '_'.join(map(str, chain.from_iterable(args.items()))) + _append_dict(join_dict='months')             
+
     return out
 
 

@@ -1325,36 +1325,40 @@ def variance_larger_than_standard_deviation(X, dim='time', **kwargs):
 
 
 
-# @set_property("fctype", "simple")
-# def quantile(x, q, skipna=True, dim='time', **kwargs):
+@set_property("fctype", "simple")
+def quantile_slow(x, q, skipna=True, dim='time', **kwargs):
 
-#     """
-#     Calculates the q quantile of x. This is the value of x greater than q% of the ordered values from x.
+    """
+    Calculates the q quantile of x. This is the value of x greater than q% of the ordered values from x.
 
-#     :param x: the time series to calculate the feature of
-#     :type x:  xarray.DataArray
-#     :param q: the quantile to calculate [0,1]
-#     :type q: float
-#     :return: the value of this feature
-#     :return type: float
-#     """
+    :param x: the time series to calculate the feature of
+    :type x:  xarray.DataArray
+    :param q: the quantile to calculate [0,1]
+    :type q: float
+    :return: the value of this feature
+    :return type: float
+    """
     
-#     return x.quantile(q, dim).rename({'quantile':'band'})
+    return x.quantile(q, dim).rename({'quantile':'band'})
   
 
 def _quantile(x,q):
     
     return __quantile(x, q)
  
-@guvectorize([(float64[:],float64[:], float64[:]),
+    
+@guvectorize([
+              (float64[:],float64[:], float64[:]),
               (float32[:],float64[:], float64[:]),
-              (int16[:],float64[:], float64[:]),
+              (int64[:],float64[:], float64[:]),
               (int32[:],float64[:], float64[:]),
-              (int64[:],float64[:], float64[:])], 
+              (int16[:],float64[:], float64[:]),
+              ], 
              "(n), ()-> ()", nopython=True )
 def __quantile(x, q:float, out): 
     
     out[:] = np.nanquantile(x,q) 
+    
     
     
 @set_property("fctype", "simple")
@@ -1371,7 +1375,7 @@ def quantile(x, q, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
+
     return  xr.apply_ufunc(_quantile, x,
                            input_core_dims=[[dim]],
                            dask='parallelized',
@@ -1379,7 +1383,7 @@ def quantile(x, q, dim='time', **kwargs):
                            output_dtypes=[np.float64],
                            keep_attrs= True)
 
-
+   
 
 @set_property("fctype", "ufunc")
 def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
