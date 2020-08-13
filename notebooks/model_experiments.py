@@ -71,10 +71,10 @@ from glob import glob
 from datetime import datetime
 import os
 
-files = '/home/mmann1123/Dropbox/Ethiopia_data/PDSI/Meher_features/'
+file_path = '/home/mmann1123/Dropbox/Ethiopia_data/PDSI/Meher_features/'
 
 band_name = 'ppt'
-file_glob = f"{files}/ppt*.tif"
+file_glob = f"{file_path}/ppt*.tif"
 strp_glob = "%Y.tif"
 
 def unique(ls):
@@ -86,20 +86,18 @@ dates = sorted(unique([datetime.strptime(os.path.basename(string[-8:]), strp_glo
 variables = unique( [os.path.basename(string[:-9])
                       for string in sorted(glob(file_glob)) ])
 
-for date in dates[3:6]:
-    files = sorted(glob(f"{files}/ppt*"+date+'*.tif'))
-    
-    # open xarray 
+for date in dates:
+    files = sorted(glob(f"{file_path}/ppt*"+date+'*.tif'))
+
     with gw.open(files, 
                  band_names=sorted(variables),
-                 #time_names = date,
                  stack_dim ='band'
                  ) as ds:
         ds.attrs['filename'] = files             
         to_vrt(ds,'/home/mmann1123/Desktop/Variable_'+date+'.vrt')
         print(ds)
-     
-        
+
+
 #%% create multiyear stack 
 
 import sys
@@ -125,7 +123,7 @@ vrts = sorted(glob("/home/mmann1123/Desktop/Variable*.vrt"))
 # open xarray 
 with gw.open(vrts, 
              #band_names=variables, # doesn't change sample ouput names
-             time_names = ['1','2','3'],
+             time_names = [str(x) for x in range(len(vrts))],
              #stack_dim ='band'
              ) as ds:
     ds.attrs['filename'] = vrts            
@@ -136,10 +134,13 @@ with gw.open(vrts,
 
 dss= ds.to_dataset(dim='band')
 
-print(Featurizer_GW(sample_dim = ('x','y','time')).fit_transform(ds ))
+
 
 #%%  add target data and vectorize data 
 import numpy as np
+sys.path.append('/home/mmann1123/Documents/github/xr_fresh/')
+
+from xr_fresh.transformers import Stackerizer 
 
 land_use = np.tile( "water", (ds.sizes["time"], ds.sizes["y"], ds.sizes["x"]) ).astype(object)
 land_use[ds.sel(band=1).values > 500000] = "forest"
@@ -147,8 +148,11 @@ land_use = land_use.astype(str)
 ds.coords["land_use"] = (["time", "y", "x"], land_use)
 
 X = Stackerizer(stack_dims = ('x','y','time'), direction='stack').fit_transform(ds)
-# X =ds
+#X =ds
 print(X)
+print(X.shape)
+print(X.land_use.shape)
+
 
 #%%
 
@@ -169,7 +173,7 @@ from xr_fresh.transformers import Stackerizer
 
 pl = Pipeline(
     [
-       # ('stackerizer',Stackerizer(stack_dims = ('x','y','time'), direction='stack')),
+        #('stackerizer',Stackerizer(stack_dims = ('x','y','time'), direction='stack')),
         ("sanitizer", Sanitizer(dim='band')),    # Remove elements containing NaNs.
         ("featurizer", Featurizer()),  # Stack all dimensions and variables except for sample dimension.
         ("scaler", wrap(StandardScaler)), # zscores , ?wrap if xarray.self required? 
@@ -218,11 +222,8 @@ yp = gs.predict(X)
 yp.values = LabelEncoder().fit(X.land_use).classes_[yp]
 yp = yp.unstack("sample")
 yp
- #%%
-import matplotlib.pyplot as plt
-imgplot = plt.imshow(yp.sel(time='1'))
 
-#%%
+#%% predict 
 yp = gs.predict(X)
 yp = yp.unstack("sample")
 
