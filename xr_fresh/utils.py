@@ -82,6 +82,9 @@ def xarray_to_rasterio(xr_data, path='', postfix='', bands=None):
     
     """
     
+    
+    Path(path).mkdir(parents=True, exist_ok=True)
+    
     try:
         if bands == None:
             

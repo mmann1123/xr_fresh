@@ -163,7 +163,8 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
             
             feature = xr.concat( feature , dim)
 
-            feature = feature.gw.match_data(xr_data,  
+            if hasattr(xr_data, 'gw'):
+                feature = feature.gw.match_data(xr_data,  
                                     band_names=  feature['variable'].values.tolist())
             
             # out = feature[0]
@@ -184,9 +185,10 @@ def extract_features(xr_data, feature_dict, band, na_rm = False,
         
         
         features = xr.concat( features , dim)
-        
-        features = features.gw.match_data(xr_data,  
-                                    band_names=  features['variable'].values.tolist())
+       
+        if hasattr(xr_data, 'gw'):
+            features = features.gw.match_data(xr_data,  
+                                    band_names=  features['variable'].values.tolist())  # place postfix here? or time assigned by dim?
 
         return features 
 
