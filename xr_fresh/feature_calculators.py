@@ -16,7 +16,7 @@ from scipy.stats import kurtosis as kt
 from scipy.stats import kendalltau
 from bottleneck import nanmean, nanmedian, nansum, nanstd, nanvar, ss, allnan # nanmin, nanmax,anynan, 
 #from numba import jit, njit
-from numba import float64, float32, int32, int16, guvectorize, int64
+from numba import float64, float32, int32, int16, guvectorize, int64, void
 
 
 
@@ -734,6 +734,22 @@ def mean_change(X , dim='time', **kwargs):
                            keep_attrs= True )
  
 
+  
+
+# @guvectorize(['void(float64[:], float64)',
+#               'void(float32[:], float64)',
+#               'void(int64[:], float64)',
+#               'void(int32[:], float64)',
+#               'void(int16[:], float64)',
+#               ], 
+#               "(n) -> ()" )#, nopython=True )
+# def _msdc(x, out):
+#     x = x[~np.isnan(x)]
+#     out[:] = (x[:,:,-1] - x[:,:,-2]  - x[:,:,1] + x[:,:,0]) / (2 * (len(x) - 2)) if len(x) > 2 else np.NaN
+
+
+
+
 @set_property("fctype", "ufunc")
 def mean_second_derivative_central(X , dim='time', **kwargs):
     """
@@ -748,13 +764,17 @@ def mean_second_derivative_central(X , dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    func = lambda x: (x[:,:,-1] - x[:,:,-2]  - x[:,:,1] + x[:,:,0]) / (2 * (len(x) - 2)) if len(x) > 2 else np.NaN
+  
+    # func = lambda x: (x[:,:,-1] - x[:,:,-2]  - x[:,:,1] + x[:,:,0]) / (2 * (len(x) - 2)) if len(x) > 2 else np.NaN
 
-    return xr.apply_ufunc(func, X,
-                           input_core_dims=[[dim]],
-                           dask='parallelized',
-                           output_dtypes=[float],
-                           keep_attrs= True )
+    # return xr.apply_ufunc(_msdc, X,
+    #                        input_core_dims=[[dim]],
+    #                        dask='parallelized',
+    #                        output_dtypes=[np.float64],
+    #                        keep_attrs= True )
+    
+    return X.diff(dim).sum(dim) /(len(X)-1) 
+
  
 
 @set_property("fctype", "ufunc")
@@ -1348,11 +1368,11 @@ def _quantile(x,q):
  
     
 @guvectorize([
-              (float64[:],float64[:], float64[:]),
-              (float32[:],float64[:], float64[:]),
-              (int64[:],float64[:], float64[:]),
-              (int32[:],float64[:], float64[:]),
-              (int16[:],float64[:], float64[:]),
+              'void(float64[:],float64, float64[:])',
+              'void(float32[:],float64, float64[:])',
+              'void(int64[:],float64, float64[:])',
+              'void(int32[:],float64, float64[:])',
+              'void(int16[:],float64, float64[:])',
               ], 
              "(n), ()-> ()", nopython=True )
 def __quantile(x, q:float, out): 
