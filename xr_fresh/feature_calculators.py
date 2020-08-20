@@ -159,7 +159,7 @@ def count_above_mean(X, dim='time', **kwargs):
     :return type: float
     """
 
-    return ((X > X.mean(dim)).sum(dim)).astype(np.int32)
+    return ((X > X.mean(dim)).sum(dim)).astype(np.float64)
 
 
 @set_property("fctype", "simple")
@@ -173,7 +173,7 @@ def count_below_mean(X, dim='time', **kwargs):
     :return type: float
     """
 
-    return ((X < X.mean(dim)).sum(dim)).astype(np.int32)
+    return ((X < X.mean(dim)).sum(dim)).astype(np.float64)
 
 
 def decorrelation_time(da, r=20, dim='time'):
@@ -435,7 +435,7 @@ def large_standard_deviation(X, r=2, dim='time', **kwargs):
     :return type: bool
     """
     
-    return (X.std(dim) > (r * (X.max(dim) - X.min(dim)))).astype(np.int32)
+    return (X.std(dim) > (r * (X.max(dim) - X.min(dim)))).astype(np.float64)
 
 
 @set_property("fctype", "ufunc")
@@ -453,7 +453,7 @@ def length(X, dim='time', **kwargs):
                            kwargs={ 'axis': -1},
                            vectorize=True,
                            dask='parallelized',
-                           output_dtypes=[np.int32],
+                           output_dtypes=[np.float64],
                            keep_attrs= True )
 
 
@@ -1273,7 +1273,7 @@ def symmetry_looking(X, r=0.1, dim='time', **kwargs):
     
     mean_median_difference = np.abs(X.mean(dim) - X.median(dim))
     max_min_difference = X.max(dim) - X.min(dim)
-    return   (mean_median_difference < (r * max_min_difference)).astype(np.int32)
+    return   (mean_median_difference < (r * max_min_difference)).astype(np.float64)
  
 
 @set_property("fctype", "simple")
@@ -1341,7 +1341,7 @@ def variance_larger_than_standard_deviation(X, dim='time', **kwargs):
     :return type: bool
     """
     y = X.var(dim)
-    return (y > np.sqrt(y)).astype(np.int32)
+    return (y > np.sqrt(y)).astype(np.float64)
 
 
 
