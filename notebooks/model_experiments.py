@@ -56,7 +56,7 @@ import os
 #      print(ds2)
 
 
-#%% create annual stacks 
+#%% create multiple annual stacks 
 
 import sys
 
@@ -86,6 +86,8 @@ dates = sorted(unique([datetime.strptime(os.path.basename(string[-8:]), strp_glo
 variables = unique( [os.path.basename(string[:-9])
                       for string in sorted(glob(file_glob)) ])
 
+check_variable_lengths(variables)
+
 for date in dates:
     files = sorted(glob(f"{file_path}/ppt*"+date+'*.tif'))
 
@@ -98,26 +100,8 @@ for date in dates:
         print(ds)
 
 
-#%% create multiyear stack 
-
-import sys
-sys.path.append('/home/mmann1123/Documents/github/xr_fresh/')
-from glob import glob
-from xr_fresh.utils import check_variable_lengths,to_vrt
-from xr_fresh.transformers import featurize_gw, Featurizer_GW
-
-import geowombat as gw
-import os
-
-def unique(ls):
-    return list(set(ls))
-
-files = '/home/mmann1123/Dropbox/Ethiopia_data/PDSI/Meher_features/'
-file_glob = f"{files}/ppt*.tif"
-
-variables = unique( [os.path.basename(string[:-9])
-                      for string in sorted(glob(file_glob)) ])
-
+#%% create multiyear stack of stacks
+ 
 vrts = sorted(glob("/home/mmann1123/Desktop/Variable*.vrt"))
 
 # open xarray 
