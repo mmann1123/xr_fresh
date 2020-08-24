@@ -4,88 +4,18 @@
 import geopandas as gpd 
 from geowombat.data import l8_224078_20200518, l8_224078_20200518_polygons
 import geowombat as gw
-from geowombat.ml import fit, fit_predict, Stackerizer
+from geowombat.ml import fit, fit_predict
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.naive_bayes import GaussianNB
-from sklearn.preprocessing import StandardScaler, LabelEncoder,LabelBinarizer
+from sklearn.preprocessing import StandardScaler, LabelEncoder,LabelBinarizer,LabelEncoder
 from sklearn_xarray.preprocessing import Splitter, Sanitizer, Featurizer, Reducer
 from sklearn_xarray import wrap, Target
 import xarray as xr
 poly = gpd.read_file(l8_224078_20200518_polygons)
 le = LabelEncoder()
 poly['lu'] = le.fit_transform(poly.name)
-
-poly
-
-#%%
-
-import functools
-
-
-def wrapped_cls(cls):
-
-    @functools.wraps(cls)
-    def wrapper(self):
-
-        if self.__module__.split('.')[0] != 'sklearn_xarray':
-            self = wrap(self, reshapes='feature')
-
-        return self
-
-    return wrapper
-
-
-@wrapped_cls
-class WrappedClassifier(object):
-    pass
-
-
-def _prepare_labels(data, labels, col, targ_name):
-
-    if not isinstance(labels, xr.DataArray):
-        labels = gw.polygon_to_array(labels, col=col, data=data)
-
-    # TODO: is this sufficient for single dates?
-    if not data.gw.has_time_coord:
-        data = data.assign_coords(time=1)
-
-    labels = xr.concat([labels] * data.gw.ntime, dim='band')\
-                .assign_coords({'band': data.time.values.tolist()})
-
-    # Mask 'no data'
-    labels = labels.where(labels != 0)
-
-    data.coords[targ_name] = (['time', 'y', 'x'], labels)
-
-    return data
-
-
-def _prepare_predictors(data, targ_name):
-
-    # TODO: where are we importing Stackerizer from?
-    X = Stackerizer(stack_dims=('y', 'x', 'time'),
-                    direction='stack').fit_transform(data)
-
-    # drop nans
-    Xna = X[~X[targ_name].isnull()]
-
-    # TODO: groupby as a user option?
-    # Xgp = Xna.groupby(targ_name).mean('sample')
-
-    return X, Xna
-
-def _prepare_classifiers(clf):  # problem is here 
-
-    if isinstance(clf, Pipeline):
-        clf = [WrappedClassifier(clf_) for clf_ in clf]
-    else:
-        clf = WrappedClassifier(clf)
-
-    return clf
-
-#%%
-
+ 
 with gw.open([l8_224078_20200518, l8_224078_20200518, l8_224078_20200518], time_names=['t1', 't2', 't3'], stack_dim='time', chunks=50) as data:
     labels = poly
     col = 'lu'
