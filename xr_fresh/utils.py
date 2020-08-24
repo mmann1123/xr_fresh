@@ -189,6 +189,9 @@ def to_vrt(data,
         >>>     with gw.open(['image1.tif', 'image2.tif'], mosaic=True) as src:
         >>>         gw.to_vrt(src, 'output.vrt')
     """
+    
+    Path(os.path.dirname(filename)).mkdir(parents=True, exist_ok=True)
+
 
     if not resampling:
         resampling = Resampling.nearest
