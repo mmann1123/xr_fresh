@@ -185,9 +185,12 @@ class Stackerizer(BaseTransformer):
         if self.compute:
             return X.stack(**{self.sample_dim: self.stack_dims})
         else:
-            from dask.array import stack as da_stack
-            print('stacking w dask')
-            return da_stack(X, **{self.sample_dim: self.stack_dims})
+            print('dask stacking not currently supported')
+            return X.stack(**{self.sample_dim: self.stack_dims})
+            # TO DO figure out dask stacking, doesn't allow new dim name
+            # from dask.array import stack as da_stack
+            # print('stacking w dask')
+            #return da_stack(X, **{self.sample_dim: self.stack_dims})
 
 
     def _inverse_transform_var(self, X):
@@ -212,6 +215,7 @@ class Stackerizer(BaseTransformer):
             if self.direction == 'stack':
    
                 if self.transposed:    
+                    print('transposing')
                     return self._transform_var(X).T
                 else:
                     return self._transform_var(X)
