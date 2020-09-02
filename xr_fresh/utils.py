@@ -54,6 +54,10 @@ def add_categorical(data, labels, col, variable_name='cat1'):
         labels = gw.polygon_to_array(labels, col=col, data=data )
         labels['band'] = [variable_name]
 
+        # problem with some int 8 
+        #labels = labels.astype(float).astype(int) # avoid invalid literal for int
+
+
     # TODO: is this sufficient for single dates?
     if not data.gw.has_time_coord:
         data = data.assign_coords(time=1) # doesn't work I think 
@@ -91,7 +95,7 @@ def save_pickle(obj, filename):
         cPickle.dump(obj, output) 
 
 
-def read_pickle(path):
+def open_pickle(path):
     with open(path, 'rb') as file:
         try:
             while True:
