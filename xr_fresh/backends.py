@@ -112,8 +112,8 @@ class Cluster(object):
         os.system('export MKL_NUM_THREADS=1')
         os.system('export OPENBLAS_NUM_THREADS=1')
 
-        self.cluster = LocalCluster(#n_workers=3,
-            #threads_per_worker=4,
+        self.cluster = LocalCluster(n_workers=3,
+            threads_per_worker=2,
             processes=True,
             **self.kwargs)
         self.client = Client(self.cluster)

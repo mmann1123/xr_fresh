@@ -91,7 +91,7 @@ def save_pickle(obj, filename):
         cPickle.dump(obj, output) 
 
 
-def read_pickle(path):
+def open_pickle(path):
     with open(path, 'rb') as file:
         try:
             while True:
