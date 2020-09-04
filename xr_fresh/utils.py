@@ -17,11 +17,14 @@ from osgeo import gdal
 from rasterio import shutil as rio_shutil
 from xarray import concat, DataArray
 import geowombat as gw
+from numpy import object as np_object
+from numpy import float as np_float
+from sklearn.preprocessing import LabelEncoder
 
 def unique(ls):
     return list(set(ls))
 
-def add_categorical(data, labels, col, variable_name='cat1'):
+def add_categorical(data, labels, col=None, variable_name=None):
     """
     
     Writes xarray bands to disk by band
@@ -43,7 +46,7 @@ def add_categorical(data, labels, col, variable_name='cat1'):
     :type data:  xarray.DataArray
     :param labels: path or df to shapefile with categorical data
     :type labels:  path or gpd.geodataframe
-    :param col: Column to create get values from 
+    :param col: Column to create get values from
     :type col:  str 
     :param variable_name: name assigned to categorical data 
     :type variable_name:  str   
@@ -51,8 +54,26 @@ def add_categorical(data, labels, col, variable_name='cat1'):
     """
 
     if not isinstance(labels, DataArray):
-        labels = gw.polygon_to_array(labels, col=col, data=data )
-        labels['band'] = [variable_name]
+        if col is None:
+            labels = gw.polygon_to_array(labels,  data=data )
+            labels['band'] = [variable_name]  
+
+        else:
+            if isinstance(labels.dtypes[col], object):
+                le = LabelEncoder()
+                labels[col] = le.fit_transform(labels[col])
+                #classes = le.fit(labels[col]).classes_    
+                print('Polygon Columns: Transformed with le.fit_transform(labels[col])')
+            
+            if isinstance(labels.dtypes[col], float):
+                labels = labels.astype(float).astype(int)
+
+            labels = gw.polygon_to_array(labels, col=col, data=data )
+            
+            if variable_name is None:
+                variable_name = col
+
+            labels['band'] = [variable_name]
 
         # problem with some int 8 
         #labels = labels.astype(float).astype(int) # avoid invalid literal for int
