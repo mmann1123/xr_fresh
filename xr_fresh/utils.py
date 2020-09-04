@@ -17,18 +17,64 @@ from osgeo import gdal
 from rasterio import shutil as rio_shutil
 from xarray import concat, DataArray
 import geowombat as gw
-from numpy import object as np_object
-from numpy import float as np_float
+import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
 def unique(ls):
     return list(set(ls))
 
+def add_time_targets(data, target, target_col_list=None, target_name='target', missing_value=-9999):
+    """
+    Adds multiple time periods of target data to existing xarray obj. 
+
+    :param data: xarray to add target data to 
+    :type data:  xarray.DataArray
+    :param target: path or df to shapefile with target data data
+    :type target:  path or gpd.geodataframe
+    :param target_col_list: list of columns holding target data
+         All column names must be in acceding order e.g. ['t_2010','t_2011']
+    :type target_col_list:  list 
+    :param target_name: single name assigned to target data dimension. Default is 'target'
+    :type variable_name:  str   
+    :param missing_value: missing value for pixels not overlapping polygon or points 
+    :type variable_name:  str          
+    """
+    assert len(target_col_list)==len(data.time.values.tolist()), 'target column list must have same length as time dimension'
+
+
+    target_collector = []
+    for t in target_col_list:
+
+        from xarray import concat, DataArray
+
+        if not isinstance(target, DataArray):
+            
+            if target.dtypes[t] == np.object:
+                le = LabelEncoder()
+                print(target.dtypes[t])
+                target[t] = le.fit_transform(target[t])
+                #classes = le.fit(target[col]).classes_    
+                print('Polygon Columns: Transformed with le.fit_transform(target[col])')
+            
+            target_array = gw.polygon_to_array(target, 
+                                                col=t, 
+                                                data=data,
+                                                fill=missing_value,
+                                                dtype=target.dtypes[t],
+                                                band_name=[target_name]) 
+
+            target_collector.append(target_array)
+    
+    poly_array = concat(target_collector, dim='band').assign_coords({'band': data.time.values.tolist()})
+    data.coords[target_name] = (["time", "y", "x"], poly_array)
+    
+    return(data)
+
+
+
 def add_categorical(data, labels, col=None, variable_name=None):
     """
-    
-    Writes xarray bands to disk by band
-
+    Adds categorical data to xarray by column name.
 
     Examples
     ========
@@ -54,26 +100,25 @@ def add_categorical(data, labels, col=None, variable_name=None):
     """
 
     if not isinstance(labels, DataArray):
+
+        if variable_name is None:
+            variable_name = col
+
         if col is None:
             labels = gw.polygon_to_array(labels,  data=data )
             labels['band'] = [variable_name]  
 
         else:
-            if isinstance(labels.dtypes[col], object):
+            if labels.dtypes[col] == np.object:
                 le = LabelEncoder()
                 labels[col] = le.fit_transform(labels[col])
                 #classes = le.fit(labels[col]).classes_    
                 print('Polygon Columns: Transformed with le.fit_transform(labels[col])')
             
-            if isinstance(labels.dtypes[col], float):
+            if labels.dtypes[col] == np.float:
                 labels = labels.astype(float).astype(int)
 
-            labels = gw.polygon_to_array(labels, col=col, data=data )
-            
-            if variable_name is None:
-                variable_name = col
-
-            labels['band'] = [variable_name]
+            labels = gw.polygon_to_array(labels, col=col, data=data,band_name= [variable_name])
 
         # problem with some int 8 
         #labels = labels.astype(float).astype(int) # avoid invalid literal for int
