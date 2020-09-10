@@ -103,10 +103,10 @@ def user_func(*args):
 
     # Send the computation to Dask
     out = data.stack(sample=('y','x','time')).T.compute(scheduler='threads', num_workers=num_workers)
-    out = out.to_dataset(name='data')
+    # out = out.to_dataset(name='data')
     out.reset_index('sample').to_netcdf(path='/home/mmann1123/Downloads/test_%04d.nc' % int(round(time.time() * 1000)), 
                             mode='w')
-
+    out.to_csv(path='/home/mmann1123/Downloads/test_%04d.dict' % int(round(time.time() * 1000)) )
     return  out  #data.stack(sample=('y','x','time')).T.compute(scheduler='threads', num_workers=num_workers)
    
  
@@ -123,7 +123,8 @@ with gw.open([l8_224078_20200518, l8_224078_20200518, l8_224078_20200518], time_
 
 
 
-    combined = xarray.open_mfdataset('/home/mmann1123/Downloads/test_*.nc', autoclose=True)
+    #combined = xarray.open_mfdataset('/home/mmann1123/Downloads/test_*.nc', autoclose=True)
+    combined = xarray.open_mfdataset('/home/mmann1123/Downloads/test_*.dict', autoclose=True)
     # combined.to_netcdf('/home/mmann1123/Downloads/results-combined.nc')
 
     # view contents of nc file ncdump -h /home/mmann1123/Downloads/test_1599758913548.nc 
@@ -161,6 +162,89 @@ with gw.open([l8_224078_20200518, l8_224078_20200518, l8_224078_20200518], time_
                         scheduler='threads',
                         n_workers=8)
     res = pt.map(user_func, 1)            
+    out = xr.combine_nested(res, concat_dim = ['sample', ])    
+
+#%%  stack exchange example 
+
+import numpy as np
+import dask.array as da
+import xarray as xr
+
+nrows = 100
+ncols = 200
+row_chunks = 50
+col_chunks = 50
+
+data = da.random.random(size=(1, nrows, ncols), chunks=(1, row_chunks, col_chunks))
+
+def create_band(data, x, y, band_name):
+
+    return xr.DataArray(data,
+                        dims=('band', 'y', 'x'),
+                        coords={'band': [band_name],
+                                'y': y,
+                                'x': x})
+
+def create_coords(data, left, top, celly, cellx):
+    nrows = data.shape[-2]
+    ncols = data.shape[-1]
+    right = left + cellx*ncols
+    bottom = top - celly*nrows
+    x = np.linspace(left, right, ncols) + cellx/2.0
+    y = np.linspace(top, bottom, nrows) - celly/2.0
+    
+    return x, y
+
+x, y = create_coords(data, 1000, 2000, 30, 30)
+
+src = []
+
+for time in ['t1', 't2', 't3']:
+
+    src_t = xr.concat([create_band(data, x, y, band) for band in ['blue', 'green', 'red', 'nir']], dim='band')\
+                    .expand_dims(dim='time')\
+                    .assign_coords({'time': [time]})
+    
+    src.append(src_t)
+
+src = xr.concat(src, dim='time')
+
+print(src)
+#%%
+print(src.stack(sample=('y','x','time')).T)
+#%%
+
+def user_func(*args):
+
+    """
+    Block-level function to be executed in parallel. The first argument is the block data, and
+    the second argument is the number of parallel worker threads for dask.compute().
+    """
+
+    # Gather function arguments
+    data, num_workers = list(itertools.chain(*args))
+
+    # Send the computation to Dask
+    return data.stack(sample=('y','x','time')).T.compute(scheduler='threads', num_workers=num_workers)
+
+
+pt = ParallelTask(src,
+                    scheduler='threads',
+                    n_workers=8)
+res = pt.map(user_func, 1) 
+
+print(res[0])
+out = xr.combine_nested(res, concat_dim = ['sample', ])#res[0].dims)           
+#out = xr.combine_by_coords(res) #ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+
+
+
+# combined = xarray.open_mfdataset('/home/mmann1123/Downloads/test_*.nc', autoclose=True)
+# combined = xarray.open_mfdataset('/home/mmann1123/Downloads/test_*.dict', autoclose=True)
+# combined.to_netcdf('/home/mmann1123/Downloads/results-combined.nc')
+
+#%% 
+# view contents of nc file ncdump -h /home/mmann1123/Downloads/test_1599758913548.nc 
 
 
 
