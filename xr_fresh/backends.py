@@ -37,7 +37,7 @@ class Cluster(object):
         >>>                   processes=False)
         >>>
         >>> # Task with little need of the GIL with 16 nodes
-        >>> cluster = Cluster(n_workers=2,
+        >>> cluster = Cluster(n_workers=1,
         >>>                   threads_per_worker=8,
         >>>                   scheduler_port=0,
         >>>                   processes=False)
