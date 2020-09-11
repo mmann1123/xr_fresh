@@ -19,6 +19,7 @@ from xarray import concat, DataArray
 import geowombat as gw
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+import bz2
 
 def unique(ls):
     return list(set(ls))
@@ -155,13 +156,26 @@ def check_variable_lengths(variable_list):
     
     return all(value for value in dict(Counter(variable_list)).values())
 
+def compressed_pickle(data, filename ):
+
+    Path(os.path.dirname(filename)).mkdir(parents=True, exist_ok=True)
+
+    with bz2.BZ2File(filename + '.pbz2', 'w') as f: 
+         cPickle.dump(data, f, protocol=-1)
+
+def decompress_pickle(file):
+
+    data = bz2.BZ2File(file, 'rb')
+    data = cPickle.load(data)
+    return data
+
 
 def save_pickle(obj, filename):
     
-    Path(filename).mkdir(parents=True, exist_ok=True)
+    Path(os.path.dirname(filename)).mkdir(parents=True, exist_ok=True)
 
     with open(filename, 'wb') as output:  # Overwrites any existing file.
-        cPickle.dump(obj, output) 
+        cPickle.dump(obj, output,protocol=-1) 
 
 
 def open_pickle(path):
