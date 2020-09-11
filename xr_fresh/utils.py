@@ -156,17 +156,26 @@ def check_variable_lengths(variable_list):
     
     return all(value for value in dict(Counter(variable_list)).values())
 
-def compressed_pickle(data, filename ):
+
+def compressed_pickle(data, filename, compress='gz' ):
 
     Path(os.path.dirname(filename)).mkdir(parents=True, exist_ok=True)
+    if compress == 'bz2':
+        with bz2.BZ2File(filename + '.pbz2', 'w') as f: 
+            cPickle.dump(data, f, protocol=-1)
+    if compress == 'gz':
+        with gzip.open(filename + '.gz', 'wb') as f: 
+            cPickle.dump(data, f, protocol=-1)
 
-    with bz2.BZ2File(filename + '.pbz2', 'w') as f: 
-         cPickle.dump(data, f, protocol=-1)
+def decompress_pickle(file, compress='gz'):
 
-def decompress_pickle(file):
+    if compress == 'bz2':
+        data = bz2.BZ2File(file, 'rb')
+        data = cPickle.load(data)
 
-    data = bz2.BZ2File(file, 'rb')
-    data = cPickle.load(data)
+    if compress == 'gz':
+        data = gzip.open(file,'rb')
+        data = cPickle.load(data)
     return data
 
 
