@@ -157,6 +157,9 @@ def check_variable_lengths(variable_list):
 
 
 def save_pickle(obj, filename):
+    
+    Path(filename).mkdir(parents=True, exist_ok=True)
+
     with open(filename, 'wb') as output:  # Overwrites any existing file.
         cPickle.dump(obj, output) 
 
