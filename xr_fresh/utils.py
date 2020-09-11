@@ -20,6 +20,8 @@ import geowombat as gw
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 import bz2
+import gzip
+
 
 def unique(ls):
     return list(set(ls))
