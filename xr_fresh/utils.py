@@ -26,7 +26,7 @@ import gzip
 def unique(ls):
     return list(set(ls))
 
-def add_time_targets(data, target, target_col_list=None, target_name='target', missing_value=-9999):
+def add_time_targets(data, target, target_col_list=None, target_name='target', missing_value=-9999, append_to_X=False):
     """
     Adds multiple time periods of target data to existing xarray obj. 
 
@@ -38,9 +38,11 @@ def add_time_targets(data, target, target_col_list=None, target_name='target', m
          All column names must be in acceding order e.g. ['t_2010','t_2011']
     :type target_col_list:  list 
     :param target_name: single name assigned to target data dimension. Default is 'target'
-    :type variable_name:  str   
+    :type target_name:  str   
     :param missing_value: missing value for pixels not overlapping polygon or points 
-    :type variable_name:  str          
+    :type missing_value:  str
+    :param append_to_X: should the target data be appended to the far right of other X variables. Default is False.
+    :type append_to_X:  bool              
     """
     assert len(target_col_list)==len(data.time.values.tolist()), 'target column list must have same length as time dimension'
 
@@ -67,9 +69,12 @@ def add_time_targets(data, target, target_col_list=None, target_name='target', m
                                                 band_name=[target_name]) 
 
             target_collector.append(target_array)
-    
-    poly_array = concat(target_collector, dim='band').assign_coords({'band': data.time.values.tolist()})
-    data.coords[target_name] = (["time", "y", "x"], poly_array)
+    if append_to_X:
+        poly_array = concat(target_collector, dim='time').assign_coords({'time': data.time.values.tolist()})
+        data = concat([data,poly_array], dim='band')
+    else:
+        poly_array = concat(target_collector, dim='band').assign_coords({'band': data.time.values.tolist()})
+        data.coords[target_name] = (["time", "y", "x"], poly_array)
     
     return(data)
 
