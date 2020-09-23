@@ -163,11 +163,13 @@ def compressed_pickle(data, filename, compress='gz' ):
 
     Path(os.path.dirname(filename)).mkdir(parents=True, exist_ok=True)
     if compress == 'bz2':
-        with bz2.BZ2File(filename + '.pbz2', 'w') as f: 
+        with bz2.BZ2File(filename + '.pbz2', 'w', compresslevel=6) as f: 
             cPickle.dump(data, f, protocol=-1)
+            
     if compress == 'gz':
         with gzip.open(filename + '.gz', 'wb') as f: 
             cPickle.dump(data, f, protocol=-1)
+
 
 def decompress_pickle(file, compress='gz'):
 
