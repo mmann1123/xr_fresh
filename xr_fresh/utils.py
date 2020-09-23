@@ -21,6 +21,8 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 import bz2
 import gzip
+from pandas import DataFrame, select_dtypes, astype, to_numeric
+
 
 
 def unique(ls):
@@ -162,6 +164,30 @@ def check_variable_lengths(variable_list):
     from collections import Counter
     
     return all(value for value in dict(Counter(variable_list)).values())
+
+def downcast_pandas(data:DataFrame):
+    """
+    Dtype cast to smallest numerical dtype possible for pandas dataframes.
+    Saves considerable space. 
+    Objects are cast to categorical, int and float are cast to the smallest dtype
+    
+    https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric  
+
+    :param data: input dataframe 
+    :type data: DataFrame
+
+    :return: downcast dataframe
+    :rtype: DataFrame
+    """
+
+    categorical_features = list( data.select_dtypes(include=['object']).columns)
+    data[categorical_features] = data[categorical_features].astype('category')
+    float_features = list(data.select_dtypes(include=['float32','float32', 'float64']).columns)
+    data[float_features] = data[float_features].apply(to_numeric, downcast='float')
+    int_features = list(data.select_dtypes(include=['int32','int16', 'int8']).columns)
+    data[int_features] = data[int_features].apply(to_numeric, downcast='int')
+
+    return data 
 
 
 def compressed_pickle(data, filename, compress='gz' ):
