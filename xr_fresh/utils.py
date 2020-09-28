@@ -21,7 +21,7 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 import bz2
 import gzip
-from pandas import DataFrame, select_dtypes, astype, to_numeric
+from pandas import DataFrame,  to_numeric 
 
 
 
