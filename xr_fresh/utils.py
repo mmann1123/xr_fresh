@@ -25,50 +25,7 @@ from pandas import DataFrame,  to_numeric
 
 
 
-def encode_multiindex(ds, idxname):
-    """
-    converte xarray stacked data (multi-index) into regular index, storing
-    the index composition in the attributes. 
-
-    :param ds: xarray data with a multi-index
-    :type ds: [type]
-    :param idxname: multi-index name example "sample"
-    :type idxname: [type]
-    :return: single index xarray
-    :rtype: [type]
-    """
-    encoded = ds.reset_index(idxname)
-    coords = dict(zip(ds.indexes[idxname].names, ds.indexes[idxname].levels))
-    for coord in coords:
-        encoded[coord] = coords[coord].values
-    shape = [encoded.sizes[coord] for coord in coords]
-    encoded[idxname] = np.ravel_multi_index(ds.indexes[idxname].codes, shape)
-    encoded[idxname].attrs["compress"] = " ".join(ds.indexes[idxname].names)
-    return encoded
-
-
-def decode_to_multiindex(encoded, idxname):
-    """
-    Decodes output of encode_multiindex 
-
-    :param encoded: output from encode_multiindex
-    :type encoded: xarray
-    :param idxname: name of original multi-index example "sample"
-    :type idxname: [type]
-    :return: multi index xarray
-    :rtype: xarray
-    """
-    names = encoded[idxname].attrs["compress"].split(" ")
-    shape = [encoded.sizes[dim] for dim in names]
-    indices = np.unravel_index(encoded.landpoint.values, shape)
-    arrays = [encoded[dim].values[index] for dim, index in zip(names, indices)]
-    mindex = pd.MultiIndex.from_arrays(arrays)
-
-    decoded = xr.Dataset({}, {idxname: mindex})
-    for varname in encoded.data_vars:
-        if idxname in encoded[varname].dims:
-            decoded[varname] = (idxname, encoded[varname].values)
-    return decoded
+# 
 
 
 def unique(ls):
@@ -410,3 +367,49 @@ def to_vrt(data,
         else:
             
             print('data.filename must contain paths for to_vrt to work')
+
+
+def encode_multiindex(ds, idxname):
+#     """
+#     converte xarray stacked data (multi-index) into regular index, storing
+#     the index composition in the attributes. 
+
+#     :param ds: xarray data with a multi-index
+#     :type ds: [type]
+#     :param idxname: multi-index name example "sample"
+#     :type idxname: [type]
+#     :return: single index xarray
+#     :rtype: [type]
+#     """
+#     encoded = ds.reset_index(idxname)
+#     coords = dict(zip(ds.indexes[idxname].names, ds.indexes[idxname].levels))
+#     for coord in coords:
+#         encoded[coord] = coords[coord].values
+#     shape = [encoded.sizes[coord] for coord in coords]
+#     encoded[idxname] = np.ravel_multi_index(ds.indexes[idxname].codes, shape)
+#     encoded[idxname].attrs["compress"] = " ".join(ds.indexes[idxname].names)
+#     return encoded
+
+
+# def decode_to_multiindex(encoded, idxname):
+#     """
+#     Decodes output of encode_multiindex 
+
+#     :param encoded: output from encode_multiindex
+#     :type encoded: xarray
+#     :param idxname: name of original multi-index example "sample"
+#     :type idxname: [type]
+#     :return: multi index xarray
+#     :rtype: xarray
+#     """
+#     names = encoded[idxname].attrs["compress"].split(" ")
+#     shape = [encoded.sizes[dim] for dim in names]
+#     indices = np.unravel_index(encoded.landpoint.values, shape)
+#     arrays = [encoded[dim].values[index] for dim, index in zip(names, indices)]
+#     mindex = pd.MultiIndex.from_arrays(arrays)
+
+#     decoded = xr.Dataset({}, {idxname: mindex})
+#     for varname in encoded.data_vars:
+#         if idxname in encoded[varname].dims:
+#             decoded[varname] = (idxname, encoded[varname].values)
+#     return decoded
