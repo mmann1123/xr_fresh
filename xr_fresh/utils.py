@@ -369,7 +369,7 @@ def to_vrt(data,
             print('data.filename must contain paths for to_vrt to work')
 
 
-def encode_multiindex(ds, idxname):
+# def encode_multiindex(ds, idxname):
 #     """
 #     converte xarray stacked data (multi-index) into regular index, storing
 #     the index composition in the attributes. 
