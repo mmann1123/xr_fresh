@@ -73,10 +73,16 @@ def add_time_targets(data, target, target_col_list=None, target_name='target', m
                                                 dtype=target.dtypes[t],
                                                 band_name=[target_name]) 
 
+            # avoid mismatched generated x y coords 
+            if not(np.all(data.x.values == target_array.x.values) & np.all(data.y.values == target_array.y.values)):
+                target_array = target_array.assign_coords({"x": data.x.values, 'y':data.y.values})
+              
             target_collector.append(target_array)
+
     if append_to_X:
         poly_array = concat(target_collector, dim='time').assign_coords({'time': data.time.values.tolist()})
         data = concat([data,poly_array], dim='band')
+        
     else:
         poly_array = concat(target_collector, dim='band').assign_coords({'band': data.time.values.tolist()})
         data.coords[target_name] = (["time", "y", "x"], poly_array)
@@ -85,7 +91,7 @@ def add_time_targets(data, target, target_col_list=None, target_name='target', m
 
 
 
-def add_categorical(data, labels, col=None, variable_name=None):
+def add_categorical(data, labels=None, col:str =None, variable_name=None):
     """
     Adds categorical data to xarray by column name.
 
@@ -122,16 +128,21 @@ def add_categorical(data, labels, col=None, variable_name=None):
             labels['band'] = [variable_name]  
 
         else:
+            # to do: figure out better solution than using [0]
             if labels.dtypes[col] == np.object:
                 le = LabelEncoder()
-                labels[col] = le.fit_transform(labels[col])
-                #classes = le.fit(labels[col]).classes_    
+                labels[col] = le.fit_transform(labels[col]) + 1 #avoid 0 its a missing value
+                # classes = le.fit(labels[col]).classes_ + 1   
                 print('Polygon Columns: Transformed with le.fit_transform(labels[col])')
             
-            if labels.dtypes[col] == np.float:
+            if labels.dtypes[col] != np.int:
                 labels = labels.astype(float).astype(int)
 
-            labels = gw.polygon_to_array(labels, col=col, data=data,band_name= [variable_name])
+            labels = gw.polygon_to_array(labels, 
+                                         col=col, 
+                                         data=data,
+                                         band_name= [variable_name],
+                                         fill=0)
 
         # problem with some int 8 
         #labels = labels.astype(float).astype(int) # avoid invalid literal for int
@@ -141,10 +152,16 @@ def add_categorical(data, labels, col=None, variable_name=None):
     if not data.gw.has_time_coord:
         data = data.assign_coords(time=1) # doesn't work I think 
 
-    labels = concat([labels] * data.gw.ntime, dim='time')\
+    category = concat([labels] * data.gw.ntime, dim='time')\
                 .assign_coords({'time': data.time.values.tolist()})
     
-    data = concat([data,labels], dim = 'band')
+    # avoid mismatched generated x y coords 
+    if np.all(data.x.values == category.x.values) & np.all(data.y.values == category.y.values):
+        data = concat([data,category], dim = 'band')
+
+    else:
+        category = category.assign_coords({"x": data.x.values, 'y':data.y.values})
+        data = concat([data,category], dim = 'band')
 
     return data
 
