@@ -35,6 +35,19 @@ def add_time_targets(data, target, target_col_list=None, target_name='target', m
     """
     Adds multiple time periods of target data to existing xarray obj. 
 
+    Examples
+    ========
+
+    with gw.open(vrts, time_names = time_names, chunks=400) as ds:
+        ds = add_time_targets(  data = ds, 
+                            target= loss_poly, 
+                            target_col_list = ['w_dam_2010','w_dam_2011','w_dam_2012',
+                                                'w_dam_2013','w_dam_2014','w_dam_2015','w_dam_2016'], 
+                            target_name='weather_damage', 
+                            missing_value=np.nan,
+                            append_to_X=True )
+
+
     :param data: xarray to add target data to 
     :type data:  xarray.DataArray
     :param target: path or df to shapefile with target data data
@@ -49,6 +62,7 @@ def add_time_targets(data, target, target_col_list=None, target_name='target', m
     :param append_to_X: should the target data be appended to the far right of other X variables. Default is False.
     :type append_to_X:  bool              
     """
+    
     assert len(target_col_list)==len(data.time.values.tolist()), 'target column list must have same length as time dimension'
 
 
@@ -104,8 +118,8 @@ def add_categorical(data, labels=None, col:str =None, variable_name=None):
              time_names = [str(x) for x in range(len(vrts))],
              ) as ds:
         ds.attrs['filename'] = vrts 
-        cats = add_categorical(ds, climatecluster,col='ClusterN_2',variable_name='clim_clust')
-        print(cats)res,'/home/mmann1123/Desktop/', postfix='test')
+        ds = add_categorical(ds, climatecluster,col='ClusterN_2',variable_name='clim_clust')
+        print(ds) 
 
     :param data: xarray to add categorical data to 
     :type data:  xarray.DataArray
@@ -124,7 +138,7 @@ def add_categorical(data, labels=None, col:str =None, variable_name=None):
             variable_name = col
 
         if col is None:
-            labels = gw.polygon_to_array(labels,  data=data )
+            labels = gw.polygon_to_array(labels,  data=data)
             labels['band'] = [variable_name]  
 
         else:
@@ -137,12 +151,14 @@ def add_categorical(data, labels=None, col:str =None, variable_name=None):
             
             if labels.dtypes[col] != np.int:
                 labels = labels.astype(float).astype(int)
+            
 
-            labels = gw.polygon_to_array(labels, 
-                                         col=col, 
-                                         data=data,
-                                         band_name= [variable_name],
-                                         fill=0)
+        labels = gw.polygon_to_array(labels, 
+                                    col=col, 
+                                    data=data,
+                                    band_name= [variable_name],
+                                    fill=0 )
+
 
         # problem with some int 8 
         #labels = labels.astype(float).astype(int) # avoid invalid literal for int
@@ -150,7 +166,7 @@ def add_categorical(data, labels=None, col:str =None, variable_name=None):
 
     # TODO: is this sufficient for single dates?
     if not data.gw.has_time_coord:
-        data = data.assign_coords(time=1) # doesn't work I think 
+        data = data.assign_coords(time=1)  
 
     category = concat([labels] * data.gw.ntime, dim='time')\
                 .assign_coords({'time': data.time.values.tolist()})
