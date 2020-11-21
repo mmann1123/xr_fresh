@@ -23,13 +23,15 @@ import bz2
 import gzip
 from pandas import DataFrame,  to_numeric 
 import dill
-
+from re import sub, search
+from glob import glob
+from datetime import datetime
 
 # 
 
 def bound(x,min=0,max=100):
     return np.clip(x, a_min=min, a_max=max)
-    
+
 def unique(ls):
     return list(set(ls))
 
@@ -202,6 +204,42 @@ def check_variable_lengths(variable_list):
     from collections import Counter
     
     return all(value for value in dict(Counter(variable_list)).values())
+
+def find_variable_names(path_glob):
+    """Return all unique variables names from path glob, removing trailing date and __
+
+    Example:
+    path_glob = f"{file_path}NDVI_MODIS/Meher_features/ndvi*.tif"
+    find_variable_names(path_glob)
+
+    :param path_glob: path with * for file glob
+    :type path_glob: path
+    """
+
+    # trim year, tif and _ from names
+    trim_year =  lambda x: sub(r"\_{1,2}\d{4}\.tif$", "", x)
+    return sorted(unique( [trim_year(os.path.basename(string))
+                        for string in sorted(glob(path_glob)) ]))
+
+def find_variable_year(path_glob,digits=4, strp_glob = "%Y.tif"  ):
+    """Return all unique variables 4 digit years years from path glob
+
+    Example:
+    path_glob = f"{file_path}NDVI_MODIS/Meher_features/ndvi*.tif"
+    find_variable_names(path_glob)
+
+    :param path_glob: path with * for file glob
+    :type path_glob: path       
+    :param digits: number of digits used to store year
+    :type digits: int
+    :param strp_glob: strptime pattern with year format and file type
+    :type strp_glob: string
+    """
+
+    find_year = lambda x:  search(r"\d{"+str(digits)+"}\.tif", x).group(0)
+    return sorted(unique([datetime.strptime(find_year(os.path.basename(string)), strp_glob).strftime("%Y")
+                          for string in sorted(glob(path_glob))  ]))
+
 
 def downcast_pandas(data:DataFrame):
     """
