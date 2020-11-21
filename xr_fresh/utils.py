@@ -22,12 +22,14 @@ from sklearn.preprocessing import LabelEncoder
 import bz2
 import gzip
 from pandas import DataFrame,  to_numeric 
-
+import dill
 
 
 # 
 
-
+def bound(x,min=0,max=100):
+    return np.clip(x, a_min=min, a_max=max)
+    
 def unique(ls):
     return list(set(ls))
 
