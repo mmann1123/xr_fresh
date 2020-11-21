@@ -156,12 +156,14 @@ def add_categorical(data, labels=None, col:str =None, variable_name=None):
             if labels.dtypes[col] != np.int:
                 labels = labels.astype(float).astype(int)
             
-
-        labels = gw.polygon_to_array(labels, 
-                                    col=col, 
-                                    data=data,
-                                    band_name= [variable_name],
-                                    fill=0 )
+        with gw.config.update(  ref_res=data.res, 
+                                ref_bounds=data.gw.bounds): 
+        
+            label_grid = gw.polygon_to_array(labels, 
+                                        col=col, 
+                                        data=data,
+                                        band_name= [variable_name],
+                                        fill=0 )
 
 
         # problem with some int 8 
@@ -172,7 +174,7 @@ def add_categorical(data, labels=None, col:str =None, variable_name=None):
     if not data.gw.has_time_coord:
         data = data.assign_coords(time=1)  
 
-    category = concat([labels] * data.gw.ntime, dim='time')\
+    category = concat([label_grid] * data.gw.ntime, dim='time')\
                 .assign_coords({'time': data.time.values.tolist()})
     
     # avoid mismatched generated x y coords 
