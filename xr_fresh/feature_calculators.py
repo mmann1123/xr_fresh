@@ -534,8 +534,22 @@ def linear_time_trend(x, param="slope", dim='time', **kwargs):
     
     return out 
 
+# to do: vectorized linreg calc
+# possible example: 
 
+# ds = xr.open_dataset('sst_2D.nc', chunks={'X': 30, 'Y': 30})
+# def ulinregress(x, y): # the universal function
+#     ny, nx, nt = y.shape ; y = np.moveaxis(y, -1, 0).reshape((nt, -1)) # nt, ny*nx
+#     return np.linalg.lstsq(np.vstack([x, np.ones(nt)]).T, y)[0].T.reshape(ny, nx, 2)
+# time = (ds['time'] - np.datetime64("1950-01-01")) / np.timedelta64(1, 'D')
+# ab = xr.apply_ufunc(ulinregress, time, ds['sst'], dask='parallelized', 
+#                     input_core_dims=[['time'], ['time']], 
+#                     output_dtypes=['d'], output_sizes={'coef': 2, }, output_core_dims=[['coef']])
+# series = ds['sst'][:, 0, 0].load()
+# line = series.copy() ; line[:] = ab[0, 0, 0] * time + ab[0, 0, 1]
+# series.plot(label='Original') ; line.plot(label='Linear regression') ; plt.legend();
 
+# calculate R2 from SSR/SST https://365datascience.com/sum-squares/
 
 # from xclim https://github.com/Ouranosinc/xclim/blob/51123e0bbcaa5ad8882877f6905d9b285e63ddd9/xclim/run_length.py
 @set_property("fctype", "simple")
