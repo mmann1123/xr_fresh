@@ -150,40 +150,80 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">where</span>
+<span class="c1"># from numpy import where</span>
 <span class="kn">from</span> <span class="nn">xr_fresh</span> <span class="kn">import</span> <span class="n">feature_calculators</span>
 <span class="kn">from</span> <span class="nn">xr_fresh.utils</span> <span class="kn">import</span> <span class="n">xarray_to_rasterio</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">expanduser</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span> <span class="k">as</span> <span class="n">path_join</span>
-<span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">progress</span>
-<span class="kn">from</span> <span class="nn">dask.diagnostics</span> <span class="kn">import</span> <span class="n">ProgressBar</span>
+<span class="c1"># from os.path import expanduser</span>
+<span class="c1"># from os.path import join as path_join</span>
+<span class="c1"># from dask.distributed import progress</span>
+<span class="c1"># from dask.diagnostics import ProgressBar</span>
 
-<span class="c1"># _logger = logging.getLogger(__name__)</span>
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">where</span>
+<span class="k">def</span> <span class="nf">_exists</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+     <span class="k">return</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+
+    <span class="c1"># use of globals is problematic, applies to all </span>
+
+<span class="k">def</span> <span class="nf">_append_dict</span><span class="p">(</span><span class="n">join_dict</span><span class="p">,</span> <span class="n">string</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    creates strings from dictionary key and value pairs if dictionary exists </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">join_dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="s1">&#39;_&#39;</span> <span class="o">*</span> <span class="n">_exists</span><span class="p">(</span><span class="n">join_dict</span><span class="p">)</span> <span class="o">+</span> \
+                            <span class="n">string</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="nb">globals</span><span class="p">()[</span><span class="n">join_dict</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span> 
+                            <span class="k">if</span> <span class="n">_exists</span><span class="p">(</span><span class="n">join_dict</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span> <span class="p">])</span>
+    
 
 <span class="k">def</span> <span class="nf">_stringr</span><span class="p">(</span><span class="n">notstring</span><span class="p">):</span>    
     <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">notstring</span><span class="p">))</span>
 
+
 <span class="k">def</span> <span class="nf">_get_xr_attr</span><span class="p">(</span><span class="n">function_name</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">feature_calculators</span><span class="p">,</span>  <span class="n">function_name</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_month_subset</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="c1"># subset by month </span>
+        <span class="n">xr_data</span> <span class="o">=</span> <span class="n">xr_data</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="p">(</span><span class="n">xr_data</span><span class="p">[</span><span class="s1">&#39;time.month&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;start_month&#39;</span><span class="p">])</span> <span class="o">&amp;</span> 
+                                 <span class="p">(</span><span class="n">xr_data</span><span class="p">[</span><span class="s1">&#39;time.month&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;end_month&#39;</span><span class="p">])</span> <span class="p">,</span> 
+                                 <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="n">months</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="p">{</span><span class="s1">&#39;start_month&#39;</span><span class="p">,</span> <span class="s1">&#39;end_month&#39;</span><span class="p">}}</span> 
+        
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;end_month&#39;</span><span class="p">,</span> <span class="s1">&#39;start_month&#39;</span><span class="p">]:</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># remove unneeded args</span>
+
+        <span class="k">return</span> <span class="n">xr_data</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">months</span>    
+
 
 <span class="k">def</span> <span class="nf">_apply_fun_name</span><span class="p">(</span><span class="n">function_name</span><span class="p">,</span> <span class="n">xr_data</span><span class="p">,</span> <span class="n">band</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
     <span class="c1"># apply function for large objects lazy</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting:  &#39;</span><span class="o">+</span> <span class="n">function_name</span><span class="p">)</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">_get_xr_attr</span><span class="p">(</span><span class="n">function_name</span><span class="p">)(</span><span class="n">xr_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">),</span><span class="o">**</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
     
-    <span class="n">out</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">+</span> <span class="s2">&quot;__&quot;</span> <span class="o">+</span> <span class="n">function_name</span><span class="o">+</span><span class="s1">&#39;__&#39;</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span> 
+    <span class="k">global</span> <span class="n">months</span>  <span class="c1"># required to check if exists w _exists</span>
+
+    <span class="k">if</span> <span class="s1">&#39;start_month&#39;</span> <span class="ow">and</span> <span class="s1">&#39;end_month&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;subsetting to month bounds&#39;</span><span class="p">)</span>
+        <span class="n">xr_data</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">months</span> <span class="o">=</span> <span class="n">_month_subset</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+    
+ 
+    <span class="n">out</span> <span class="o">=</span> <span class="n">_get_xr_attr</span><span class="p">(</span><span class="n">function_name</span><span class="p">)(</span><span class="n">xr_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">),</span><span class="o">**</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>        
+    
+
+    <span class="k">if</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s1">&#39;linear_time_trend&#39;</span> <span class="ow">and</span> <span class="n">args</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;param&#39;</span><span class="p">:</span> <span class="s1">&#39;all&#39;</span><span class="p">}:</span>
+        <span class="c1">#handle exception for regression </span>
+        <span class="n">out</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">band</span> <span class="o">+</span> <span class="s2">&quot;__&quot;</span> <span class="o">+</span> <span class="n">function_name</span><span class="o">+</span><span class="s1">&#39;__&#39;</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="n">_append_dict</span><span class="p">(</span><span class="n">join_dict</span><span class="o">=</span><span class="s1">&#39;months&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;intercept&#39;</span>  <span class="p">,</span> <span class="s1">&#39;slope&#39;</span><span class="p">,</span><span class="s1">&#39;pvalue&#39;</span><span class="p">,</span><span class="s1">&#39;rvalue&#39;</span><span class="p">]]</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="c1"># out.coords[&#39;variable&#39;] = band + &quot;__&quot; + function_name+&#39;_&#39;   + _append_dict(join_dict=&#39;args&#39;) + _append_dict(join_dict=&#39;months&#39;)             </span>
+        <span class="n">out</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">+</span> <span class="s2">&quot;__&quot;</span> <span class="o">+</span> <span class="n">function_name</span><span class="o">+</span><span class="s1">&#39;_&#39;</span>   <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span> <span class="o">+</span> <span class="n">_append_dict</span><span class="p">(</span><span class="n">join_dict</span><span class="o">=</span><span class="s1">&#39;months&#39;</span><span class="p">)</span>             
+
     <span class="k">return</span> <span class="n">out</span>
-  
 
-<span class="c1"># def _apply_fun_name_persist(function_name, xr_data, band, args):</span>
-
-<span class="c1">#     # apply function for small objects persist </span>
-<span class="c1">#     out = _get_xr_attr(function_name)(xr_data.sel(band=band).persist(),  **args).compute() #num_workers=workers)</span>
-<span class="c1">#     out.coords[&#39;variable&#39;] = band + &quot;__&quot; + function_name+&#39;__&#39; +&#39;_&#39;.join(map(str, chain.from_iterable(args.items()))) </span>
-<span class="c1">#     return out</span>
 
 
 <span class="k">def</span> <span class="nf">check_dictionary</span><span class="p">(</span><span class="n">arguments</span><span class="p">):</span>
@@ -210,6 +250,8 @@
 
 <span class="sd">    &gt;&gt;&gt;  f_dict = { &#39;maximum&#39;:[{}] ,  </span>
 <span class="sd">                   &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;},{&#39;q&#39;:&#39;0.95&#39;}]}</span>
+<span class="sd">    &gt;&gt;&gt;  f_dict2 = { &#39;maximum&#39;:[{}] ,  </span>
+<span class="sd">                   &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;, &#39;start_month&#39;:1, &#39;end_month&#39;:6}]}</span>
 <span class="sd">    &gt;&gt;&gt;  features = extract_features(xr_data=ds,</span>
 <span class="sd">    &gt;&gt;&gt;                     feature_dict=f_dict,</span>
 <span class="sd">    &gt;&gt;&gt;                     band=&#39;aet&#39;, </span>
@@ -219,7 +261,7 @@
 <span class="sd">    :type xr_data: xarray.DataArray</span>
 
 <span class="sd">    :param feature_dict: mapping from feature calculator names to parameters. Only those names</span>
-<span class="sd">           which are keys in this dict will be calculated. See example above. </span>
+<span class="sd">           which are keys in this dict will be calculated. See examples above. </span>
 <span class="sd">    :type feature_dict: dict</span>
 
 <span class="sd">    :param band: The name of the variable to create feature for.</span>
@@ -266,23 +308,22 @@
                             <span class="n">band</span><span class="o">=</span> <span class="n">band</span><span class="p">,</span> 
                             <span class="n">args</span><span class="o">=</span> <span class="n">arg</span><span class="p">)</span>
                                     <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
-                
+            
             <span class="n">feature</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span> <span class="n">feature</span> <span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
 
-            <span class="n">feature</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">match_data</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span>  
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span> <span class="s1">&#39;gw&#39;</span><span class="p">):</span>
+                <span class="n">feature</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">match_data</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span>  
                                     <span class="n">band_names</span><span class="o">=</span>  <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
             
-            <span class="n">out</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">out</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">imshow</span><span class="p">()</span>
+            <span class="c1"># out = feature[0]</span>
+            <span class="c1"># out.gw.imshow()</span>
             
             <span class="n">xarray_to_rasterio</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">filepath</span> <span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="n">postfix</span> <span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">persist</span><span class="p">:</span>
-            <span class="n">xr_data</span> <span class="o">=</span> <span class="n">xr_data</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
-
+            
         <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">_apply_fun_name</span><span class="p">(</span><span class="n">function_name</span> <span class="o">=</span> <span class="n">func</span><span class="p">,</span>
                         <span class="n">xr_data</span><span class="o">=</span><span class="n">xr_data</span> <span class="p">,</span>
                         <span class="n">band</span><span class="o">=</span> <span class="n">band</span><span class="p">,</span> 
@@ -292,12 +333,11 @@
         
         
         <span class="n">features</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span> <span class="n">features</span> <span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
-        
-        <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">match_data</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span>  
-                                    <span class="n">band_names</span><span class="o">=</span>  <span class="n">features</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">out</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">imshow</span><span class="p">()</span>
-        
+       
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span> <span class="s1">&#39;gw&#39;</span><span class="p">):</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">match_data</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span>  
+                                    <span class="n">band_names</span><span class="o">=</span>  <span class="n">features</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>  <span class="c1"># place postfix here? or time assigned by dim?</span>
+
         <span class="k">return</span> <span class="n">features</span> </div>
 
 

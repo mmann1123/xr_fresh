@@ -185,7 +185,7 @@
 <span class="sd">        &gt;&gt;&gt;                   processes=False)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; # Task with little need of the GIL with 16 nodes</span>
-<span class="sd">        &gt;&gt;&gt; cluster = Cluster(n_workers=2,</span>
+<span class="sd">        &gt;&gt;&gt; cluster = Cluster(n_workers=1,</span>
 <span class="sd">        &gt;&gt;&gt;                   threads_per_worker=8,</span>
 <span class="sd">        &gt;&gt;&gt;                   scheduler_port=0,</span>
 <span class="sd">        &gt;&gt;&gt;                   processes=False)</span>
@@ -260,8 +260,8 @@
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;export MKL_NUM_THREADS=1&#39;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;export OPENBLAS_NUM_THREADS=1&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">cluster</span> <span class="o">=</span> <span class="n">LocalCluster</span><span class="p">(</span><span class="c1">#n_workers=3,</span>
-            <span class="c1">#threads_per_worker=4,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster</span> <span class="o">=</span> <span class="n">LocalCluster</span><span class="p">(</span><span class="n">n_workers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">processes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster</span><span class="p">)</span>

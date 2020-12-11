@@ -169,6 +169,8 @@
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">f_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;maximum&#39;</span><span class="p">:[{}]</span> <span class="p">,</span>
 <span class="go">               &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;},{&#39;q&#39;:&#39;0.95&#39;}]}</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="n">f_dict2</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;maximum&#39;</span><span class="p">:[{}]</span> <span class="p">,</span>
+<span class="go">               &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;, &#39;start_month&#39;:1, &#39;end_month&#39;:6}]}</span>
 <span class="gp">&gt;&gt;&gt; </span> <span class="n">features</span> <span class="o">=</span> <span class="n">extract_features</span><span class="p">(</span><span class="n">xr_data</span><span class="o">=</span><span class="n">ds</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                    <span class="n">feature_dict</span><span class="o">=</span><span class="n">f_dict</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                    <span class="n">band</span><span class="o">=</span><span class="s1">&#39;aet&#39;</span><span class="p">,</span>
@@ -180,7 +182,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xr_data</strong> (<em>xarray.DataArray</em>) – The xarray.DataArray with a time series of rasters to compute the features for.</p></li>
 <li><p><strong>feature_dict</strong> (<em>dict</em>) – mapping from feature calculator names to parameters. Only those names
-which are keys in this dict will be calculated. See example above.</p></li>
+which are keys in this dict will be calculated. See examples above.</p></li>
 <li><p><strong>band</strong> (<em>str</em>) – The name of the variable to create feature for.</p></li>
 <li><p><strong>na_rm</strong> (<em>bool</em>) – If True (default), all missing values are masked using .attrs[‘nodatavals’]</p></li>
 <li><p><strong>filepath</strong> (<em>str</em>) – If not none, assuming xarrays being used, writes each feature to filepath</p></li>

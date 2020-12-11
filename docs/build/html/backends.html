@@ -198,7 +198,7 @@ Otherwise, maybe go for only two threads in a process.”
 <span class="gp">&gt;&gt;&gt; </span>                  <span class="n">processes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Task with little need of the GIL with 16 nodes</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cluster</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">n_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cluster</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">n_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                  <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                  <span class="n">scheduler_port</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                  <span class="n">processes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -219,10 +219,10 @@ vs. processes.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#xr_fresh.backends.Cluster.start_large_IO_object" title="xr_fresh.backends.Cluster.start_large_IO_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start_large_IO_object</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xr_fresh.backends.Cluster.start_large_IO_object" title="xr_fresh.backends.Cluster.start_large_IO_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start_large_IO_object</span></code></a>(self)</p></td>
 <td><p>Using few processes and many threads per process is good if you are doing mostly numeric workloads, such as are common in Numpy, Pandas, and Scikit-Learn code, which is not affected by Python’s Global Interpreter Lock (GIL).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.backends.Cluster.start_large_object" title="xr_fresh.backends.Cluster.start_large_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start_large_object</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.backends.Cluster.start_large_object" title="xr_fresh.backends.Cluster.start_large_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start_large_object</span></code></a>(self)</p></td>
 <td><p>Using few processes and many threads per process is good if you are doing mostly numeric workloads, such as are common in Numpy, Pandas, and Scikit-Learn code, which is not affected by Python’s Global Interpreter Lock (GIL).</p></td>
 </tr>
 </tbody>
@@ -249,7 +249,7 @@ vs. processes.</p>
 </table>
 <dl class="py method">
 <dt id="xr_fresh.backends.Cluster.start_large_IO_object">
-<code class="sig-name descname">start_large_IO_object</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/backends.html#Cluster.start_large_IO_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.backends.Cluster.start_large_IO_object" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">start_large_IO_object</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/backends.html#Cluster.start_large_IO_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.backends.Cluster.start_large_IO_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Using few processes and many threads per process is good if you are doing mostly
 numeric workloads, such as are common in Numpy, Pandas, and Scikit-Learn code,
 which is not affected by Python’s Global Interpreter Lock (GIL).
@@ -258,7 +258,7 @@ Rasterio also releases GIL <a class="reference external" href="https://rasterio.
 
 <dl class="py method">
 <dt id="xr_fresh.backends.Cluster.start_large_object">
-<code class="sig-name descname">start_large_object</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/backends.html#Cluster.start_large_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.backends.Cluster.start_large_object" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">start_large_object</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/backends.html#Cluster.start_large_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.backends.Cluster.start_large_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Using few processes and many threads per process is good if you are doing mostly
 numeric workloads, such as are common in Numpy, Pandas, and Scikit-Learn code,
 which is not affected by Python’s Global Interpreter Lock (GIL).

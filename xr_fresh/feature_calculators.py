@@ -733,7 +733,7 @@ def mean_change(X , dim='time', **kwargs):
     
     .. math::
     
-    \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
+        \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
     
     :param X: the time series to calculate the feature of
     :type X: xarray.DataArray
