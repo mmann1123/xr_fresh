@@ -163,7 +163,7 @@ def add_categorical(data, labels=None, col =None, variable_name=None, missing_va
         label_grid = gw.polygon_to_array(labels, 
                                         col=col, 
                                         data=data, 
-                                        dtype=np.int16,
+                                        dtype=np.int32,
                                         band_name=[variable_name], 
                                         fill=missing_value,
                                         src_res=data)
