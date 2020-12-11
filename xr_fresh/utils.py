@@ -22,12 +22,11 @@ from sklearn.preprocessing import LabelEncoder
 import bz2
 import gzip
 from pandas import DataFrame,  to_numeric 
-import dill
+#import dill
 from re import sub, search
 from glob import glob
 from datetime import datetime
-
-# 
+  
 
 def bound(x,min=0,max=100):
     return np.clip(x, a_min=min, a_max=max)
@@ -62,7 +61,7 @@ def add_time_targets(data, target, target_col_list=None, target_name='target', m
     :param target_name: single name assigned to target data dimension. Default is 'target'
     :type target_name:  str   
     :param missing_value: missing value for pixels not overlapping polygon or points 
-    :type missing_value:  str
+    :type missing_value:  int
     :param append_to_X: should the target data be appended to the far right of other X variables. Default is False.
     :type append_to_X:  bool              
     """
@@ -79,17 +78,19 @@ def add_time_targets(data, target, target_col_list=None, target_name='target', m
             
             if target.dtypes[t] == np.object:
                 le = LabelEncoder()
-                print(target.dtypes[t])
                 target[t] = le.fit_transform(target[t])
                 #classes = le.fit(target[col]).classes_    
-                print('Polygon Columns: Transformed with le.fit_transform(target[col])')
-            
+                print('Transformed with le.fit_transform(target[col])')
+            print('Adding target:%s with type: %s' % (t, target.dtypes[t]))
+            print('Missing values: %s' % missing_value)
+
             target_array = gw.polygon_to_array(target, 
                                                 col=t, 
                                                 data=data,
                                                 fill=missing_value,
                                                 dtype=target.dtypes[t],
-                                                band_name=[target_name]) 
+                                                band_name=[target_name],
+                                                src_res=data) 
 
             # avoid mismatched generated x y coords 
             if not(np.all(data.x.values == target_array.x.values) & np.all(data.y.values == target_array.y.values)):
@@ -109,7 +110,7 @@ def add_time_targets(data, target, target_col_list=None, target_name='target', m
 
 
 
-def add_categorical(data, labels=None, col:str =None, variable_name=None):
+def add_categorical(data, labels=None, col =None, variable_name=None, missing_value = -9999):
     """
     Adds categorical data to xarray by column name.
 
@@ -133,13 +134,14 @@ def add_categorical(data, labels=None, col:str =None, variable_name=None):
     :type col:  str 
     :param variable_name: name assigned to categorical data 
     :type variable_name:  str   
-    
+    :param missing_value: missing value for pixels not overlapping polygon or points 
+    :type missing_value:  int
     """
 
     if not isinstance(labels, DataArray):
 
         if variable_name is None:
-            variable_name = col
+            variable_name = [col]
 
         if col is None:
             labels = gw.polygon_to_array(labels,  data=data)
@@ -151,20 +153,20 @@ def add_categorical(data, labels=None, col:str =None, variable_name=None):
                 le = LabelEncoder()
                 labels[col] = le.fit_transform(labels[col]) + 1 #avoid 0 its a missing value
                 # classes = le.fit(labels[col]).classes_ + 1   
-                print('Polygon Columns: Transformed with le.fit_transform(labels[col])')
-            
+                print('Adding categorical: Transformed with le.fit_transform(target[col])')
+
             if labels.dtypes[col] != np.int:
                 labels = labels.astype(float).astype(int)
-            
-        with gw.config.update(  ref_res=data.res, 
-                                ref_bounds=data.gw.bounds): 
-        
-            label_grid = gw.polygon_to_array(labels, 
-                                        col=col, 
-                                        data=data,
-                                        band_name= [variable_name],
-                                        fill=0 )
 
+        print('Missing values: %s' % missing_value)            
+    
+        label_grid = gw.polygon_to_array(labels, 
+                                        col=col, 
+                                        data=data, 
+                                        dtype=np.int16,
+                                        band_name=[variable_name], 
+                                        fill=missing_value,
+                                        src_res=data)
 
         # problem with some int 8 
         #labels = labels.astype(float).astype(int) # avoid invalid literal for int
@@ -243,7 +245,7 @@ def find_variable_year(path_glob,digits=4, strp_glob = "%Y.tif"  ):
                           for string in sorted(glob(path_glob))  ]))
 
 
-def downcast_pandas(data:DataFrame):
+def downcast_pandas(data):
     """
     Dtype cast to smallest numerical dtype possible for pandas dataframes.
     Saves considerable space. 
