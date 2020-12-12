@@ -155,15 +155,22 @@ def add_categorical(data, labels=None, col =None, variable_name=None, missing_va
                 # classes = le.fit(labels[col]).classes_ + 1   
                 print('Adding categorical: Transformed with le.fit_transform(target[col])')
 
-            if labels.dtypes[col] != np.int:
-                labels = labels.astype(float).astype(int)
+            # downcast to smallest datatype 
+            labels[col] = downcast_pandas(labels)[col]
+
+            if labels.dtypes[col] == np.int64:
+                # int64 not available in gw
+                labels[col] = labels[col].astype('float32')
+                out_type = np.float32
+            else:
+                out_type = labels.dtypes[col]
 
         print('Missing values: %s' % missing_value)            
-    
+
         label_grid = gw.polygon_to_array(labels, 
                                         col=col, 
                                         data=data, 
-                                        dtype=np.int32,
+                                        dtype=out_type,
                                         band_name=[variable_name], 
                                         fill=missing_value,
                                         src_res=data)
