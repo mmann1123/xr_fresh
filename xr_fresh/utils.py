@@ -132,6 +132,29 @@ def add_time_targets(
     return data
 
 
+def _assign_concat2band(data, label_grid):
+
+    # TODO: is this sufficient for single dates?
+    if not data.gw.has_time_coord:
+        data = data.assign_coords(time=1)
+
+    category = concat([label_grid] * data.gw.ntime, dim="time").assign_coords(
+        {"time": data.time.values.tolist()}
+    )
+
+    # avoid mismatched generated x y coords
+    if np.all(data.x.values == category.x.values) & np.all(
+        data.y.values == category.y.values
+    ):
+        data = concat([data, category], dim="band")
+
+    else:
+        category = category.assign_coords({"x": data.x.values, "y": data.y.values})
+        data = concat([data, category], dim="band")
+
+    return data
+
+
 def add_categorical(
     data, labels=None, col=None, variable_name=None, missing_value=-9999
 ):
@@ -209,6 +232,7 @@ def add_categorical(
 
         # problem with some int 8
         # labels = labels.astype(float).astype(int) # avoid invalid literal for int
+        data = _assign_concat2band(data, label_grid)
 
     elif not isinstance(labels, DataArray):
         with gw.config.update(
@@ -223,35 +247,11 @@ def add_categorical(
                 nodata=missing_value,
             ).data
 
-            print(label_grid)
-
-            # category = xr.concat(
-            #     [label_grid] * data.gw.ntime, dim="time"
-            # ).assign_coords({"time": data.time.values.tolist()})
-            # category = category.assign_coords({"x": data.x.values, "y": data.y.values})
-            # data = xr.concat([data, category], dim="band")
-            # print(data)
+        data = _assign_concat2band(data, label_grid)
 
     else:
         label_grid = labels
-
-    # TODO: is this sufficient for single dates?
-    if not data.gw.has_time_coord:
-        data = data.assign_coords(time=1)
-
-    category = concat([label_grid] * data.gw.ntime, dim="time").assign_coords(
-        {"time": data.time.values.tolist()}
-    )
-
-    # avoid mismatched generated x y coords
-    if np.all(data.x.values == category.x.values) & np.all(
-        data.y.values == category.y.values
-    ):
-        data = concat([data, category], dim="band")
-
-    else:
-        category = category.assign_coords({"x": data.x.values, "y": data.y.values})
-        data = concat([data, category], dim="band")
+        data = _assign_concat2band(data, label_grid)
 
     return data
 
