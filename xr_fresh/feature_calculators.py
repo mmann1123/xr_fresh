@@ -1,8 +1,9 @@
 import numpy as np
 import xarray as xr
-from  bottleneck import rankdata
-#from xskillscore import pearson_r, pearson_r_p_value
-#from xclim import run_length as rl
+from bottleneck import rankdata
+
+# from xskillscore import pearson_r, pearson_r_p_value
+# from xclim import run_length as rl
 from typing import Sequence
 from typing import Tuple
 from typing import Union
@@ -14,10 +15,18 @@ from scipy.stats import skew
 from scipy import special
 from scipy.stats import kurtosis as kt
 from scipy.stats import kendalltau
-from bottleneck import nanmean, nanmedian, nansum, nanstd, nanvar, ss, allnan # nanmin, nanmax,anynan, 
-#from numba import jit, njit
-from numba import float64, float32, int32, int16, guvectorize, int64, void
+from bottleneck import (
+    nanmean,
+    nanmedian,
+    nansum,
+    nanstd,
+    nanvar,
+    ss,
+    allnan,
+)  # nanmin, nanmax,anynan,
 
+# from numba import jit, njit
+from numba import float64, float32, int32, int16, guvectorize, int64, void
 
 
 logging.captureWarnings(True)
@@ -27,16 +36,20 @@ def set_property(key, value):
     """
     This method returns a decorator that sets the property key of the function to value
     """
+
     def decorate_func(func):
         setattr(func, key, value)
         if func.__doc__ and key == "fctype":
-            func.__doc__ = func.__doc__ + "\n\n    *This function is of type: " + value + "*\n"
+            func.__doc__ = (
+                func.__doc__ + "\n\n    *This function is of type: " + value + "*\n"
+            )
         return func
+
     return decorate_func
 
 
 @set_property("fctype", "ufunc")
-def abs_energy(X,dim='time', **kwargs):
+def abs_energy(X, dim="time", **kwargs):
     """
     Returns the absolute energy of the time series which is the sum over the squared values
 
@@ -50,27 +63,29 @@ def abs_energy(X,dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-        
-    return xr.apply_ufunc( lambda x: pow(x,2), X,
-                          dask='parallelized', 
-                          output_dtypes=[float],
-                          keep_attrs= True ).sum(dim)
 
+    return xr.apply_ufunc(
+        lambda x: pow(x, 2),
+        X,
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    ).sum(dim)
 
 
 def _abs_energy(x):
 
-    return __abs_energy(x) 
+    return __abs_energy(x)
 
 
-@guvectorize([(float64[:], float64[:])], "(n) -> ()" , nopython=True )
-def __abs_energy(x, out): 
+@guvectorize([(float64[:], float64[:])], "(n) -> ()", nopython=True)
+def __abs_energy(x, out):
 
     out[:] = np.sum(np.square(x))
-    
-    
+
+
 @set_property("fctype", "simple")
-def _abs_energy_slower(x, dim='time', **kwargs):
+def _abs_energy_slower(x, dim="time", **kwargs):
     """
     Not as fast as regular abs energy Returns the absolute energy of the time series which is the sum over the squared values
 
@@ -84,17 +99,19 @@ def _abs_energy_slower(x, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
-    return  xr.apply_ufunc(_abs_energy, x,
-                            input_core_dims=[[dim]],
-                            dask='parallelized',
-                            output_dtypes=[float],
-                            keep_attrs= True) 
 
+    return xr.apply_ufunc(
+        _abs_energy,
+        x,
+        input_core_dims=[[dim]],
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "simple")
-def absolute_sum_of_changes(X, dim='time', **kwargs):
+def absolute_sum_of_changes(X, dim="time", **kwargs):
     """
     Returns the sum over the absolute value of consecutive changes in the series x
 
@@ -109,10 +126,10 @@ def absolute_sum_of_changes(X, dim='time', **kwargs):
     :return type: float
     """
     return np.abs(X.diff(dim)).sum(dim)
- 
+
 
 @set_property("fctype", "simple")
-def autocorr(X, lag=1, dim='time', return_p=True, **kwargs):
+def autocorr(X, lag=1, dim="time", return_p=True, **kwargs):
     """Calculate the lagged correlation of time series. Amended from xskillscore package
     Args:
         X (xarray object): Time series or grid of time series.
@@ -149,7 +166,7 @@ def autocorr(X, lag=1, dim='time', return_p=True, **kwargs):
 
 
 @set_property("fctype", "simple")
-def count_above_mean(X, dim='time', **kwargs):
+def count_above_mean(X, dim="time", **kwargs):
     """
     Returns the number of values in X that are higher than the mean of X
 
@@ -163,7 +180,7 @@ def count_above_mean(X, dim='time', **kwargs):
 
 
 @set_property("fctype", "simple")
-def count_below_mean(X, dim='time', **kwargs):
+def count_below_mean(X, dim="time", **kwargs):
     """
     Returns the number of values in X that are higher than the mean of X
 
@@ -176,7 +193,7 @@ def count_below_mean(X, dim='time', **kwargs):
     return ((X < X.mean(dim)).sum(dim)).astype(np.float64)
 
 
-def decorrelation_time(da, r=20, dim='time'):
+def decorrelation_time(da, r=20, dim="time"):
 
     """Calculate the decorrelaton time of a time series.
 https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html
@@ -200,12 +217,12 @@ https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html
     one = xr.ones_like(da.isel({dim: 0}))
     one = one.where(da.isel({dim: 0}).notnull())
     return one + 2 * xr.concat(
-        [autocorr(da, dim=dim, lag=i) ** i for i in range(1, r)], 'it'
-    ).sum('it')
+        [autocorr(da, dim=dim, lag=i) ** i for i in range(1, r)], "it"
+    ).sum("it")
 
 
 @set_property("fctype", "simple")
-def doy_of_maximum_last(x,dim='time', band ='NDVI', **kwargs):
+def doy_of_maximum_last(x, dim="time", band="NDVI", **kwargs):
     """
     Returns the last day of the year (doy) location of the maximum value of x.
     The position is calculated relatively to the length of x.
@@ -216,88 +233,30 @@ def doy_of_maximum_last(x,dim='time', band ='NDVI', **kwargs):
     :return type: int
     """
     # create doy array to match x
-    dates = np.array([int(to_datetime(i).strftime('%j')) for i in x[dim].values])
+    dates = np.array([int(to_datetime(i).strftime("%j")) for i in x[dim].values])
     shp = x.shape
-    dates = np.repeat(dates,shp[-1]*shp[-2]).reshape(-1,1,shp[-2],shp[-1])
+    dates = np.repeat(dates, shp[-1] * shp[-2]).reshape(-1, 1, shp[-2], shp[-1])
 
-    #create xarrary to match x for doy 
-    xr_dates = xr.DataArray(dates,  dims=['time','band', 'y', 'x'], coords={'time': x.time,'band':['doy'] ,'y':x.y,'x':x.x,} )
-    x = xr.concat([x ,xr_dates], dim='band')
+    # create xarrary to match x for doy
+    xr_dates = xr.DataArray(
+        dates,
+        dims=["time", "band", "y", "x"],
+        coords={"time": x.time, "band": ["doy"], "y": x.y, "x": x.x,},
+    )
+    x = xr.concat([x, xr_dates], dim="band")
 
     # remove all but maximum values
-    x_at_max = x.where(x.sel(band= band) == x.sel(band= band).max('time'))
-    
-    #change output band value to match others 
-    out = x_at_max.sel(band='doy').max('time')  
-    out.band.values = np.array(band, dtype='<U4')
+    x_at_max = x.where(x.sel(band=band) == x.sel(band=band).max("time"))
+
+    # change output band value to match others
+    out = x_at_max.sel(band="doy").max("time")
+    out.band.values = np.array(band, dtype="<U4")
 
     return out
 
 
 @set_property("fctype", "simple")
-def doy_of_maximum_first(x,dim='time', band ='ppt', **kwargs):
-    """
-    Returns the first day of the year (doy) location of the maximum value of x.
-    The position is calculated relatively to the length of x.
-
-    :param x: the time series to calculate the feature of
-    :type x:  xarray.DataArray
-    :return: the value of this feature
-    :return type: int
-    """
-    
-    # create doy array to match x
-    dates = np.array([int(to_datetime(i).strftime('%j')) for i in x[dim].values])
-    shp = x.shape
-    dates = np.repeat(dates,shp[-1]*shp[-2]).reshape(-1,1,shp[-2],shp[-1])
-
-    #create xarrary to match x for doy 
-    xr_dates = xr.DataArray(dates,  dims=['time','band', 'y', 'x'], coords={'time': x.time,'band':['doy'] ,'y':x.y,'x':x.x,} )
-    x = xr.concat([x ,xr_dates], dim='band')
-
-    # remove all but maximum values
-    x_at_max = x.where(x.sel(band= band) == x.sel(band= band).max('time'))
-
-    #change output band value to match others 
-    out =   x_at_max.sel(band='doy').min('time') 
-    out.band.values = np.array(band, dtype='<U4')
-    
-    return out
-
-
-@set_property("fctype", "simple")
-def doy_of_minimum_last(x,dim='time', band ='ppt', **kwargs):
-    """
-    Returns the last day of the year (doy) location of the maximum value of x.
-    The position is calculated relatively to the length of x.
-
-    :param x: the time series to calculate the feature of
-    :type x:  xarray.DataArray
-    :return: the value of this feature
-    :return type: int
-    """
-
-    # create doy array to match x
-    dates = np.array([int(to_datetime(i).strftime('%j')) for i in x[dim].values])
-    shp = x.shape
-    dates = np.repeat(dates,shp[-1]*shp[-2]).reshape(-1,1,shp[-2],shp[-1])
-
-    #create xarrary to match x for doy 
-    xr_dates = xr.DataArray(dates,  dims=['time','band', 'y', 'x'], coords={'time': x.time,'band':['doy'] ,'y':x.y,'x':x.x,} )
-    x = xr.concat([x ,xr_dates], dim='band')
-
-    # remove all but maximum values
-    x_at_min = x.where(x.sel(band= band) == x.sel(band= band).min('time'))
-
-    #change output band value to match others 
-    out =  x_at_min.sel(band='doy').max('time') 
-    out.band.values = np.array(band, dtype='<U4')
-
-    return out
-
-
-@set_property("fctype", "simple")
-def doy_of_minimum_first(x,dim='time', band ='ppt', **kwargs):
+def doy_of_maximum_first(x, dim="time", band="ppt", **kwargs):
     """
     Returns the first day of the year (doy) location of the maximum value of x.
     The position is calculated relatively to the length of x.
@@ -309,26 +268,100 @@ def doy_of_minimum_first(x,dim='time', band ='ppt', **kwargs):
     """
 
     # create doy array to match x
-    dates = np.array([int(to_datetime(i).strftime('%j')) for i in x[dim].values])
+    dates = np.array([int(to_datetime(i).strftime("%j")) for i in x[dim].values])
     shp = x.shape
-    dates = np.repeat(dates,shp[-1]*shp[-2]).reshape(-1,1,shp[-2],shp[-1])
+    dates = np.repeat(dates, shp[-1] * shp[-2]).reshape(-1, 1, shp[-2], shp[-1])
 
-    #create xarrary to match x for doy 
-    xr_dates = xr.DataArray(dates,  dims=['time','band', 'y', 'x'], coords={'time': x.time,'band':['doy'] ,'y':x.y,'x':x.x,} )
-    x = xr.concat([x ,xr_dates], dim='band')
+    # create xarrary to match x for doy
+    xr_dates = xr.DataArray(
+        dates,
+        dims=["time", "band", "y", "x"],
+        coords={"time": x.time, "band": ["doy"], "y": x.y, "x": x.x,},
+    )
+    x = xr.concat([x, xr_dates], dim="band")
 
     # remove all but maximum values
-    x_at_min = x.where(x.sel(band= band) == x.sel(band= band).min('time'))
+    x_at_max = x.where(x.sel(band=band) == x.sel(band=band).max("time"))
 
-    #change output band value to match others 
-    out = x_at_min.sel(band='doy').min('time') 
-    out.band.values = np.array(band, dtype='<U4')
+    # change output band value to match others
+    out = x_at_max.sel(band="doy").min("time")
+    out.band.values = np.array(band, dtype="<U4")
 
     return out
-    
+
 
 @set_property("fctype", "simple")
-def _k_cor(x,y, pthres = 0.05, direction = True, **kwargs):
+def doy_of_minimum_last(x, dim="time", band="ppt", **kwargs):
+    """
+    Returns the last day of the year (doy) location of the maximum value of x.
+    The position is calculated relatively to the length of x.
+
+    :param x: the time series to calculate the feature of
+    :type x:  xarray.DataArray
+    :return: the value of this feature
+    :return type: int
+    """
+
+    # create doy array to match x
+    dates = np.array([int(to_datetime(i).strftime("%j")) for i in x[dim].values])
+    shp = x.shape
+    dates = np.repeat(dates, shp[-1] * shp[-2]).reshape(-1, 1, shp[-2], shp[-1])
+
+    # create xarrary to match x for doy
+    xr_dates = xr.DataArray(
+        dates,
+        dims=["time", "band", "y", "x"],
+        coords={"time": x.time, "band": ["doy"], "y": x.y, "x": x.x,},
+    )
+    x = xr.concat([x, xr_dates], dim="band")
+
+    # remove all but maximum values
+    x_at_min = x.where(x.sel(band=band) == x.sel(band=band).min("time"))
+
+    # change output band value to match others
+    out = x_at_min.sel(band="doy").max("time")
+    out.band.values = np.array(band, dtype="<U4")
+
+    return out
+
+
+@set_property("fctype", "simple")
+def doy_of_minimum_first(x, dim="time", band="ppt", **kwargs):
+    """
+    Returns the first day of the year (doy) location of the maximum value of x.
+    The position is calculated relatively to the length of x.
+
+    :param x: the time series to calculate the feature of
+    :type x:  xarray.DataArray
+    :return: the value of this feature
+    :return type: int
+    """
+
+    # create doy array to match x
+    dates = np.array([int(to_datetime(i).strftime("%j")) for i in x[dim].values])
+    shp = x.shape
+    dates = np.repeat(dates, shp[-1] * shp[-2]).reshape(-1, 1, shp[-2], shp[-1])
+
+    # create xarrary to match x for doy
+    xr_dates = xr.DataArray(
+        dates,
+        dims=["time", "band", "y", "x"],
+        coords={"time": x.time, "band": ["doy"], "y": x.y, "x": x.x,},
+    )
+    x = xr.concat([x, xr_dates], dim="band")
+
+    # remove all but maximum values
+    x_at_min = x.where(x.sel(band=band) == x.sel(band=band).min("time"))
+
+    # change output band value to match others
+    out = x_at_min.sel(band="doy").min("time")
+    out.band.values = np.array(band, dtype="<U4")
+
+    return out
+
+
+@set_property("fctype", "simple")
+def _k_cor(x, y, pthres=0.05, direction=True, **kwargs):
     """
     Uses the scipy stats module to calculate a Kendall correlation test
     :x vector: Input pixel vector to run tests on
@@ -338,10 +371,10 @@ def _k_cor(x,y, pthres = 0.05, direction = True, **kwargs):
     """
     # Check NA values
     co = np.count_nonzero(~np.isnan(x))
-    if co < 4: # If fewer than 4 observations return -9999
+    if co < 4:  # If fewer than 4 observations return -9999
         return -9999
     # Run the kendalltau test
-    tau, p_value =  kendalltau(x, y)
+    tau, p_value = kendalltau(x, y)
 
     # Criterium to return results in case of Significance
     if p_value < pthres:
@@ -354,11 +387,11 @@ def _k_cor(x,y, pthres = 0.05, direction = True, **kwargs):
         else:
             return tau
     else:
-      return 0  
+        return 0
 
 
 @set_property("fctype", "ufunc")
-def kendall_time_correlation(X, dim='time', direction = True, **kwargs):
+def kendall_time_correlation(X, dim="time", direction=True, **kwargs):
     """
     Returns the significance of a kendall tau test across all time periods in x.
     
@@ -377,21 +410,24 @@ def kendall_time_correlation(X, dim='time', direction = True, **kwargs):
     # The function we are going to use for applying our kendal test per pixel
 
     # x = Pixel value, y = a vector containing the date, dim == dimension
-    
-    y = xr.DataArray(np.arange(len(X[dim]))+1, dims=dim,
-                 coords={dim: X[dim]})  
-     
-    return xr.apply_ufunc( _k_cor, X , y,
-                            input_core_dims=[[dim], [dim]],
-                            kwargs={'direction':direction},
-                            vectorize=True,  
-                            dask='parallelized',
-                            output_dtypes=[float],
-                            keep_attrs= True)
+
+    y = xr.DataArray(np.arange(len(X[dim])) + 1, dims=dim, coords={dim: X[dim]})
+
+    return xr.apply_ufunc(
+        _k_cor,
+        X,
+        y,
+        input_core_dims=[[dim], [dim]],
+        kwargs={"direction": direction},
+        vectorize=True,
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "ufunc")
-def kurtosis(X, dim='time', fisher=False, **kwargs):
+def kurtosis(X, dim="time", fisher=False, **kwargs):
 
     """
     Returns the kurtosis of X (calculated with the adjusted Fisher-Pearson standardized
@@ -405,17 +441,20 @@ def kurtosis(X, dim='time', fisher=False, **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
-    return xr.apply_ufunc(kt, X,
-                            input_core_dims=[[dim]],
-                            kwargs={'axis': -1,'fisher':fisher,'nan_policy':'omit'},
-                            dask='parallelized',
-                            output_dtypes=[float],
-                            keep_attrs= True )
+
+    return xr.apply_ufunc(
+        kt,
+        X,
+        input_core_dims=[[dim]],
+        kwargs={"axis": -1, "fisher": fisher, "nan_policy": "omit"},
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "simple")
-def large_standard_deviation(X, r=2, dim='time', **kwargs):
+def large_standard_deviation(X, r=2, dim="time", **kwargs):
     """
     Boolean variable denoting if the standard dev of x is higher
     than 'r' times the range = difference between max and min of x.
@@ -434,12 +473,12 @@ def large_standard_deviation(X, r=2, dim='time', **kwargs):
     :return: the value of this feature
     :return type: bool
     """
-    
+
     return (X.std(dim) > (r * (X.max(dim) - X.min(dim)))).astype(np.float64)
 
 
 @set_property("fctype", "ufunc")
-def length(X, dim='time', **kwargs):
+def length(X, dim="time", **kwargs):
     """
     Returns the mean of X
 
@@ -448,44 +487,49 @@ def length(X, dim='time', **kwargs):
     :return: the value of this feature
     :return type: floatde
     """
-    return xr.apply_ufunc(np.size, X,
-                           input_core_dims=[[dim]],
-                           kwargs={ 'axis': -1},
-                           vectorize=True,
-                           dask='parallelized',
-                           output_dtypes=[np.float64],
-                           keep_attrs= True )
+    return xr.apply_ufunc(
+        np.size,
+        X,
+        input_core_dims=[[dim]],
+        kwargs={"axis": -1},
+        vectorize=True,
+        dask="parallelized",
+        output_dtypes=[np.float64],
+        keep_attrs=True,
+    )
 
 
 def _timereg(Y, t, param):
-    
+
     # avoid all missing
     if allnan(Y):
-        if param != 'all':
+        if param != "all":
             return np.NaN
         else:
-            
-            return np.stack((np.NaN,
-                             np.NaN,
-                             np.NaN,
-                             np.NaN), axis=-1)
-        
-    else:                        
+
+            return np.stack((np.NaN, np.NaN, np.NaN, np.NaN), axis=-1)
+
+    else:
         mask = ~np.isnan(t) & ~np.isnan(Y)
         linReg = linregress(x=t[mask], y=Y[mask])
-    
-        if param != 'all':
-            return getattr(linReg, param)     
-        
+
+        if param != "all":
+            return getattr(linReg, param)
+
         else:
-            return np.stack((getattr(linReg, 'intercept'),
-                             getattr(linReg, 'slope'),
-                             getattr(linReg, 'pvalue'),
-                             getattr(linReg, 'rvalue') ), axis=-1)
-        
-        
+            return np.stack(
+                (
+                    getattr(linReg, "intercept"),
+                    getattr(linReg, "slope"),
+                    getattr(linReg, "pvalue"),
+                    getattr(linReg, "rvalue"),
+                ),
+                axis=-1,
+            )
+
+
 @set_property("fctype", "ufunc")
-def linear_time_trend(x, param="slope", dim='time', **kwargs):
+def linear_time_trend(x, param="slope", dim="time", **kwargs):
 
     """
     # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
@@ -505,45 +549,55 @@ def linear_time_trend(x, param="slope", dim='time', **kwargs):
     :return: the value of this feature
     :return type: int
     """
-            
-    t = xr.DataArray(np.arange(len(x[dim]))+1, dims=dim,
-            coords={dim: x[dim]})
-    
-    
-    if param == 'all':
-        
-        out = xr.apply_ufunc( _timereg, x , t,
-                                input_core_dims=[[dim], [dim]],
-                                kwargs={ 'param':param},
-                                vectorize=True,  
-                                dask='parallelized',
-                                output_dtypes=[float],
-                                output_core_dims= [["variable"]],
-                                output_sizes={"variable": 4},
-                                keep_attrs= True 
-                                ).to_dataset(dim='variable').to_array()    
+
+    t = xr.DataArray(np.arange(len(x[dim])) + 1, dims=dim, coords={dim: x[dim]})
+
+    if param == "all":
+
+        out = (
+            xr.apply_ufunc(
+                _timereg,
+                x,
+                t,
+                input_core_dims=[[dim], [dim]],
+                kwargs={"param": param},
+                vectorize=True,
+                dask="parallelized",
+                output_dtypes=[float],
+                output_core_dims=[["variable"]],
+                output_sizes={"variable": 4},
+                keep_attrs=True,
+            )
+            .to_dataset(dim="variable")
+            .to_array()
+        )
     else:
-      
-        out = xr.apply_ufunc( _timereg, x , t,
-                              input_core_dims=[[dim], [dim]],
-                              kwargs={ 'param':param},
-                              vectorize=True,  
-                              dask='parallelized',
-                              output_dtypes=[float],
-                              keep_attrs= True)
-    
-    return out 
+
+        out = xr.apply_ufunc(
+            _timereg,
+            x,
+            t,
+            input_core_dims=[[dim], [dim]],
+            kwargs={"param": param},
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[float],
+            keep_attrs=True,
+        )
+
+    return out
+
 
 # to do: vectorized linreg calc
-# possible example: 
+# possible example:
 
 # ds = xr.open_dataset('sst_2D.nc', chunks={'X': 30, 'Y': 30})
 # def ulinregress(x, y): # the universal function
 #     ny, nx, nt = y.shape ; y = np.moveaxis(y, -1, 0).reshape((nt, -1)) # nt, ny*nx
 #     return np.linalg.lstsq(np.vstack([x, np.ones(nt)]).T, y)[0].T.reshape(ny, nx, 2)
 # time = (ds['time'] - np.datetime64("1950-01-01")) / np.timedelta64(1, 'D')
-# ab = xr.apply_ufunc(ulinregress, time, ds['sst'], dask='parallelized', 
-#                     input_core_dims=[['time'], ['time']], 
+# ab = xr.apply_ufunc(ulinregress, time, ds['sst'], dask='parallelized',
+#                     input_core_dims=[['time'], ['time']],
 #                     output_dtypes=['d'], output_sizes={'coef': 2, }, output_core_dims=[['coef']])
 # series = ds['sst'][:, 0, 0].load()
 # line = series.copy() ; line[:] = ab[0, 0, 0] * time + ab[0, 0, 1]
@@ -575,10 +629,13 @@ def _get_npts(da: xr.DataArray) -> int:
 
 
 @set_property("fctype", "simple")
-def longest_run(da: xr.DataArray, dim: str = "time", 
-                ufunc_1dim: Union[str, bool] = "auto",
-                npts_opt = 9000 ):
-    
+def longest_run(
+    da: xr.DataArray,
+    dim: str = "time",
+    ufunc_1dim: Union[str, bool] = "auto",
+    npts_opt=9000,
+):
+
     """Return the length of the longest consecutive run of True values.
         Parameters
         ----------
@@ -636,17 +693,19 @@ def longest_run_ufunc(x: Sequence[bool]) -> xr.apply_ufunc:
     out : func
       A function operating along the time dimension of a dask-array.
     """
-    return xr.apply_ufunc(  _longest_run_1d,
-                            x,
-                            input_core_dims=[["time"]],
-                            vectorize=True,
-                            dask="parallelized",
-                            output_dtypes=[np.int],
-                            keep_attrs=True)
+    return xr.apply_ufunc(
+        _longest_run_1d,
+        x,
+        input_core_dims=[["time"]],
+        vectorize=True,
+        dask="parallelized",
+        output_dtypes=[np.int],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "simple")
-def longest_strike_below_mean(X, dim='time', **kwargs):
+def longest_strike_below_mean(X, dim="time", **kwargs):
     """
     Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X
 
@@ -655,12 +714,12 @@ def longest_strike_below_mean(X, dim='time', **kwargs):
     :return: longest period below the mean pixel value
     :return type: float
     """
-    
+
     return longest_run(X < mean(X))
 
 
 @set_property("fctype", "simple")
-def longest_strike_above_mean(X, dim='time', **kwargs):
+def longest_strike_above_mean(X, dim="time", **kwargs):
     """
     Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X
 
@@ -669,12 +728,12 @@ def longest_strike_above_mean(X, dim='time', **kwargs):
     :return: longest period below the mean pixel value
     :return type: float
     """
-     
-    return longest_run(X > mean(X)) 
+
+    return longest_run(X > mean(X))
 
 
 @set_property("fctype", "simple")
-def maximum(x,dim='time', **kwargs):
+def maximum(x, dim="time", **kwargs):
     """
     Calculates the highest value of the time series x.
 
@@ -685,9 +744,9 @@ def maximum(x,dim='time', **kwargs):
     """
     return x.max(dim)
 
- 
+
 @set_property("fctype", "ufunc")
-def mean(X, dim='time', **kwargs):
+def mean(X, dim="time", **kwargs):
     """
     Returns the mean of X
 
@@ -696,18 +755,19 @@ def mean(X, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    return xr.apply_ufunc(nanmean, X,
-                           input_core_dims=[[dim]],
-                           kwargs={'axis': -1},
-                           dask='parallelized',
-                           output_dtypes=[float],
-                           keep_attrs= True )
-
- 
+    return xr.apply_ufunc(
+        nanmean,
+        X,
+        input_core_dims=[[dim]],
+        kwargs={"axis": -1},
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "simple")
-def mean_abs_change(X, dim='time', **kwargs):
+def mean_abs_change(X, dim="time", **kwargs):
     """
     Returns the mean over the absolute differences between subsequent time series values which is
 
@@ -722,12 +782,12 @@ def mean_abs_change(X, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
+
     return np.abs(X.diff(dim)).mean(dim)
 
 
 @set_property("fctype", "ufunc")
-def mean_change(X , dim='time', **kwargs):
+def mean_change(X, dim="time", **kwargs):
     """
     Returns the mean over the differences between subsequent time series values which is
     
@@ -740,32 +800,31 @@ def mean_change(X , dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    func = lambda x: (x[:,:,-1] - x[:,:,0]) / (len(x) - 1)  
-    return xr.apply_ufunc(func, X,
-                           input_core_dims=[[dim]],
-                           dask='parallelized',
-                           output_dtypes=[float],
-                           keep_attrs= True )
- 
+    func = lambda x: (x[:, :, -1] - x[:, :, 0]) / (len(x) - 1)
+    return xr.apply_ufunc(
+        func,
+        X,
+        input_core_dims=[[dim]],
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
-  
 
 # @guvectorize(['void(float64[:], float64)',
 #               'void(float32[:], float64)',
 #               'void(int64[:], float64)',
 #               'void(int32[:], float64)',
 #               'void(int16[:], float64)',
-#               ], 
+#               ],
 #               "(n) -> ()" )#, nopython=True )
 # def _msdc(x, out):
 #     x = x[~np.isnan(x)]
 #     out[:] = (x[:,:,-1] - x[:,:,-2]  - x[:,:,1] + x[:,:,0]) / (2 * (len(x) - 2)) if len(x) > 2 else np.NaN
 
 
-
-
 @set_property("fctype", "ufunc")
-def mean_second_derivative_central(X , dim='time', **kwargs):
+def mean_second_derivative_central(X, dim="time", **kwargs):
     """
     Returns the mean over the differences between subsequent time series values which is
     
@@ -778,7 +837,7 @@ def mean_second_derivative_central(X , dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-  
+
     # func = lambda x: (x[:,:,-1] - x[:,:,-2]  - x[:,:,1] + x[:,:,0]) / (2 * (len(x) - 2)) if len(x) > 2 else np.NaN
 
     # return xr.apply_ufunc(_msdc, X,
@@ -786,13 +845,12 @@ def mean_second_derivative_central(X , dim='time', **kwargs):
     #                        dask='parallelized',
     #                        output_dtypes=[np.float64],
     #                        keep_attrs= True )
-    
-    return X.diff(dim).sum(dim) /(len(X)-1) 
 
- 
+    return X.diff(dim).sum(dim) / (len(X) - 1)
+
 
 @set_property("fctype", "ufunc")
-def median(X, dim='time', **kwargs):
+def median(X, dim="time", **kwargs):
     """
     Returns the median of x
 
@@ -801,18 +859,21 @@ def median(X, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-        
-    return xr.apply_ufunc(nanmedian, X,
-                           input_core_dims=[[dim]],
-                           kwargs={'axis': -1},
-                           dask='parallelized',
-                           output_dtypes=[float],
-                           keep_attrs= True )
+
+    return xr.apply_ufunc(
+        nanmedian,
+        X,
+        input_core_dims=[[dim]],
+        kwargs={"axis": -1},
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "simple")
-def minimum(x,dim='time', **kwargs):
-	
+def minimum(x, dim="time", **kwargs):
+
     """
     Calculates the lowest value of the time series x.
 
@@ -825,15 +886,17 @@ def minimum(x,dim='time', **kwargs):
 
 
 def _covariance_gufunc(x, y):
-    return ((x - x.mean(axis=-1, keepdims=True))
-            * (y - y.mean(axis=-1, keepdims=True))).mean(axis=-1)
+    return (
+        (x - x.mean(axis=-1, keepdims=True)) * (y - y.mean(axis=-1, keepdims=True))
+    ).mean(axis=-1)
+
 
 def _pearson_correlation_gufunc(x, y):
     return _covariance_gufunc(x, y) / (x.std(axis=-1) * y.std(axis=-1))
-   
+
 
 @set_property("fctype", "ufunc")
-def pearson_correlation(x, y, dim='time', **kwargs):
+def pearson_correlation(x, y, dim="time", **kwargs):
     """
     Returns the pearsons correlation of two xarray objects, which 
     must have the same dimensions.
@@ -844,14 +907,18 @@ def pearson_correlation(x, y, dim='time', **kwargs):
     :type y: xarray.DataArray
     :return: the value of this feature
     :return type: float
-    """    
+    """
 
-    return xr.apply_ufunc( _pearson_correlation_gufunc, x, y,
-                            input_core_dims=[[dim], [dim]],
-                            dask='parallelized',
-                            output_dtypes=[float],
-                            keep_attrs= True)
-    
+    return xr.apply_ufunc(
+        _pearson_correlation_gufunc,
+        x,
+        y,
+        input_core_dims=[[dim], [dim]],
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
+
 
 def _get_bottleneck_funcs(skipna, **kwargs):
     """
@@ -862,7 +929,7 @@ def _get_bottleneck_funcs(skipna, **kwargs):
         return nansum, nanmean
     else:
         return np.sum, np.mean
-    
+
 
 def _preprocess_dims(dim, **kwargs):
     """Preprocesses dimensions to prep for stacking.
@@ -877,7 +944,7 @@ def _preprocess_dims(dim, **kwargs):
     axis = tuple(range(-1, -len(dim) - 1, -1))
     return dim, axis
 
-    
+
 def _pearson_r(a, b, axis=-1, skipna=False, **kwargs):
     """
     ndarray implementation of scipy.stats.pearsonr.
@@ -904,14 +971,14 @@ def _pearson_r(a, b, axis=-1, skipna=False, **kwargs):
 
     """
     sumfunc, meanfunc = _get_bottleneck_funcs(skipna, **kwargs)
-    
+
     a = np.rollaxis(a, axis)
     b = np.rollaxis(b, axis)
 
     # Only do weighted sums if there are weights. Cannot have a
     # single generic function with weights of all ones, because
     # the denominator gets inflated when there are masked regions.
-   
+
     ma = meanfunc(a, axis=0)
     mb = meanfunc(b, axis=0)
 
@@ -929,29 +996,22 @@ def _pearson_r_p_value(a, b, axis, skipna, **kwargs):
     """
     ndarray implementation of scipy.stats.pearsonr.
 
-    Parameters
-    ----------
-    a : ndarray
-        Input array.
-    b : ndarray
-        Input array.
-    axis : int
-        The axis to apply the correlation along.
-    weights : ndarray
-        Input array of weights for a and b.
-    skipna : bool
-        If True, skip NaNs when computing function.
-
-    Returns
-    -------
-    res : ndarray
-        2-tailed p-value.
+    :param a: Input array.
+    :type a: ndarray
+    :param b: Input array.
+    :type b: ndarray
+    :param axis: The axis to apply the correlation along.
+    :type axis: int
+    :param skipna: If True, skip NaNs when computing function.
+    :type skipna: bool
+    :return: 2-tailed p-value.
+    :rtype: ndarray
 
     See Also
     --------
     scipy.stats.pearsonr
-
     """
+
     r = _pearson_r(a, b, axis, skipna)
     a = np.rollaxis(a, axis)
     b = np.rollaxis(b, axis)
@@ -971,7 +1031,7 @@ def _pearson_r_p_value(a, b, axis, skipna, **kwargs):
 
 
 @set_property("fctype", "ufunc")
-def pearson_r(a, b, dim='time',  skipna=False, **kwargs):
+def pearson_r(a, b, dim="time", skipna=False, **kwargs):
     """
     
     use corr from xarray  https://github.com/pydata/xarray/blob/master/xarray/core/computation.py
@@ -1010,25 +1070,27 @@ def pearson_r(a, b, dim='time',  skipna=False, **kwargs):
     """
     dim, _ = _preprocess_dims(dim)
     if len(dim) > 1:
-        new_dim = '_'.join(dim)
+        new_dim = "_".join(dim)
         a = a.stack(**{new_dim: dim})
         b = b.stack(**{new_dim: dim})
-        
+
     else:
         new_dim = dim[0]
 
-    return xr.apply_ufunc(_pearson_r,
-                            a,
-                            b,
-                            input_core_dims=[[new_dim] , [new_dim]],  
-                            kwargs={'axis': -1, 'skipna': skipna},
-                            dask='parallelized',
-                            output_dtypes=[float],
-                            keep_attrs= True )
-                    
+    return xr.apply_ufunc(
+        _pearson_r,
+        a,
+        b,
+        input_core_dims=[[new_dim], [new_dim]],
+        kwargs={"axis": -1, "skipna": skipna},
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
+
 
 @set_property("fctype", "ufunc")
-def pearson_r_p_value(a, b, dim = 'time',  skipna=False, **kwargs):
+def pearson_r_p_value(a, b, dim="time", skipna=False, **kwargs):
     """
     2-tailed p-value associated with pearson's correlation coefficient.
 
@@ -1060,25 +1122,27 @@ def pearson_r_p_value(a, b, dim = 'time',  skipna=False, **kwargs):
     """
     dim, _ = _preprocess_dims(dim)
     if len(dim) > 1:
-        new_dim = '_'.join(dim)
+        new_dim = "_".join(dim)
         a = a.stack(**{new_dim: dim})
         b = b.stack(**{new_dim: dim})
 
     else:
         new_dim = dim[0]
 
-    return xr.apply_ufunc( _pearson_r_p_value,
-                            a,
-                            b,
-                            input_core_dims=[[new_dim] , [new_dim]], 
-                            kwargs={'axis': -1, 'skipna': skipna},
-                            dask='parallelized',
-                            output_dtypes=[float],
-                            keep_attrs= True  )
+    return xr.apply_ufunc(
+        _pearson_r_p_value,
+        a,
+        b,
+        input_core_dims=[[new_dim], [new_dim]],
+        kwargs={"axis": -1, "skipna": skipna},
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "simple")
-def potential_predictability(ds, dim='time', m=10, chunk=True):
+def potential_predictability(ds, dim="time", m=10, chunk=True):
     """
     https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html
     Calculates the Diagnostic Potential Predictability (dpp)
@@ -1117,7 +1181,7 @@ def potential_predictability(ds, dim='time', m=10, chunk=True):
 
     """
 
-    def _chunking(ds, dim='time', number_chunks=False, chunk_length=False):
+    def _chunking(ds, dim="time", number_chunks=False, chunk_length=False):
         """
         Separate data into chunks and reshapes chunks in a c dimension.
 
@@ -1141,18 +1205,18 @@ def potential_predictability(ds, dim='time', m=10, chunk=True):
             cmin = int(ds[dim].min())
             number_chunks = int(np.floor(ds[dim].size / chunk_length))
         else:
-            raise KeyError('set number_chunks or chunk_length to True')
+            raise KeyError("set number_chunks or chunk_length to True")
         c = ds.sel({dim: slice(cmin, cmin + chunk_length - 1)})
-        c = c.expand_dims('c')
-        c['c'] = [0]
+        c = c.expand_dims("c")
+        c["c"] = [0]
         for i in range(1, number_chunks):
             c2 = ds.sel(
                 {dim: slice(cmin + chunk_length * i, cmin + (i + 1) * chunk_length - 1)}
             )
-            c2 = c2.expand_dims('c')
-            c2['c'] = [i]
+            c2 = c2.expand_dims("c")
+            c2["c"] = [i]
             c2[dim] = c[dim]
-            c = xr.concat([c, c2], 'c')
+            c = xr.concat([c, c2], "c")
         return c
 
     if not chunk:  # Resplandy 2015, Seferian 2018
@@ -1164,15 +1228,15 @@ def potential_predictability(ds, dim='time', m=10, chunk=True):
         chunked_means = _chunking(ds, dim=dim, chunk_length=m).mean(dim)
         # sub means in chunks
         chunked_deviations = _chunking(ds, dim=dim, chunk_length=m) - chunked_means
-        s2v = chunked_means.var('c')
-        s2e = chunked_deviations.var([dim, 'c'])
+        s2v = chunked_means.var("c")
+        s2e = chunked_deviations.var([dim, "c"])
         s2 = s2v + s2e
     dpp = (s2v - s2 / (m)) / s2
     return dpp
 
 
 @set_property("fctype", "simple")
-def ratio_beyond_r_sigma(X, r=2, dim='time', **kwargs):
+def ratio_beyond_r_sigma(X, r=2, dim="time", **kwargs):
     """
     Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.
 
@@ -1181,12 +1245,12 @@ def ratio_beyond_r_sigma(X, r=2, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
-    return (np.abs(X - X.mean(dim)) > r * X.std(dim)).sum(dim)/len(X)
+
+    return (np.abs(X - X.mean(dim)) > r * X.std(dim)).sum(dim) / len(X)
 
 
 @set_property("fctype", "ufunc")
-def skewness(X, dim='time', **kwargs):
+def skewness(X, dim="time", **kwargs):
     """
     Returns the sample skewness of X (calculated with the adjusted Fisher-Pearson standardized
     moment coefficient G1). Normal value = 0, skewness > 0 means more weight in the left tail of 
@@ -1198,12 +1262,15 @@ def skewness(X, dim='time', **kwargs):
     :return type: float
     """
 
-    return xr.apply_ufunc(skew, X,
-                       input_core_dims=[[dim]],
-                       kwargs={'axis': -1,'nan_policy':'omit'},
-                       dask='parallelized',
-                       output_dtypes=[float],
-                       keep_attrs= True )
+    return xr.apply_ufunc(
+        skew,
+        X,
+        input_core_dims=[[dim]],
+        kwargs={"axis": -1, "nan_policy": "omit"},
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 def _spearman_correlation_gufunc(x, y):
@@ -1213,7 +1280,7 @@ def _spearman_correlation_gufunc(x, y):
 
 
 @set_property("fctype", "ufunc")
-def spearman_correlation(x, y, dim='time', **kwargs):
+def spearman_correlation(x, y, dim="time", **kwargs):
     """
     Returns the spearmans correlation of two xarray objects, which 
     must have the same dimensions.
@@ -1225,16 +1292,20 @@ def spearman_correlation(x, y, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
-    return xr.apply_ufunc( _spearman_correlation_gufunc, x, y,
-                            input_core_dims=[[dim], [dim]],
-                            dask='parallelized',
-                            output_dtypes=[float],
-                            keep_attrs= True )
+
+    return xr.apply_ufunc(
+        _spearman_correlation_gufunc,
+        x,
+        y,
+        input_core_dims=[[dim], [dim]],
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "ufunc")
-def standard_deviation(X, dim='time', **kwargs):
+def standard_deviation(X, dim="time", **kwargs):
     """
     Returns the standard deviation of X
 
@@ -1243,17 +1314,20 @@ def standard_deviation(X, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
-    return xr.apply_ufunc(nanstd, X,
-                           input_core_dims=[[dim]],
-                           kwargs={'axis': -1},
-                           dask='parallelized',
-                           output_dtypes=[float],
-                           keep_attrs= True )
+
+    return xr.apply_ufunc(
+        nanstd,
+        X,
+        input_core_dims=[[dim]],
+        kwargs={"axis": -1},
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "simple")
-def sum_values(X, dim='time', **kwargs):
+def sum_values(X, dim="time", **kwargs):
     """
     Calculates the sum over the time series values
 
@@ -1262,14 +1336,14 @@ def sum_values(X, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
-    if allnan(X):        
+
+    if allnan(X):
         return np.NaN
     return X.sum(dim)
 
 
 @set_property("fctype", "simple")
-def symmetry_looking(X, r=0.1, dim='time', **kwargs):
+def symmetry_looking(X, r=0.1, dim="time", **kwargs):
     """
     Boolean variable denoting if the distribution of x *looks symmetric*. This is the case if
 
@@ -1284,14 +1358,14 @@ def symmetry_looking(X, r=0.1, dim='time', **kwargs):
     :return: the value of this feature
     :return type: bool
     """
-    
+
     mean_median_difference = np.abs(X.mean(dim) - X.median(dim))
     max_min_difference = X.max(dim) - X.min(dim)
-    return   (mean_median_difference < (r * max_min_difference)).astype(np.float64)
- 
+    return (mean_median_difference < (r * max_min_difference)).astype(np.float64)
+
 
 @set_property("fctype", "simple")
-def ts_complexity_cid_ce(X, normalize=True, dim='time', **kwargs):
+def ts_complexity_cid_ce(X, normalize=True, dim="time", **kwargs):
     """
     This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,
     valleys etc.). It calculates the value of
@@ -1314,19 +1388,19 @@ def ts_complexity_cid_ce(X, normalize=True, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
+
     if normalize:
         s = X.std(dim)
-        #if s!=0:
-        X = (X - X.mean(dim))/s
-        #else:
+        # if s!=0:
+        X = (X - X.mean(dim)) / s
+        # else:
         #    return 0.0
 
-    return np.sqrt(X.dot(X.diff(dim),dims=dim) ) 
+    return np.sqrt(X.dot(X.diff(dim), dims=dim))
 
 
 @set_property("fctype", "ufunc")
-def variance(X, dim='time', **kwargs):
+def variance(X, dim="time", **kwargs):
     """
     Returns the variance of X
 
@@ -1335,16 +1409,19 @@ def variance(X, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    return xr.apply_ufunc(nanvar, X,
-                           input_core_dims=[[dim]],
-                           kwargs={'axis': -1},
-                           dask='parallelized',
-                           output_dtypes=[float],
-                           keep_attrs= True )
- 
+    return xr.apply_ufunc(
+        nanvar,
+        X,
+        input_core_dims=[[dim]],
+        kwargs={"axis": -1},
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
+
 
 @set_property("fctype", "simple")
-def variance_larger_than_standard_deviation(X, dim='time', **kwargs):
+def variance_larger_than_standard_deviation(X, dim="time", **kwargs):
     """
     Boolean variable denoting if the variance of x is greater than its standard deviation. Is equal to variance of x
     being larger than 1
@@ -1358,9 +1435,8 @@ def variance_larger_than_standard_deviation(X, dim='time', **kwargs):
     return (y > np.sqrt(y)).astype(np.float64)
 
 
-
 @set_property("fctype", "simple")
-def quantile_slow(x, q, skipna=True, dim='time', **kwargs):
+def quantile_slow(x, q, skipna=True, dim="time", **kwargs):
 
     """
     Calculates the q quantile of x. This is the value of x greater than q% of the ordered values from x.
@@ -1372,31 +1448,33 @@ def quantile_slow(x, q, skipna=True, dim='time', **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    
-    return x.quantile(q, dim).rename({'quantile':'band'})
-  
 
-def _quantile(x,q):
-    
+    return x.quantile(q, dim).rename({"quantile": "band"})
+
+
+def _quantile(x, q):
+
     return __quantile(x, q)
- 
-    
-@guvectorize([
-              'void(float64[:],float64, float64[:])',
-              'void(float32[:],float64, float64[:])',
-              'void(int64[:],float64, float64[:])',
-              'void(int32[:],float64, float64[:])',
-              'void(int16[:],float64, float64[:])',
-              ], 
-             "(n), ()-> ()", nopython=True )
-def __quantile(x, q:float, out): 
-    
-    out[:] = np.nanquantile(x,q) 
-    
-    
-    
+
+
+@guvectorize(
+    [
+        "void(float64[:],float64, float64[:])",
+        "void(float32[:],float64, float64[:])",
+        "void(int64[:],float64, float64[:])",
+        "void(int32[:],float64, float64[:])",
+        "void(int16[:],float64, float64[:])",
+    ],
+    "(n), ()-> ()",
+    nopython=True,
+)
+def __quantile(x, q: float, out):
+
+    out[:] = np.nanquantile(x, q)
+
+
 @set_property("fctype", "simple")
-def quantile(x, q, dim='time', **kwargs):
+def quantile(x, q, dim="time", **kwargs):
 
     """
     Ultrafast implimentation of np.nanpercentile.
@@ -1410,17 +1488,19 @@ def quantile(x, q, dim='time', **kwargs):
     :return type: float
     """
 
-    return  xr.apply_ufunc(_quantile, x,
-                           input_core_dims=[[dim]],
-                           dask='parallelized',
-                           kwargs={'q': q },
-                           output_dtypes=[np.float64],
-                           keep_attrs= True)
+    return xr.apply_ufunc(
+        _quantile,
+        x,
+        input_core_dims=[[dim]],
+        dask="parallelized",
+        kwargs={"q": q},
+        output_dtypes=[np.float64],
+        keep_attrs=True,
+    )
 
-   
 
 @set_property("fctype", "ufunc")
-def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
+def ratio_value_number_to_time_series_length(X, dim="time", **kwargs):
     """
     Returns a factor which is 1 if all values in the time series occur only once,
     and below one if this is not the case.
@@ -1433,18 +1513,19 @@ def ratio_value_number_to_time_series_length(X,dim='time',  **kwargs):
     :return: the value of this feature
     :return type: float
     """
-    time_len = len( X )
-    func = lambda x: np.unique(x, 'time')[0].size / time_len
-    
-    return xr.apply_ufunc(func, X,
-                           input_core_dims=[[dim]],
-                           vectorize=True,
-                           kwargs={ },
-                           dask='parallelized',
-                           output_dtypes=[float],
-                           keep_attrs= True)
-    
-    
+    time_len = len(X)
+    func = lambda x: np.unique(x, "time")[0].size / time_len
+
+    return xr.apply_ufunc(
+        func,
+        X,
+        input_core_dims=[[dim]],
+        vectorize=True,
+        kwargs={},
+        dask="parallelized",
+        output_dtypes=[float],
+        keep_attrs=True,
+    )
 
 
 @set_property("fctype", "simple")
@@ -1486,8 +1567,9 @@ def rle(da: xr.DataArray, dim: str = "time", max_chunk: int = 1_000_000):
 
 
 @set_property("fctype", "simple")
-def rle_1d(arr: Union[int, float, bool, Sequence[Union[int, float, bool]]]
-           ) -> Tuple[np.array, np.array, np.array]:
+def rle_1d(
+    arr: Union[int, float, bool, Sequence[Union[int, float, bool]]]
+) -> Tuple[np.array, np.array, np.array]:
     """Return the length, starting position and value of consecutive identical values.
     Parameters
     ----------
@@ -1520,10 +1602,10 @@ def rle_1d(arr: Union[int, float, bool, Sequence[Union[int, float, bool]]]
     i = np.append(np.where(y), n - 1)  # must include last element position
     rl = np.diff(np.append(-1, i))  # run lengths
     pos = np.cumsum(np.append(0, rl))[:-1]  # positions
-    return ia[i], rl, pos 
+    return ia[i], rl, pos
 
 
-def varweighted_mean_period(da, dim='time', **kwargs):
+def varweighted_mean_period(da, dim="time", **kwargs):
     """Calculate the variance weighted mean period of time series based on
     xrft.power_spectrum.
     https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html
@@ -1546,7 +1628,7 @@ def varweighted_mean_period(da, dim='time', **kwargs):
     """
     # set nans to 0
     if isinstance(da, xr.Dataset):
-        raise ValueError('require xr.Dataset')
+        raise ValueError("require xr.Dataset")
     da = da.fillna(0.0)
     # dim should be list
     if isinstance(dim, str):
@@ -1555,13 +1637,13 @@ def varweighted_mean_period(da, dim='time', **kwargs):
     ps = power_spectrum(da, dim=dim, **kwargs)
     # take pos
     for d in dim:
-        ps = ps.where(ps[f'freq_{d}'] > 0)
+        ps = ps.where(ps[f"freq_{d}"] > 0)
     # weighted average
     vwmp = ps
     for d in dim:
-        vwmp = vwmp.sum(f'freq_{d}') / ((vwmp * vwmp[f'freq_{d}']).sum(f'freq_{d}'))
+        vwmp = vwmp.sum(f"freq_{d}") / ((vwmp * vwmp[f"freq_{d}"]).sum(f"freq_{d}"))
     for d in dim:
-        del vwmp[f'freq_{d}_spacing']
+        del vwmp[f"freq_{d}_spacing"]
     # try to copy coords
     try:
         vwmp = copy_coords_from_to(da.drop(dim), vwmp)
@@ -1574,8 +1656,8 @@ def varweighted_mean_period(da, dim='time', **kwargs):
 #     from climpred.stats import autocorr
 #     """
 #     Calculated dim lagged correlation of a xr.Dataset.
-    
-    
+
+
 #     :param X : xarray dataset/dataarray time series
 #     :type x: xarray.DataArray
 #     :param dim : name of time dimension/dimension to autocorrelate over
@@ -1591,12 +1673,9 @@ def varweighted_mean_period(da, dim='time', **kwargs):
 #     """
 #     if return_p:
 #         return autocorr(X, lag=lag, dim=dim, return_p=return_p)[1]
-        
+
 #     else:
 #         return autocorr(X, lag=lag, dim=dim, return_p=return_p)
-
- 
-
 
 
 # def _ts_complexity_cid_ce(X,normalize):
@@ -1609,10 +1688,10 @@ def varweighted_mean_period(da, dim='time', **kwargs):
 #         ##    return 0.0
 
 #     X = X.diff('time')
-    
+
 #     # return np.sqrt(X.dot(X,dims=dim) ).fillna(0)
 #     return np.sqrt(X.dot(X,dims='time') ).fillna(0)
- 
+
 # @set_property("fctype", "simple")
 # def ts_complexity_cid_ce(X, normalize=True, dim='time', **kwargs):
 #     """
@@ -1644,14 +1723,14 @@ def varweighted_mean_period(da, dim='time', **kwargs):
 #                             dask='parallelized',
 #                              vectorize=True,
 #                             output_dtypes=[float])
- 
-    # time_len = len( X )
-    # func = lambda x: np.unique(x, 'time')[0].size / time_len
-    
-    # return xr.apply_ufunc(func, X,
-    #                    input_core_dims=[[dim]],
-    #                    vectorize=True,
-    #                    kwargs={ },
-    #                    dask='parallelized',
-    #                    output_dtypes=[float])
-    
+
+# time_len = len( X )
+# func = lambda x: np.unique(x, 'time')[0].size / time_len
+
+# return xr.apply_ufunc(func, X,
+#                    input_core_dims=[[dim]],
+#                    vectorize=True,
+#                    kwargs={ },
+#                    dask='parallelized',
+#                    output_dtypes=[float])
+
