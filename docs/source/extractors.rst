@@ -1,5 +1,6 @@
+.. _extractors:
  
-Calculate Feature Generators
+Extractor Function
 =====================================
 
  
@@ -11,8 +12,7 @@ Calculate Feature Generators
 
 
 Functions
-==================
- 
+----------------------- 
 .. automodule:: xr_fresh.extractors
     :members:
 

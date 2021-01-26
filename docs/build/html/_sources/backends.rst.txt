@@ -1,4 +1,5 @@
- 
+.. _backends:
+
 Utilities to work with Dask 
 =====================================
 
@@ -11,8 +12,7 @@ Utilities to work with Dask
 
 
 Functions
-==================
- 
+------------------ 
 .. automodule:: xr_fresh.backends
     :members:
 

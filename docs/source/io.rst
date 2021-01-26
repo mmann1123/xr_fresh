@@ -1,6 +1,8 @@
-.. _utils:
+.. _io:
 
-Other Utilities
+
+
+Utilities for reading and writing
 =====================================
 
  
@@ -13,8 +15,7 @@ Other Utilities
 
 Functions
 ------------------------------ 
- 
-.. automodule:: xr_fresh.utils
+.. automodule:: xr_fresh.io
     :members:
 
 

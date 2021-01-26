@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Calculate Feature Generators &mdash; xr_fresh 0.0.0 documentation</title>
+  <title>Extractor Function &mdash; xr_fresh 0.0.0 documentation</title>
   
 
   
@@ -37,7 +37,9 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utilities to work with Dask" href="backends.html" />
+    <link rel="prev" title="The xr_fresh Docs!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,12 +84,17 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Calculate Feature Generators</a></li>
-<li><a class="reference internal" href="#module-xr_fresh.extractors">Functions</a></li>
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Extractor Function</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.extractors">Functions</a></li>
 </ul>
-</div>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Other Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+</ul>
+
             
           
         </div>
@@ -132,7 +139,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Calculate Feature Generators</li>
+      <li>Extractor Function</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -151,13 +158,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="calculate-feature-generators">
-<h1>Calculate Feature Generators<a class="headerlink" href="#calculate-feature-generators" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="extractor-function">
+<span id="extractors"></span><h1>Extractor Function<a class="headerlink" href="#extractor-function" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-</div>
 <div class="section" id="module-xr_fresh.extractors">
-<span id="functions"></span><h1>Functions<a class="headerlink" href="#module-xr_fresh.extractors" title="Permalink to this headline">¶</a></h1>
+<span id="functions"></span><h2>Functions<a class="headerlink" href="#module-xr_fresh.extractors" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="xr_fresh.extractors.extract_features">
 <code class="sig-prename descclassname">xr_fresh.extractors.</code><code class="sig-name descname">extract_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xr_data</span></em>, <em class="sig-param"><span class="n">feature_dict</span></em>, <em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">na_rm</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">filepath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">postfix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'variable'</span></em>, <em class="sig-param"><span class="n">persist</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors.html#extract_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.extractors.extract_features" title="Permalink to this definition">¶</a></dt>
@@ -201,12 +207,22 @@ which are keys in this dict will be calculated. See examples above.</p></li>
 </dd></dl>
 
 </div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="backends.html" class="btn btn-neutral float-right" title="Utilities to work with Dask" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="The xr_fresh Docs!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

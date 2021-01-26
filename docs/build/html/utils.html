@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utilities for reading and writing &mdash; xr_fresh 0.0.0 documentation</title>
+  <title>Other Utilities &mdash; xr_fresh 0.0.0 documentation</title>
   
 
   
@@ -37,7 +37,9 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utilities for reading and writing" href="io.html" />
+    <link rel="prev" title="Utilities to work with Dask" href="backends.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,12 +84,17 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Utilities for reading and writing</a></li>
-<li><a class="reference internal" href="#module-xr_fresh.utils">Functions</a></li>
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="extractors.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Other Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.utils">Functions</a></li>
 </ul>
-</div>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+</ul>
+
             
           
         </div>
@@ -132,7 +139,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Utilities for reading and writing</li>
+      <li>Other Utilities</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -151,13 +158,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="utilities-for-reading-and-writing">
-<h1>Utilities for reading and writing<a class="headerlink" href="#utilities-for-reading-and-writing" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="other-utilities">
+<span id="utils"></span><h1>Other Utilities<a class="headerlink" href="#other-utilities" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-</div>
 <div class="section" id="module-xr_fresh.utils">
-<span id="functions"></span><h1>Functions<a class="headerlink" href="#module-xr_fresh.utils" title="Permalink to this headline">¶</a></h1>
+<span id="functions"></span><h2>Functions<a class="headerlink" href="#module-xr_fresh.utils" title="Permalink to this headline">¶</a></h2>
 <p>Created on Tue Jun 30 15:34:47 2020</p>
 <p>&#64;author: <a class="reference external" href="https://github.com/robintw/XArrayAndRasterio/blob/master/rasterio_to_xarray.py">https://github.com/robintw/XArrayAndRasterio/blob/master/rasterio_to_xarray.py</a></p>
 <dl class="py function">
@@ -180,7 +186,7 @@ print(ds)</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>xarray.DataArray</em>) – xarray to add categorical data to</p></li>
-<li><p><strong>labels</strong> (<em>path</em><em> or </em><em>gpd.geodataframe</em>) – path or df to shapefile with categorical data</p></li>
+<li><p><strong>labels</strong> (<em>path</em><em> or </em><em>gpd.geodataframe</em><em> or </em><em>path to tif</em>) – path or df to shapefile or raster with categorical data</p></li>
 <li><p><strong>col</strong> (<em>str</em>) – Column to create get values from</p></li>
 <li><p><strong>variable_name</strong> (<em>str</em>) – name assigned to categorical data</p></li>
 <li><p><strong>missing_value</strong> (<em>int</em>) – missing value for pixels not overlapping polygon or points</p></li>
@@ -356,12 +362,22 @@ find_variable_names(path_glob)</p>
 </dd></dl>
 
 </div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="io.html" class="btn btn-neutral float-right" title="Utilities for reading and writing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="backends.html" class="btn btn-neutral float-left" title="Utilities to work with Dask" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

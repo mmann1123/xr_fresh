@@ -12,7 +12,7 @@ Feature Generators
 
 Functions
 ------------------------ 
-.. automodule:: feature_calculators
+.. automodule:: xr_fresh.feature_calculators
     :members:
 
 

@@ -1,5 +1,6 @@
- 
-Utilities for reading and writing
+.. _utils:
+
+Other Utilities
 =====================================
 
  
@@ -11,7 +12,7 @@ Utilities for reading and writing
 
 
 Functions
-==================
+------------------------------ 
  
 .. automodule:: xr_fresh.utils
     :members:

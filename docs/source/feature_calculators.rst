@@ -1,5 +1,6 @@
- 
-Calculate Feature Generators
+.. _feature_calculators:
+
+Feature Generators
 =====================================
 
  
@@ -10,8 +11,7 @@ Calculate Feature Generators
 
 
 Functions
-==================
- 
+------------------------ 
 .. automodule:: xr_fresh.feature_calculators
     :members:
 

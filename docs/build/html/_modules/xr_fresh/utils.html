@@ -82,8 +82,15 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_calculators.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../extractors.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Other Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../io.html">Utilities for reading and writing</a></li>
+</ul>
+
             
           
         </div>
@@ -169,20 +176,31 @@
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
 <span class="kn">import</span> <span class="nn">bz2</span>
 <span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span>  <span class="n">to_numeric</span> 
-<span class="c1">#import dill</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">to_numeric</span>
+<span class="kn">from</span> <span class="nn">geopandas</span> <span class="kn">import</span> <span class="n">GeoDataFrame</span>
+
+<span class="c1"># import dill</span>
 <span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="n">sub</span><span class="p">,</span> <span class="n">search</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-  
 
-<span class="k">def</span> <span class="nf">bound</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">bound</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="nb">min</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="nb">max</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="n">ls</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ls</span><span class="p">))</span>
 
-<div class="viewcode-block" id="add_time_targets"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.add_time_targets">[docs]</a><span class="k">def</span> <span class="nf">add_time_targets</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">target_col_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="n">missing_value</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">append_to_X</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="add_time_targets"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.add_time_targets">[docs]</a><span class="k">def</span> <span class="nf">add_time_targets</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">,</span>
+    <span class="n">target_col_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">target_name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">append_to_X</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Adds multiple time periods of target data to existing xarray obj. </span>
 
@@ -213,9 +231,10 @@
 <span class="sd">    :param append_to_X: should the target data be appended to the far right of other X variables. Default is False.</span>
 <span class="sd">    :type append_to_X:  bool              </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_col_list</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()),</span> <span class="s1">&#39;target column list must have same length as time dimension&#39;</span>
 
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_col_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="p">),</span> <span class="s2">&quot;target column list must have same length as time dimension&quot;</span>
 
     <span class="n">target_collector</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">target_col_list</span><span class="p">:</span>
@@ -223,42 +242,77 @@
         <span class="kn">from</span> <span class="nn">xarray</span> <span class="kn">import</span> <span class="n">concat</span><span class="p">,</span> <span class="n">DataArray</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">DataArray</span><span class="p">):</span>
-            
+
             <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
                 <span class="n">le</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
                 <span class="n">target</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
-                <span class="c1">#classes = le.fit(target[col]).classes_    </span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Transformed with le.fit_transform(target[col])&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Adding target:</span><span class="si">%s</span><span class="s1"> with type: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">t</span><span class="p">]))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Missing values: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">missing_value</span><span class="p">)</span>
+                <span class="c1"># classes = le.fit(target[col]).classes_</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transformed with le.fit_transform(target[col])&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adding target:</span><span class="si">%s</span><span class="s2"> with type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">t</span><span class="p">]))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Missing values: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">missing_value</span><span class="p">)</span>
 
-            <span class="n">target_array</span> <span class="o">=</span> <span class="n">gw</span><span class="o">.</span><span class="n">polygon_to_array</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> 
-                                                <span class="n">col</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> 
-                                                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-                                                <span class="n">fill</span><span class="o">=</span><span class="n">missing_value</span><span class="p">,</span>
-                                                <span class="n">dtype</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">t</span><span class="p">],</span>
-                                                <span class="n">band_name</span><span class="o">=</span><span class="p">[</span><span class="n">target_name</span><span class="p">],</span>
-                                                <span class="n">src_res</span><span class="o">=</span><span class="n">data</span><span class="p">)</span> 
+            <span class="n">target_array</span> <span class="o">=</span> <span class="n">gw</span><span class="o">.</span><span class="n">polygon_to_array</span><span class="p">(</span>
+                <span class="n">target</span><span class="p">,</span>
+                <span class="n">col</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">fill</span><span class="o">=</span><span class="n">missing_value</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">t</span><span class="p">],</span>
+                <span class="n">band_name</span><span class="o">=</span><span class="p">[</span><span class="n">target_name</span><span class="p">],</span>
+                <span class="n">src_res</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="p">)</span>
 
-            <span class="c1"># avoid mismatched generated x y coords </span>
-            <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">target_array</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">target_array</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">)):</span>
-                <span class="n">target_array</span> <span class="o">=</span> <span class="n">target_array</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
-              
+            <span class="c1"># avoid mismatched generated x y coords</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">target_array</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+                <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">target_array</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">target_array</span> <span class="o">=</span> <span class="n">target_array</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">}</span>
+                <span class="p">)</span>
+
             <span class="n">target_collector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target_array</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">append_to_X</span><span class="p">:</span>
-        <span class="n">poly_array</span> <span class="o">=</span> <span class="n">concat</span><span class="p">(</span><span class="n">target_collector</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()})</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">data</span><span class="p">,</span><span class="n">poly_array</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;band&#39;</span><span class="p">)</span>
-        
+        <span class="n">poly_array</span> <span class="o">=</span> <span class="n">concat</span><span class="p">(</span><span class="n">target_collector</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()}</span>
+        <span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">data</span><span class="p">,</span> <span class="n">poly_array</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">)</span>
+
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">poly_array</span> <span class="o">=</span> <span class="n">concat</span><span class="p">(</span><span class="n">target_collector</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;band&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span><span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()})</span>
+        <span class="n">poly_array</span> <span class="o">=</span> <span class="n">concat</span><span class="p">(</span><span class="n">target_collector</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;band&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()}</span>
+        <span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">target_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">poly_array</span><span class="p">)</span>
-    
-    <span class="k">return</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+    <span class="k">return</span> <span class="n">data</span></div>
 
 
+<span class="k">def</span> <span class="nf">_assign_concat2band</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label_grid</span><span class="p">):</span>
 
-<div class="viewcode-block" id="add_categorical"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.add_categorical">[docs]</a><span class="k">def</span> <span class="nf">add_categorical</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variable_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">missing_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">):</span>
+    <span class="c1"># TODO: is this sufficient for single dates?</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">has_time_coord</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">label_grid</span><span class="p">]</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># avoid mismatched generated x y coords</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">category</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">category</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span>
+    <span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">data</span><span class="p">,</span> <span class="n">category</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">category</span> <span class="o">=</span> <span class="n">category</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">data</span><span class="p">,</span> <span class="n">category</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<div class="viewcode-block" id="add_categorical"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.add_categorical">[docs]</a><span class="k">def</span> <span class="nf">add_categorical</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variable_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">missing_value</span><span class="o">=-</span><span class="mi">9999</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Adds categorical data to xarray by column name.</span>
 
@@ -276,8 +330,8 @@
 
 <span class="sd">    :param data: xarray to add categorical data to </span>
 <span class="sd">    :type data:  xarray.DataArray</span>
-<span class="sd">    :param labels: path or df to shapefile with categorical data</span>
-<span class="sd">    :type labels:  path or gpd.geodataframe</span>
+<span class="sd">    :param labels: path or df to shapefile or raster with categorical data</span>
+<span class="sd">    :type labels:  path or gpd.geodataframe or path to tif</span>
 <span class="sd">    :param col: Column to create get values from</span>
 <span class="sd">    :type col:  str </span>
 <span class="sd">    :param variable_name: name assigned to categorical data </span>
@@ -286,54 +340,73 @@
 <span class="sd">    :type missing_value:  int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">DataArray</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">GeoDataFrame</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">labels</span><span class="p">))[</span>
+        <span class="mi">1</span>
+    <span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.shp&quot;</span><span class="p">,</span> <span class="s2">&quot;.kml&quot;</span><span class="p">,</span> <span class="s2">&quot;.gpkg&quot;</span><span class="p">,</span> <span class="s2">&quot;.geojson&quot;</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">variable_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">variable_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="n">gw</span><span class="o">.</span><span class="n">polygon_to_array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span>  <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
-            <span class="n">labels</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">variable_name</span><span class="p">]</span>  
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">gw</span><span class="o">.</span><span class="n">polygon_to_array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">labels</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">variable_name</span><span class="p">]</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># to do: figure out better solution than using [0]</span>
             <span class="k">if</span> <span class="n">labels</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
                 <span class="n">le</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
-                <span class="n">labels</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span> <span class="c1">#avoid 0 its a missing value</span>
-                <span class="c1"># classes = le.fit(labels[col]).classes_ + 1   </span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Adding categorical: Transformed with le.fit_transform(target[col])&#39;</span><span class="p">)</span>
+                <span class="n">labels</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="p">)</span>  <span class="c1"># avoid 0 its a missing value</span>
+                <span class="c1"># classes = le.fit(labels[col]).classes_ + 1</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;Adding categorical: Transformed with le.fit_transform(target[col])&quot;</span>
+                <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">labels</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">:</span>
-                <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="c1"># downcast to smallest datatype</span>
+            <span class="n">labels</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">downcast_pandas</span><span class="p">(</span><span class="n">labels</span><span class="p">)[</span><span class="n">col</span><span class="p">]</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Missing values: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">missing_value</span><span class="p">)</span>            
-    
-        <span class="n">label_grid</span> <span class="o">=</span> <span class="n">gw</span><span class="o">.</span><span class="n">polygon_to_array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> 
-                                        <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> 
-                                        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> 
-                                        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span>
-                                        <span class="n">band_name</span><span class="o">=</span><span class="p">[</span><span class="n">variable_name</span><span class="p">],</span> 
-                                        <span class="n">fill</span><span class="o">=</span><span class="n">missing_value</span><span class="p">,</span>
-                                        <span class="n">src_res</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">labels</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span>
+                <span class="c1"># int64 not available in gw</span>
+                <span class="n">labels</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+                <span class="n">out_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out_type</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
 
-        <span class="c1"># problem with some int 8 </span>
-        <span class="c1">#labels = labels.astype(float).astype(int) # avoid invalid literal for int</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Missing values: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">missing_value</span><span class="p">)</span>
 
+        <span class="n">label_grid</span> <span class="o">=</span> <span class="n">gw</span><span class="o">.</span><span class="n">polygon_to_array</span><span class="p">(</span>
+            <span class="n">labels</span><span class="p">,</span>
+            <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">out_type</span><span class="p">,</span>
+            <span class="n">band_name</span><span class="o">=</span><span class="p">[</span><span class="n">variable_name</span><span class="p">],</span>
+            <span class="n">fill</span><span class="o">=</span><span class="n">missing_value</span><span class="p">,</span>
+            <span class="n">src_res</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    <span class="c1"># TODO: is this sufficient for single dates?</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">has_time_coord</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  
+        <span class="c1"># problem with some int 8</span>
+        <span class="c1"># labels = labels.astype(float).astype(int) # avoid invalid literal for int</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">_assign_concat2band</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label_grid</span><span class="p">)</span>
 
-    <span class="n">category</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">label_grid</span><span class="p">]</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>\
-                <span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()})</span>
-    
-    <span class="c1"># avoid mismatched generated x y coords </span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">category</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">category</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">data</span><span class="p">,</span><span class="n">category</span><span class="p">],</span> <span class="n">dim</span> <span class="o">=</span> <span class="s1">&#39;band&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">DataArray</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="c1"># ref_image=data.filename[0]</span>
+            <span class="n">ref_res</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">celly</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">cellx</span><span class="p">),</span>
+            <span class="n">ref_bounds</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="n">label_grid</span> <span class="o">=</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
+                <span class="n">labels</span><span class="p">,</span>
+                <span class="n">band_names</span><span class="o">=</span><span class="p">[</span><span class="n">variable_name</span><span class="p">],</span>
+                <span class="n">resampling</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+                <span class="n">nodata</span><span class="o">=</span><span class="n">missing_value</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">_assign_concat2band</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label_grid</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">category</span> <span class="o">=</span> <span class="n">category</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">data</span><span class="p">,</span><span class="n">category</span><span class="p">],</span> <span class="n">dim</span> <span class="o">=</span> <span class="s1">&#39;band&#39;</span><span class="p">)</span>
+        <span class="n">label_grid</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">_assign_concat2band</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label_grid</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 
@@ -352,10 +425,11 @@
 <span class="sd">    TYPE bool</span>
 <span class="sd">        DESCRIPTION.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>    
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
-    
+
     <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">variable_list</span><span class="p">))</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
 
 <div class="viewcode-block" id="find_variable_names"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.find_variable_names">[docs]</a><span class="k">def</span> <span class="nf">find_variable_names</span><span class="p">(</span><span class="n">path_glob</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return all unique variables names from path glob, removing trailing date and __</span>
@@ -369,11 +443,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># trim year, tif and _ from names</span>
-    <span class="n">trim_year</span> <span class="o">=</span>  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\_{1,2}\d</span><span class="si">{4}</span><span class="s2">\.tif$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span> <span class="p">[</span><span class="n">trim_year</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
-                        <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">path_glob</span><span class="p">))</span> <span class="p">]))</span></div>
+    <span class="n">trim_year</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\_{1,2}\d</span><span class="si">{4}</span><span class="s2">\.tif$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">unique</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">trim_year</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">string</span><span class="p">))</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">path_glob</span><span class="p">))]</span>
+        <span class="p">)</span>
+    <span class="p">)</span></div>
 
-<div class="viewcode-block" id="find_variable_year"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.find_variable_year">[docs]</a><span class="k">def</span> <span class="nf">find_variable_year</span><span class="p">(</span><span class="n">path_glob</span><span class="p">,</span><span class="n">digits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">strp_glob</span> <span class="o">=</span> <span class="s2">&quot;%Y.tif&quot;</span>  <span class="p">):</span>
+
+<div class="viewcode-block" id="find_variable_year"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.find_variable_year">[docs]</a><span class="k">def</span> <span class="nf">find_variable_year</span><span class="p">(</span><span class="n">path_glob</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">strp_glob</span><span class="o">=</span><span class="s2">&quot;%Y.tif&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return all unique variables 4 digit years years from path glob</span>
 
 <span class="sd">    Example:</span>
@@ -388,9 +466,17 @@
 <span class="sd">    :type strp_glob: string</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">find_year</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span>  <span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d{&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;}\.tif&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">unique</span><span class="p">([</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">find_year</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">string</span><span class="p">)),</span> <span class="n">strp_glob</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y&quot;</span><span class="p">)</span>
-                          <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">path_glob</span><span class="p">))</span>  <span class="p">]))</span></div>
+    <span class="n">find_year</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;}\.tif&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">unique</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+                    <span class="n">find_year</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">string</span><span class="p">)),</span> <span class="n">strp_glob</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">path_glob</span><span class="p">))</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="downcast_pandas"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.downcast_pandas">[docs]</a><span class="k">def</span> <span class="nf">downcast_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -408,59 +494,63 @@
 <span class="sd">    :rtype: DataFrame</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">categorical_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="n">categorical_features</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">categorical_features</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
-    <span class="n">float_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="s1">&#39;float64&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="n">float_features</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">float_features</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">)</span>
-    <span class="n">int_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;int32&#39;</span><span class="p">,</span><span class="s1">&#39;int16&#39;</span><span class="p">,</span> <span class="s1">&#39;int8&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="n">int_features</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">int_features</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+    <span class="n">categorical_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;object&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">categorical_features</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">categorical_features</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+    <span class="n">float_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;float32&quot;</span><span class="p">,</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span> <span class="s2">&quot;float64&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">columns</span>
+    <span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">float_features</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">float_features</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+    <span class="n">int_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;int32&quot;</span><span class="p">,</span> <span class="s2">&quot;int16&quot;</span><span class="p">,</span> <span class="s2">&quot;int8&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">int_features</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">int_features</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">data</span> </div>
+    <span class="k">return</span> <span class="n">data</span></div>
 
 
-<span class="k">def</span> <span class="nf">compressed_pickle</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="s1">&#39;gz&#39;</span> <span class="p">):</span>
+<span class="k">def</span> <span class="nf">compressed_pickle</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="s2">&quot;gz&quot;</span><span class="p">):</span>
 
     <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">compress</span> <span class="o">==</span> <span class="s1">&#39;bz2&#39;</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.pbz2&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> 
-            <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            
-    <span class="k">if</span> <span class="n">compress</span> <span class="o">==</span> <span class="s1">&#39;gz&#39;</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.gz&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> 
+    <span class="k">if</span> <span class="n">compress</span> <span class="o">==</span> <span class="s2">&quot;bz2&quot;</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.pbz2&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">compress</span> <span class="o">==</span> <span class="s2">&quot;gz&quot;</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">decompress_pickle</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="s1">&#39;gz&#39;</span><span class="p">):</span>
 
-    <span class="k">if</span> <span class="n">compress</span> <span class="o">==</span> <span class="s1">&#39;bz2&#39;</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">decompress_pickle</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="s2">&quot;gz&quot;</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">compress</span> <span class="o">==</span> <span class="s2">&quot;bz2&quot;</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">compress</span> <span class="o">==</span> <span class="s1">&#39;gz&#39;</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">compress</span> <span class="o">==</span> <span class="s2">&quot;gz&quot;</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span>
 
 
 <span class="k">def</span> <span class="nf">save_pickle</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-    
+
     <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>  <span class="c1"># Overwrites any existing file.</span>
-        <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span><span class="n">protocol</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> 
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>  <span class="c1"># Overwrites any existing file.</span>
+        <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">open_pickle</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="k">return</span>  <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
             <span class="k">pass</span>
-<span class="c1">#return pickle.load( open( &quot;save.p&quot;, &quot;rb&quot; ) )</span>
 
 
-<div class="viewcode-block" id="xarray_to_rasterio"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.xarray_to_rasterio">[docs]</a><span class="k">def</span> <span class="nf">xarray_to_rasterio</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="c1"># return pickle.load( open( &quot;save.p&quot;, &quot;rb&quot; ) )</span>
+
+
+<div class="viewcode-block" id="xarray_to_rasterio"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.xarray_to_rasterio">[docs]</a><span class="k">def</span> <span class="nf">xarray_to_rasterio</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    </span>
 <span class="sd">    Writes xarray bands to disk by band</span>
@@ -489,37 +579,37 @@
 <span class="sd">    :type output_postfix:  list   </span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-    
+
     <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    
+
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">bands</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            
-            <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">xr_data</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">band</span> <span class="o">+</span> <span class="n">postfix</span><span class="o">+</span> <span class="s1">&#39;.tif&#39;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">xr_data</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">band</span> <span class="o">+</span> <span class="n">postfix</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span><span class="p">)</span>
                 <span class="n">xr_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">to_raster</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                    
+
         <span class="k">else</span><span class="p">:</span>
-            
+
             <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">band</span> <span class="o">+</span> <span class="n">postfix</span><span class="o">+</span> <span class="s1">&#39;.tif&#39;</span><span class="p">)</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">band</span> <span class="o">+</span> <span class="n">postfix</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span><span class="p">)</span>
                 <span class="n">xr_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">to_raster</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error writing&#39;</span><span class="p">)</span>
-                    
-        <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">xr_data</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">band</span> <span class="o">+</span> <span class="n">postfix</span><span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)</span>                    
-            <span class="n">save_pickle</span><span class="p">(</span> <span class="n">xr_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">),</span> <span class="n">filename</span> <span class="p">)</span></div>
-                 
-            
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error writing&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="to_vrt"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.to_vrt">[docs]</a><span class="k">def</span> <span class="nf">to_vrt</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
-           <span class="n">filename</span><span class="p">,</span>
-           <span class="n">resampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-           <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-           <span class="n">init_dest_nodata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-           <span class="n">warp_mem_limit</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">xr_data</span><span class="p">[</span><span class="s2">&quot;band&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">band</span> <span class="o">+</span> <span class="n">postfix</span> <span class="o">+</span> <span class="s2">&quot;.pkl&quot;</span><span class="p">)</span>
+            <span class="n">save_pickle</span><span class="p">(</span><span class="n">xr_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_vrt"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.to_vrt">[docs]</a><span class="k">def</span> <span class="nf">to_vrt</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">,</span>
+    <span class="n">resampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">init_dest_nodata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">warp_mem_limit</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+<span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes a file to a VRT file</span>
@@ -548,56 +638,61 @@
 <span class="sd">        &gt;&gt;&gt;     with gw.open([&#39;image1.tif&#39;, &#39;image2.tif&#39;], mosaic=True) as src:</span>
 <span class="sd">        &gt;&gt;&gt;         gw.to_vrt(src, &#39;output.vrt&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+    <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">resampling</span><span class="p">:</span>
         <span class="n">resampling</span> <span class="o">=</span> <span class="n">Resampling</span><span class="o">.</span><span class="n">nearest</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span> <span class="n">Path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="n">Path</span>
+    <span class="p">):</span>
 
         <span class="c1"># Open the input file on disk</span>
-        <span class="k">with</span> <span class="n">rio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">])</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">rio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
 
-            <span class="k">with</span> <span class="n">WarpedVRT</span><span class="p">(</span><span class="n">src</span><span class="p">,</span>
-                           <span class="n">src_crs</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>                         <span class="c1"># the original CRS</span>
-                           <span class="n">crs</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>                            <span class="c1"># the transformed CRS</span>
-                           <span class="n">src_transform</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span>             <span class="c1"># the original transform</span>
-                           <span class="n">transform</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span>                <span class="c1"># the new transform</span>
-                           <span class="n">dtype</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-                           <span class="n">resampling</span><span class="o">=</span><span class="n">resampling</span><span class="p">,</span>
-                           <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span>
-                           <span class="n">init_dest_nodata</span><span class="o">=</span><span class="n">init_dest_nodata</span><span class="p">,</span>
-                           <span class="n">warp_mem_limit</span><span class="o">=</span><span class="n">warp_mem_limit</span><span class="p">)</span> <span class="k">as</span> <span class="n">vrt</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">WarpedVRT</span><span class="p">(</span>
+                <span class="n">src</span><span class="p">,</span>
+                <span class="n">src_crs</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>  <span class="c1"># the original CRS</span>
+                <span class="n">crs</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>  <span class="c1"># the transformed CRS</span>
+                <span class="n">src_transform</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span>  <span class="c1"># the original transform</span>
+                <span class="n">transform</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span>  <span class="c1"># the new transform</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="n">resampling</span><span class="o">=</span><span class="n">resampling</span><span class="p">,</span>
+                <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span>
+                <span class="n">init_dest_nodata</span><span class="o">=</span><span class="n">init_dest_nodata</span><span class="p">,</span>
+                <span class="n">warp_mem_limit</span><span class="o">=</span><span class="n">warp_mem_limit</span><span class="p">,</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">vrt</span><span class="p">:</span>
 
-                <span class="n">rio_shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">vrt</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;VRT&#39;</span><span class="p">)</span>
+                <span class="n">rio_shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">vrt</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;VRT&quot;</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
-            
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+
             <span class="n">separate</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">data_are_separate</span> <span class="k">else</span> <span class="kc">False</span>
-    
-            <span class="n">vrt_options</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">BuildVRTOptions</span><span class="p">(</span><span class="n">outputBounds</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
-                                               <span class="n">xRes</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">cellx</span><span class="p">,</span>
-                                               <span class="n">yRes</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">celly</span><span class="p">,</span>
-                                               <span class="n">separate</span><span class="o">=</span><span class="n">separate</span><span class="p">,</span>
-                                               <span class="n">outputSRS</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">crs</span> <span class="p">)</span>
-    
-            <span class="n">dat</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">BuildVRT</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span> <span class="n">options</span><span class="o">=</span><span class="n">vrt_options</span><span class="p">)</span>
-    
+
+            <span class="n">vrt_options</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">BuildVRTOptions</span><span class="p">(</span>
+                <span class="n">outputBounds</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+                <span class="n">xRes</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">cellx</span><span class="p">,</span>
+                <span class="n">yRes</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">celly</span><span class="p">,</span>
+                <span class="n">separate</span><span class="o">=</span><span class="n">separate</span><span class="p">,</span>
+                <span class="n">outputSRS</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">dat</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">BuildVRT</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="n">options</span><span class="o">=</span><span class="n">vrt_options</span><span class="p">)</span>
+
             <span class="n">dat</span> <span class="o">=</span> <span class="kc">None</span>
-            
+
         <span class="k">else</span><span class="p">:</span>
-            
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data.filename must contain paths for to_vrt to work&#39;</span><span class="p">)</span></div>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data.filename must contain paths for to_vrt to work&quot;</span><span class="p">)</span></div>
 
 
 <span class="c1"># def encode_multiindex(ds, idxname):</span>
 <span class="c1">#     &quot;&quot;&quot;</span>
 <span class="c1">#     converte xarray stacked data (multi-index) into regular index, storing</span>
-<span class="c1">#     the index composition in the attributes. </span>
+<span class="c1">#     the index composition in the attributes.</span>
 
 <span class="c1">#     :param ds: xarray data with a multi-index</span>
 <span class="c1">#     :type ds: [type]</span>
@@ -618,7 +713,7 @@
 
 <span class="c1"># def decode_to_multiindex(encoded, idxname):</span>
 <span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     Decodes output of encode_multiindex </span>
+<span class="c1">#     Decodes output of encode_multiindex</span>
 
 <span class="c1">#     :param encoded: output from encode_multiindex</span>
 <span class="c1">#     :type encoded: xarray</span>
