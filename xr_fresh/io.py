@@ -51,7 +51,8 @@ class WriteDaskArray(object):
 
         out_filename = (
             self.parent
-            / f"{self.stem}_y{y.start:09d}_x{x.start:09d}_h{y.stop - y.start:09d}_w{x.stop - x.start:09d}{self.suffix}"
+            # / f"{self.stem}_y{y.start:09d}_x{x.start:09d}_h{y.stop - y.start:09d}_w{x.stop - x.start:09d}{self.suffix}"
+            / f"{self.stem}_row{y.start:09d}{self.suffix}"
         )
 
         if self.overwrite:
