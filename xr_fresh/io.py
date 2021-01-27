@@ -98,6 +98,7 @@ def parquet_append(
     Read, filter and append large set of parquet files to a single file. Note: resulting file must be read with pd.read_parquet(engine='pyarrow')
 
     `See read_table docs <https://arrow.apache.org/docs/python/generated/pyarrow.parquet.read_table.html#pyarrow.parquet.read_table>`_
+    
     :param file_list: list of file paths to .parquet files
     :type file_list: list
     :param out_path: path and name of output parquet file

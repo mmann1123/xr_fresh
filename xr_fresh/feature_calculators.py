@@ -110,6 +110,18 @@ def _abs_energy_slower(x, dim="time", **kwargs):
     )
 
 
+def test(test):
+    """[summary]
+
+    :param test: [description]
+    :type test: [type]
+    :raises KeyError: [description]
+    :raises ValueError: [description]
+    :return: [description]
+    :rtype: [type]
+    """
+
+
 @set_property("fctype", "simple")
 def absolute_sum_of_changes(X, dim="time", **kwargs):
     """
@@ -131,26 +143,29 @@ def absolute_sum_of_changes(X, dim="time", **kwargs):
 @set_property("fctype", "simple")
 def autocorr(X, lag=1, dim="time", return_p=True, **kwargs):
     """Calculate the lagged correlation of time series. Amended from xskillscore package
-    Args:
-        X (xarray object): Time series or grid of time series.
-        lag (optional int): Number of time steps to lag correlate to.
-        dim (optional str): Name of dimension to autocorrelate over.
-        return_p (optional bool): If True, return correlation coefficients
-                                  and p values.
-    Returns:
-        Pearson correlation coefficients.
-        If return_p, also returns their associated p values.
+
+    :param X: Time series or grid of time series.
+    :type X: xr.DataArray
+    :param lag: Number of time steps to lag correlate to. optional, defaults to 1
+    :type lag: int, optional
+    :param dim: Name of dimension to autocorrelate over. optional, defaults to "time"
+    :type dim: str, optional
+    :param return_p: If True, return p values. optional, defaults to True
+    :type return_p: bool, optional
+    :return: Pearson correlation coefficients (r). If return_p, returns its associated p values.
+    :rtype: float
     """
+
     X = X
     N = X[dim].size
     normal = X.isel({dim: slice(0, N - lag)})
     shifted = X.isel({dim: slice(0 + lag, N)})
-    """
-    xskillscore pearson_r looks for the dimensions to be matching, but we
-    shifted them so they probably won't be. This solution doesn't work
-    if the user provides a dataset without a coordinate for the main
-    dimension, so we need to create a dummy dimension in that case.
-    """
+    # """
+    # xskillscore pearson_r looks for the dimensions to be matching, but we
+    # shifted them so they probably won't be. This solution doesn't work
+    # if the user provides a dataset without a coordinate for the main
+    # dimension, so we need to create a dummy dimension in that case.
+    # """
     if dim not in list(X.coords):
         normal[dim] = np.arange(1, N)
     shifted[dim] = normal[dim]
@@ -635,23 +650,23 @@ def longest_run(
     ufunc_1dim: Union[str, bool] = "auto",
     npts_opt=9000,
 ):
-
     """Return the length of the longest consecutive run of True values.
-        Parameters
-        ----------
-        da : xr.DataArray
-          N-dimensional array (boolean)
-        dim : str
-          Dimension along which to calculate consecutive run; Default: 'time'.
-        ufunc_1dim : Union[str, bool]
-          Use the 1d 'ufunc' version of this function : default (auto) will attempt to select optimal
+    
+
+    :param da: N-dimensional array (boolean)
+    :type da: xr.DataArray
+    :param dim: Dimension along which to calculate consecutive run, defaults to "time"
+    :type dim: str, optional
+    :param ufunc_1dim: Use the 1d 'ufunc' version of this function : default (auto) will attempt to select optimal
           usage based on number of data points.  Using 1D_ufunc=True is typically more efficient
-          for dataarray with a small number of gridpoints.
-        Returns
-        -------
-        N-dimensional array (int)
-          Length of longest run of True values along dimension
-        """
+          for dataarray with a small number of gridpoints, defaults to "auto"
+    :type ufunc_1dim: Union[str, bool], optional
+    :param npts_opt: [description], defaults to 9000
+    :type npts_opt: int, optional
+    :return: Length of longest run of True values along dimension
+    :rtype: ndarray (int)
+    """
+
     if ufunc_1dim == "auto":
         npts = _get_npts(da)
         ufunc_1dim = npts <= npts_opt

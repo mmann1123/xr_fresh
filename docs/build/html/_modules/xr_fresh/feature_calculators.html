@@ -265,6 +265,18 @@
     <span class="p">)</span>
 
 
+<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculators.test">[docs]</a><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;[summary]</span>
+
+<span class="sd">    :param test: [description]</span>
+<span class="sd">    :type test: [type]</span>
+<span class="sd">    :raises KeyError: [description]</span>
+<span class="sd">    :raises ValueError: [description]</span>
+<span class="sd">    :return: [description]</span>
+<span class="sd">    :rtype: [type]</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
 <div class="viewcode-block" id="absolute_sum_of_changes"><a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculators.absolute_sum_of_changes">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">absolute_sum_of_changes</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -286,26 +298,29 @@
 <div class="viewcode-block" id="autocorr"><a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculators.autocorr">[docs]</a><span class="nd">@set_property</span><span class="p">(</span><span class="s2">&quot;fctype&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">autocorr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">return_p</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculate the lagged correlation of time series. Amended from xskillscore package</span>
-<span class="sd">    Args:</span>
-<span class="sd">        X (xarray object): Time series or grid of time series.</span>
-<span class="sd">        lag (optional int): Number of time steps to lag correlate to.</span>
-<span class="sd">        dim (optional str): Name of dimension to autocorrelate over.</span>
-<span class="sd">        return_p (optional bool): If True, return correlation coefficients</span>
-<span class="sd">                                  and p values.</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        Pearson correlation coefficients.</span>
-<span class="sd">        If return_p, also returns their associated p values.</span>
+
+<span class="sd">    :param X: Time series or grid of time series.</span>
+<span class="sd">    :type X: xr.DataArray</span>
+<span class="sd">    :param lag: Number of time steps to lag correlate to. optional, defaults to 1</span>
+<span class="sd">    :type lag: int, optional</span>
+<span class="sd">    :param dim: Name of dimension to autocorrelate over. optional, defaults to &quot;time&quot;</span>
+<span class="sd">    :type dim: str, optional</span>
+<span class="sd">    :param return_p: If True, return p values. optional, defaults to True</span>
+<span class="sd">    :type return_p: bool, optional</span>
+<span class="sd">    :return: Pearson correlation coefficients (r). If return_p, returns its associated p values.</span>
+<span class="sd">    :rtype: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
     <span class="n">normal</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">isel</span><span class="p">({</span><span class="n">dim</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="n">lag</span><span class="p">)})</span>
     <span class="n">shifted</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">isel</span><span class="p">({</span><span class="n">dim</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">lag</span><span class="p">,</span> <span class="n">N</span><span class="p">)})</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    xskillscore pearson_r looks for the dimensions to be matching, but we</span>
-<span class="sd">    shifted them so they probably won&#39;t be. This solution doesn&#39;t work</span>
-<span class="sd">    if the user provides a dataset without a coordinate for the main</span>
-<span class="sd">    dimension, so we need to create a dummy dimension in that case.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># &quot;&quot;&quot;</span>
+    <span class="c1"># xskillscore pearson_r looks for the dimensions to be matching, but we</span>
+    <span class="c1"># shifted them so they probably won&#39;t be. This solution doesn&#39;t work</span>
+    <span class="c1"># if the user provides a dataset without a coordinate for the main</span>
+    <span class="c1"># dimension, so we need to create a dummy dimension in that case.</span>
+    <span class="c1"># &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">coords</span><span class="p">):</span>
         <span class="n">normal</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
     <span class="n">shifted</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">normal</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span>
@@ -790,23 +805,23 @@
     <span class="n">ufunc_1dim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="n">npts_opt</span><span class="o">=</span><span class="mi">9000</span><span class="p">,</span>
 <span class="p">):</span>
-
     <span class="sd">&quot;&quot;&quot;Return the length of the longest consecutive run of True values.</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        da : xr.DataArray</span>
-<span class="sd">          N-dimensional array (boolean)</span>
-<span class="sd">        dim : str</span>
-<span class="sd">          Dimension along which to calculate consecutive run; Default: &#39;time&#39;.</span>
-<span class="sd">        ufunc_1dim : Union[str, bool]</span>
-<span class="sd">          Use the 1d &#39;ufunc&#39; version of this function : default (auto) will attempt to select optimal</span>
+<span class="sd">    </span>
+
+<span class="sd">    :param da: N-dimensional array (boolean)</span>
+<span class="sd">    :type da: xr.DataArray</span>
+<span class="sd">    :param dim: Dimension along which to calculate consecutive run, defaults to &quot;time&quot;</span>
+<span class="sd">    :type dim: str, optional</span>
+<span class="sd">    :param ufunc_1dim: Use the 1d &#39;ufunc&#39; version of this function : default (auto) will attempt to select optimal</span>
 <span class="sd">          usage based on number of data points.  Using 1D_ufunc=True is typically more efficient</span>
-<span class="sd">          for dataarray with a small number of gridpoints.</span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        N-dimensional array (int)</span>
-<span class="sd">          Length of longest run of True values along dimension</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">          for dataarray with a small number of gridpoints, defaults to &quot;auto&quot;</span>
+<span class="sd">    :type ufunc_1dim: Union[str, bool], optional</span>
+<span class="sd">    :param npts_opt: [description], defaults to 9000</span>
+<span class="sd">    :type npts_opt: int, optional</span>
+<span class="sd">    :return: Length of longest run of True values along dimension</span>
+<span class="sd">    :rtype: ndarray (int)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="n">ufunc_1dim</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
         <span class="n">npts</span> <span class="o">=</span> <span class="n">_get_npts</span><span class="p">(</span><span class="n">da</span><span class="p">)</span>
         <span class="n">ufunc_1dim</span> <span class="o">=</span> <span class="n">npts</span> <span class="o">&lt;=</span> <span class="n">npts_opt</span>

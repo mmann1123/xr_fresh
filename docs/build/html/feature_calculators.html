@@ -214,21 +214,21 @@
 <dl class="py function">
 <dt id="xr_fresh.feature_calculators.autocorr">
 <code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">autocorr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">lag</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">return_p</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#autocorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.autocorr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the lagged correlation of time series. Amended from xskillscore package
-:param X: Time series or grid of time series.
-:type X: xarray object
-:param lag: Number of time steps to lag correlate to.
-:type lag: optional int
-:param dim: Name of dimension to autocorrelate over.
-:type dim: optional str
-:param return_p: If True, return correlation coefficients</p>
-<blockquote>
-<div><p>and p values.</p>
-</div></blockquote>
+<dd><p>Calculate the lagged correlation of time series. Amended from xskillscore package</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Pearson correlation coefficients.
-If return_p, also returns their associated p values.</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>xr.DataArray</em>) – Time series or grid of time series.</p></li>
+<li><p><strong>lag</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of time steps to lag correlate to. optional, defaults to 1</p></li>
+<li><p><strong>dim</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of dimension to autocorrelate over. optional, defaults to “time”</p></li>
+<li><p><strong>return_p</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return p values. optional, defaults to True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pearson correlation coefficients (r). If return_p, returns its associated p values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 <p><em>This function is of type: simple</em></p>
@@ -493,21 +493,23 @@ linregress for more information.</p>
 <dl class="py function">
 <dt id="xr_fresh.feature_calculators.longest_run">
 <code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">da</span><span class="p">:</span> <span class="n">xarray.core.dataarray.DataArray</span></em>, <em class="sig-param"><span class="n">dim</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'time'</span></em>, <em class="sig-param"><span class="n">ufunc_1dim</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">npts_opt</span><span class="o">=</span><span class="default_value">9000</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run" title="Permalink to this definition">¶</a></dt>
-<dd><dl>
-<dt>Return the length of the longest consecutive run of True values.</dt><dd><dl class="simple">
-<dt>da<span class="classifier">xr.DataArray</span></dt><dd><p>N-dimensional array (boolean)</p>
-</dd>
-<dt>dim<span class="classifier">str</span></dt><dd><p>Dimension along which to calculate consecutive run; Default: ‘time’.</p>
-</dd>
-<dt>ufunc_1dim<span class="classifier">Union[str, bool]</span></dt><dd><p>Use the 1d ‘ufunc’ version of this function : default (auto) will attempt to select optimal
+<dd><p>Return the length of the longest consecutive run of True values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>da</strong> (<em>xr.DataArray</em>) – N-dimensional array (boolean)</p></li>
+<li><p><strong>dim</strong> (<em>str</em><em>, </em><em>optional</em>) – Dimension along which to calculate consecutive run, defaults to “time”</p></li>
+<li><p><strong>ufunc_1dim</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>bool</em><em>]</em><em>, </em><em>optional</em>) – Use the 1d ‘ufunc’ version of this function : default (auto) will attempt to select optimal
 usage based on number of data points.  Using 1D_ufunc=True is typically more efficient
-for dataarray with a small number of gridpoints.</p>
+for dataarray with a small number of gridpoints, defaults to “auto”</p></li>
+<li><p><strong>npts_opt</strong> (<em>int</em><em>, </em><em>optional</em>) – [description], defaults to 9000</p></li>
+</ul>
 </dd>
-</dl>
-<dl class="simple">
-<dt>N-dimensional array (int)</dt><dd><p>Length of longest run of True values along dimension</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Length of longest run of True values along dimension</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray (int)</p>
 </dd>
 </dl>
 <p><em>This function is of type: simple</em></p>
@@ -515,7 +517,7 @@ for dataarray with a small number of gridpoints.</p>
 
 <dl class="py function">
 <dt id="xr_fresh.feature_calculators.longest_run_ufunc">
-<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run_ufunc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>bool<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; &lt;function apply_ufunc at 0x7f4629e72290&gt;<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run_ufunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run_ufunc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run_ufunc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>bool<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; &lt;function apply_ufunc at 0x7ff3403e6320&gt;<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run_ufunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run_ufunc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dask-parallel version of longest_run_1d, ie the maximum number of consecutive true values in
 array.
 :param x: Input array (bool)
@@ -1020,6 +1022,29 @@ must have the same dimensions.</p>
 </dd>
 </dl>
 <p><em>This function is of type: simple</em></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="xr_fresh.feature_calculators.test">
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">test</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">test</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>[summary]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>test</strong> (<em>[</em><em>type</em><em>]</em>) – [description]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>KeyError</strong> – [description]</p></li>
+<li><p><strong>ValueError</strong> – [description]</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>[description]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>[type]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
