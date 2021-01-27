@@ -91,6 +91,43 @@ def WriteStackedArray(src: xr.DataArray, file_path="/tmp/test.parquet"):
         res.compute()
 
 
+def parquet_append(
+    file_list: list, out_path: str, filters: list,
+):
+    """
+    Read, filter and append large set of parquet files to a single file. 
+
+    `See read_table docs <https://arrow.apache.org/docs/python/generated/pyarrow.parquet.read_table.html#pyarrow.parquet.read_table>`_
+    :param file_list: list of file paths to .parquet files
+    :type file_list: list
+    :param out_path: path and name of output parquet file
+    :type out_path: str
+    :param filters: list of 
+    :type filters: list
+
+    .. highlight:: python
+    .. code-block:: python
+
+        ('x', '=', 0)
+        ('y', 'in', ['a', 'b', 'c'])
+        ('z', 'not in', {'a','b'})
+        ...
+
+    """
+    pqwriter = None
+    for i, df in enumerate(file_list):
+        table = pq.read_table(df, filters=filters, use_pandas_metadata=True,)
+        # for the first chunk of records
+        if i == 0:
+            # create a parquet write object giving it an output file
+            pqwriter = pq.ParquetWriter(out_path, table.schema,)
+        pqwriter.write_table(table)
+
+    # close the parquet writer
+    if pqwriter:
+        pqwriter.close()
+
+
 # old example using parallel task, much slower, but shouldn't be.
 # # add variables and stackerize
 # def user_func(*args, name_append=os.path.basename(image_stack_folder)):
