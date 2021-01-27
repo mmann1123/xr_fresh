@@ -89,3 +89,117 @@ def WriteStackedArray(src: xr.DataArray, file_path="/tmp/test.parquet"):
         res = da.store(src.data, dst, lock=False, compute=False)
 
         res.compute()
+
+
+# old example using parallel task, much slower, but shouldn't be.
+# # add variables and stackerize
+# def user_func(*args, name_append=os.path.basename(image_stack_folder)):
+#     # Gather function arguments
+#     data, window_id, num_workers = list(itertools.chain(*args))  # num_workers=1
+
+#     # Send the computation to Dask
+#     X = Stackerizer(stack_dims=("y", "x", "time"), direction="stack").fit_transform(
+#         data
+#     )  # NOTE stack y before x!!!
+#     X.compute(scheduler="threads", num_workers=num_workers)
+
+#     with open(unstacked_folder + "/log.txt", "a") as the_file:
+#         the_file.write("working on %08d \t" % window_id)
+#         the_file.write(str(datetime.now()) + "\n")
+
+#     X = X.to_pandas()
+
+#     # # downcast to save memory
+#     X = downcast_pandas(X)
+#     X.columns = X.columns.astype(str)
+
+#     # save this approach wont write files in order
+#     X.to_parquet(
+#         unstacked_folder
+#         + "/NDVI_2010-2016_Xy_"
+#         + name_append
+#         + "_"
+#         + os.path.splitext(block)[0]
+#         + "_%05d.parquet" % window_id,
+#         compression="snappy",
+#     )
+
+#     return None
+
+
+# # import matplotlib.pyplot as plt
+# # fig, ax = plt.subplots(dpi=350)
+# # labels.sel(band='r_code').plot.imshow(robust=False, ax=ax)
+# # plt.show(plt.tight_layout(pad=1))
+
+
+# #%%
+# name_append = os.path.basename(image_stack_folder)
+
+# lc = os.path.join(data_path, "Ethiopia_Land_Cover_2017/LandCoverMap/LC_ethiopia_RF.tif")
+
+
+# for block in unique_blocks[1:2]:  # 0 completed
+#     print("working on block:" + block)
+
+#     vrts = sorted(glob(image_stack_folder + "/**/" + block))
+#     vrts = vrts[:-3]  # limit to 2010-2016
+
+#     time_names = [x for x in range(2010, 2017)]  # NEED TO LIMIT 2012 to 2016
+
+#     with gw.open(
+#         vrts, time_names=time_names, chunks=400
+#     ) as ds:  # chunks is the pixel size of a chunk
+
+#         ds = add_categorical(
+#             data=ds,
+#             labels=regions,
+#             col="NAME_1",
+#             variable_name="region_code",
+#             missing_value=-9999,
+#         )  # use -9999 going forward
+#         ds = add_categorical(
+#             data=ds,
+#             labels=zones,
+#             col="NAME_2",
+#             variable_name="zone_code",
+#             missing_value=-9999,
+#         )
+#         ds = add_categorical(
+#             data=ds,
+#             labels=loss_poly,
+#             col="rk_code",
+#             variable_name="rk_code",
+#             missing_value=-9999,
+#         )
+#         # add target data by year
+#         ds = add_time_targets(
+#             data=ds,
+#             target=loss_poly,
+#             target_col_list=[
+#                 "w_dam_2010",
+#                 "w_dam_2011",
+#                 "w_dam_2012",
+#                 "w_dam_2013",
+#                 "w_dam_2014",
+#                 "w_dam_2015",
+#                 "w_dam_2016",
+#             ],
+#             target_name="weather_damage",
+#             missing_value=np.NaN,
+#             append_to_X=True,
+#         )
+
+#         ds = add_categorical(
+#             data=ds, labels=lc, variable_name="land_cover", missing_value=-9999,
+#         )
+
+#         ds = ds.chunk(
+#             {"time": -1, "band": -1, "y": "auto", "x": "auto"}
+#         )  # rechunk to time
+#         print(ds)
+
+#         pt = ParallelTask(ds, scheduler="threads", n_workers=2)
+#         print("n chunks %s" % pt.n_chunks)
+#         print("n windows %s" % pt.n_windows)
+#         res = pt.map(user_func, 6)
