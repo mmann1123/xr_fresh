@@ -332,6 +332,9 @@ def downcast_pandas(data):
     
     https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric  
 
+    Note: could be problematic with chunks if different dtypes are assigned to same column
+
+
     :param data: input dataframe 
     :type data: DataFrame
 
