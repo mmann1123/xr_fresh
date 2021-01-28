@@ -2,6 +2,8 @@ import dask.array as da
 from pathlib import Path
 from .transformers import Stackerizer
 import xarray as xr
+import geowombat as gw
+import numpy as np
 
 
 def stack_to_pandas(data, src, t, b, y, x):
@@ -39,6 +41,7 @@ class WriteDaskArray(object):
         self.suffix = fpath.suffix
 
         self.src = src
+        self.gw = src.gw
 
     def __setitem__(self, key, item):
 
@@ -49,10 +52,20 @@ class WriteDaskArray(object):
         else:
             y, x = key
 
+        row_chunks = list(self.src.chunks[-2])
+        row_chunks[0] = 0
+        row_id = np.add.accumulate(row_chunks)
+
+        self.src.attrs["chunk_ids"] = dict(
+            zip([f"{i:09d}" for i in row_id], range(0, len(row_id)),)
+        )
+        # note not working yet
+        # chunk_id = self.src.attrs["chunk_ids"][f"{y.start:09d}"]
+
         out_filename = (
             self.parent
-            # / f"{self.stem}_y{y.start:09d}_x{x.start:09d}_h{y.stop - y.start:09d}_w{x.stop - x.start:09d}{self.suffix}"
             / f"{self.stem}_row{y.start:09d}{self.suffix}"
+            # / f"{self.stem}_chunk{chunk_id:09d}{self.suffix}"
         )
 
         if self.overwrite:
@@ -112,7 +125,7 @@ def parquet_append(
         ('x', '=', 0)
         ('y', 'in', ['a', 'b', 'c'])
         ('z', 'not in', {'a','b'})
-        ...
+    ...
 
     """
     pqwriter = None
@@ -241,3 +254,48 @@ def parquet_append(
 #         print("n chunks %s" % pt.n_chunks)
 #         print("n windows %s" % pt.n_windows)
 #         res = pt.map(user_func, 6)
+
+
+#####################
+# dask delayed write
+#####################
+
+# import dask.dataframe as dd
+# from dask.diagnostics import ProgressBar, progress
+
+# ProgressBar().register()
+# from glob import glob
+# import dask
+
+# files = sorted(glob(os.path.join(unstacked_folder, "Xy_2010_2017_ea_lu_*.parquet")))
+# out_files = os.path.join(unstacked_folder, "training/")
+
+
+# @dask.delayed
+# def dask_dropna(file_in, column):
+#     ddf = pd.read_parquet(file_in)
+#     ddf.dropna(
+#         axis="rows", inplace=True, subset=[column]
+#     )  # loc[ddf[column].isnull(),:]
+#     # ddf.to_parquet(os.path.join(out_files,os.path.basename(file_in) ))
+#     return ddf
+
+
+# results = []
+# for x in files:
+#     # Note the difference in way the inc function is called!
+#     y = dask_dropna(file_in=x, column="weather_damage")
+#     results.append(y)
+
+
+# results = dask.compute(*results)
+# results = pd.concat(results, ignore_index=False)
+# print(results.head())
+
+# # drop areas outside of sub kebeles
+# results = results[results.rk_code != 0]
+# results.to_parquet(
+#     os.path.join(out_files, "Xy_2010_2017_ea_lu__training.parquet"),
+#     engine="pyarrow",
+#     index=True,
+# )
