@@ -517,7 +517,7 @@ for dataarray with a small number of gridpoints, defaults to “auto”</p></li>
 
 <dl class="py function">
 <dt id="xr_fresh.feature_calculators.longest_run_ufunc">
-<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run_ufunc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>bool<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; &lt;function apply_ufunc at 0x7ff3403e6320&gt;<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run_ufunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run_ufunc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">longest_run_ufunc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>bool<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; &lt;function apply_ufunc at 0x7f31224d4320&gt;<a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#longest_run_ufunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.longest_run_ufunc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dask-parallel version of longest_run_1d, ie the maximum number of consecutive true values in
 array.
 :param x: Input array (bool)
@@ -653,8 +653,7 @@ array.
 <code class="sig-prename descclassname">xr_fresh.feature_calculators.</code><code class="sig-name descname">mean_second_derivative_central</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'time'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculators.html#mean_second_derivative_central"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.feature_calculators.mean_second_derivative_central" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the mean over the differences between subsequent time series values which is</p>
 <div class="math notranslate nohighlight">
-\[\]</div>
-<p>frac{1}{n-1} sum_{i=1,ldots, n-1}  x_{i+1} - x_{i} = frac{1}{n-1} (x_{n} - x_{1})</p>
+\[\frac{1}{n-1} \sum_{i=1,\ldots, n-1}  x_{i+1} - x_{i} = \frac{1}{n-1} (x_{n} - x_{1})\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>X</strong> (<em>xarray.DataArray</em>) – the time series to calculate the feature of</p>

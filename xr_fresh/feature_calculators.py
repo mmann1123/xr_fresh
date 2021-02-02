@@ -213,6 +213,7 @@ def decorrelation_time(da, r=20, dim="time"):
     """Calculate the decorrelaton time of a time series.
 https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html
     .. math::
+
         \\tau_{d} = 1 + 2 * \\sum_{k=1}^{r}(\\alpha_{k})^{k}
 
     Args:
@@ -845,7 +846,7 @@ def mean_second_derivative_central(X, dim="time", **kwargs):
     
     .. math::
     
-    \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
+        \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
     
     :param X: the time series to calculate the feature of
     :type X: xarray.DataArray
@@ -1626,6 +1627,7 @@ def varweighted_mean_period(da, dim="time", **kwargs):
     https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html
 
     .. math::
+    
         P_{x} = \\frac{\\sum_k V(f_k,x)}{\\sum_k f_k  \\cdot V(f_k,x)}
 
     Args:

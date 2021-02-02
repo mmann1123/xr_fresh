@@ -2,8 +2,8 @@ import dask.array as da
 from pathlib import Path
 from .transformers import Stackerizer
 import xarray as xr
-import geowombat as gw
 import numpy as np
+import pyarrow.parquet as pq
 
 
 def stack_to_pandas(data, src, t, b, y, x):

@@ -368,6 +368,7 @@
     <span class="sd">&quot;&quot;&quot;Calculate the decorrelaton time of a time series.</span>
 <span class="sd">https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html</span>
 <span class="sd">    .. math::</span>
+
 <span class="sd">        \\tau_{d} = 1 + 2 * \\sum_{k=1}^{r}(\\alpha_{k})^{k}</span>
 
 <span class="sd">    Args:</span>
@@ -1000,7 +1001,7 @@
 <span class="sd">    </span>
 <span class="sd">    .. math::</span>
 <span class="sd">    </span>
-<span class="sd">    \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})</span>
+<span class="sd">        \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})</span>
 <span class="sd">    </span>
 <span class="sd">    :param X: the time series to calculate the feature of</span>
 <span class="sd">    :type X: xarray.DataArray</span>
@@ -1781,6 +1782,7 @@
 <span class="sd">    https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html</span>
 
 <span class="sd">    .. math::</span>
+<span class="sd">    </span>
 <span class="sd">        P_{x} = \\frac{\\sum_k V(f_k,x)}{\\sum_k f_k  \\cdot V(f_k,x)}</span>
 
 <span class="sd">    Args:</span>

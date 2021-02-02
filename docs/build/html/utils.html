@@ -86,6 +86,7 @@
             
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="feature_calculators.html">Feature Generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extractors.html">Extractor Function</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Other Utilities</a><ul>
@@ -253,6 +254,7 @@ All column names must be in acceding order e.g. [‘t_2010’,’t_2011’]</p><
 Saves considerable space.
 Objects are cast to categorical, int and float are cast to the smallest dtype</p>
 <p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric">https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric</a></p>
+<p>Note: could be problematic with chunks if different dtypes are assigned to same column</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>DataFrame</em>) – input dataframe</p>
