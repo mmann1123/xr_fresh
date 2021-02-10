@@ -965,7 +965,7 @@
 <span class="sd">    .. math::</span>
 <span class="sd">    </span>
 <span class="sd">        \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})</span>
-<span class="sd">    </span>
+
 <span class="sd">    :param X: the time series to calculate the feature of</span>
 <span class="sd">    :type X: xarray.DataArray</span>
 <span class="sd">    :return: the value of this feature</span>
@@ -1001,8 +1001,8 @@
 <span class="sd">    </span>
 <span class="sd">    .. math::</span>
 <span class="sd">    </span>
-<span class="sd">        \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})</span>
-<span class="sd">    </span>
+<span class="sd">        \\frac{1}{2(n-2)} \\sum_{i=1,\\ldots, n-1}  \\frac{1}{2} (x_{i+2} - 2 \\cdot x_{i+1} + x_i)</span>
+<span class="sd">            </span>
 <span class="sd">    :param X: the time series to calculate the feature of</span>
 <span class="sd">    :type X: xarray.DataArray</span>
 <span class="sd">    :return: the value of this feature</span>
