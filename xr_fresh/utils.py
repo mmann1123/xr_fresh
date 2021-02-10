@@ -134,10 +134,10 @@ def add_time_targets(
 
 def _assign_concat2band(data, label_grid):
 
-    # TODO: is this sufficient for single dates?
     if not data.gw.has_time_coord:
         data = data.assign_coords(time=1)
 
+    # not working for single time periods - ValueError: dimension 'time' already exists as a scalar variable
     category = concat([label_grid] * data.gw.ntime, dim="time").assign_coords(
         {"time": data.time.values.tolist()}
     )
