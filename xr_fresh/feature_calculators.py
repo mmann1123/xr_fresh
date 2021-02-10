@@ -496,7 +496,7 @@ def large_standard_deviation(X, r=2, dim="time", **kwargs):
 @set_property("fctype", "ufunc")
 def length(X, dim="time", **kwargs):
     """
-    Returns the mean of X
+    Returns the length of X
 
     :param X: the time series to calculate thfunce feature of
     :type X: xarray.DataArray
@@ -607,6 +607,48 @@ def linear_time_trend(x, param="slope", dim="time", **kwargs):
 # to do: vectorized linreg calc
 # possible example:
 
+# def linregress_3D(y_array):
+#     # y_array is a 3-D array formatted like (time,lon,lat)
+#     # The purpose of this function is to do linear regression using time series of data over each (lon,lat) grid box with consideration of ignoring np.nan
+#     # Construct x_array indicating time indexes of y_array, namely the independent variable.
+#     x_array=np.empty(y_array.shape)
+#     for i in range(y_array.shape[0]): x_array[i,:,:]=i+1 # This would be fine if time series is not too long. Or we can use i+yr (e.g. 2019).
+#     x_array[np.isnan(y_array)]=np.nan
+#     # Compute the number of non-nan over each (lon,lat) grid box.
+#     n=np.sum(~np.isnan(x_array),axis=0)
+#     # Compute mean and standard deviation of time series of x_array and y_array over each (lon,lat) grid box.
+#     x_mean=np.nanmean(x_array,axis=0)
+#     y_mean=np.nanmean(y_array,axis=0)
+#     x_std=np.nanstd(x_array,axis=0)
+#     y_std=np.nanstd(y_array,axis=0)
+#     # Compute co-variance between time series of x_array and y_array over each (lon,lat) grid box.
+#     cov=np.nansum((x_array-x_mean)*(y_array-y_mean),axis=0)/n
+#     # Compute correlation coefficients between time series of x_array and y_array over each (lon,lat) grid box.
+#     cor=cov/(x_std*y_std)
+#     # Compute slope between time series of x_array and y_array over each (lon,lat) grid box.
+#     slope=cov/(x_std**2)
+#     # Compute intercept between time series of x_array and y_array over each (lon,lat) grid box.
+#     intercept=y_mean-x_mean*slope
+#     # Compute tstats, stderr, and p_val between time series of x_array and y_array over each (lon,lat) grid box.
+#     tstats=cor*np.sqrt(n-2)/np.sqrt(1-cor**2)
+#     stderr=slope/tstats
+#     from scipy.stats import t
+#     p_val=t.sf(tstats,n-2)*2
+#     # Compute r_square and rmse between time series of x_array and y_array over each (lon,lat) grid box.
+#     # r_square also equals to cor**2 in 1-variable lineare regression analysis, which can be used for checking.
+#     r_square=np.nansum((slope*x_array+intercept-y_mean)**2,axis=0)/np.nansum((y_array-y_mean)**2,axis=0)
+#     rmse=np.sqrt(np.nansum((y_array-slope*x_array-intercept)**2,axis=0)/n)
+#     # Do further filteration if needed (e.g. We stipulate at least 3 data records are needed to do regression analysis) and return values
+#     n=n*1.0 # convert n from integer to float to enable later use of np.nan
+#     n[n<3]=np.nan
+#     slope[np.isnan(n)]=np.nan
+#     intercept[np.isnan(n)]=np.nan
+#     p_val[np.isnan(n)]=np.nan
+#     r_square[np.isnan(n)]=np.nan
+#     rmse[np.isnan(n)]=np.nan
+#     return n,slope,intercept,p_val,r_square,rmse
+
+
 # ds = xr.open_dataset('sst_2D.nc', chunks={'X': 30, 'Y': 30})
 # def ulinregress(x, y): # the universal function
 #     ny, nx, nt = y.shape ; y = np.moveaxis(y, -1, 0).reshape((nt, -1)) # nt, ny*nx
@@ -620,6 +662,65 @@ def linear_time_trend(x, param="slope", dim="time", **kwargs):
 # series.plot(label='Original') ; line.plot(label='Linear regression') ; plt.legend();
 
 # calculate R2 from SSR/SST https://365datascience.com/sum-squares/
+
+
+# another example
+
+
+# def xarray_trend(xarr):
+#     from scipy import stats
+#     # getting shapes
+
+#     m = np.prod(xarr.shape[1:]).squeeze()
+#     n = xarr.shape[0]
+
+#     # creating x and y variables for linear regression
+#     x = xarr.time.to_pandas().index.to_julian_date().values[:, None]
+#     y = xarr.to_masked_array().reshape(n, -1)
+
+#     # ############################ #
+#     # LINEAR REGRESSION DONE BELOW #
+#     xm = x.mean(0)  # mean
+#     ym = y.mean(0)  # mean
+#     ya = y - ym  # anomaly
+#     xa = x - xm  # anomaly
+
+#     # variance and covariances
+#     xss = (xa ** 2).sum(0) / (n - 1)  # variance of x (with df as n-1)
+#     yss = (ya ** 2).sum(0) / (n - 1)  # variance of y (with df as n-1)
+#     xys = (xa * ya).sum(0) / (n - 1)  # covariance (with df as n-1)
+#     # slope and intercept
+#     slope = xys / xss
+#     intercept = ym - (slope * xm)
+#     # statistics about fit
+#     df = n - 2
+#     r = xys / (xss * yss)**0.5
+#     t = r * (df / ((1 - r) * (1 + r)))**0.5
+#     p = stats.distributions.t.sf(abs(t), df)
+
+#     # misclaneous additional functions
+#     # yhat = dot(x, slope[None]) + intercept
+#     # sse = ((yhat - y)**2).sum(0) / (n - 2)  # n-2 is df
+#     # se = ((1 - r**2) * yss / xss / df)**0.5
+
+#     # preparing outputs
+#     out = xarr[:2].mean('time')
+#     # first create variable for slope and adjust meta
+#     xarr_slope = out.copy()
+#     xarr_slope.name += '_slope'
+#     xarr_slope.attrs['units'] = 'units / day'
+#     xarr_slope.values = slope.reshape(xarr.shape[1:])
+#     # do the same for the p value
+#     xarr_p = out.copy()
+#     xarr_p.name += '_Pvalue'
+#     xarr_p.attrs['info'] = "If p < 0.05 then the results from 'slope' are significant."
+#     xarr_p.values = p.reshape(xarr.shape[1:])
+#     # join these variables
+#     xarr_out = xarr_slope.to_dataset(name='slope')
+#     xarr_out['pval'] = xarr_p
+
+#     return xarr_out
+
 
 # from xclim https://github.com/Ouranosinc/xclim/blob/51123e0bbcaa5ad8882877f6905d9b285e63ddd9/xclim/run_length.py
 @set_property("fctype", "simple")
@@ -810,7 +911,7 @@ def mean_change(X, dim="time", **kwargs):
     .. math::
     
         \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
-    
+
     :param X: the time series to calculate the feature of
     :type X: xarray.DataArray
     :return: the value of this feature
@@ -846,8 +947,8 @@ def mean_second_derivative_central(X, dim="time", **kwargs):
     
     .. math::
     
-        \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
-    
+        \\frac{1}{2(n-2)} \\sum_{i=1,\\ldots, n-1}  \\frac{1}{2} (x_{i+2} - 2 \\cdot x_{i+1} + x_i)
+            
     :param X: the time series to calculate the feature of
     :type X: xarray.DataArray
     :return: the value of this feature
