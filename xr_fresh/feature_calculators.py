@@ -515,130 +515,7 @@ def length(X, dim="time", **kwargs):
     )
 
 
-def _timereg(Y, t, param):
-
-    # avoid all missing
-    if allnan(Y):
-        if param != "all":
-            return np.NaN
-        else:
-
-            return np.stack((np.NaN, np.NaN, np.NaN, np.NaN), axis=-1)
-
-    else:
-        mask = ~np.isnan(t) & ~np.isnan(Y)
-        linReg = linregress(x=t[mask], y=Y[mask])
-
-        if param != "all":
-            return getattr(linReg, param)
-
-        else:
-            return np.stack(
-                (
-                    getattr(linReg, "intercept"),
-                    getattr(linReg, "slope"),
-                    getattr(linReg, "pvalue"),
-                    getattr(linReg, "rvalue"),
-                ),
-                axis=-1,
-            )
-
-
-@set_property("fctype", "ufunc")
-def linear_time_trend(x, param="slope", dim="time", **kwargs):
-
-    """
-    # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
-
-    Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to
-    length of the time series minus one.
-    This feature assumes the signal to be uniformly sampled. It will not use the time stamps to fit the model.
-    The parameters control which of the characteristics are returned.
-
-    Possible extracted attributes are "all", "pvalue", "rvalue", "intercept", "slope", "stderr", see the documentation of
-    linregress for more information.
-
-    :param x: the time series to calculate the feature of
-    :type x:  xarray.DataArray
-    :param param: contains text of the attribute name of the regression model
-    :type param: list
-    :return: the value of this feature
-    :return type: int
-    """
-
-    t = xr.DataArray(np.arange(len(x[dim])) + 1, dims=dim, coords={dim: x[dim]})
-
-    if param == "all":
-
-        out = (
-            xr.apply_ufunc(
-                _timereg,
-                x,
-                t,
-                input_core_dims=[[dim], [dim]],
-                kwargs={"param": param},
-                vectorize=True,
-                dask="parallelized",
-                output_dtypes=[float],
-                output_core_dims=[["variable"]],
-                output_sizes={"variable": 4},
-                keep_attrs=True,
-            )
-            .to_dataset(dim="variable")
-            .to_array()
-        )
-    else:
-
-        out = xr.apply_ufunc(
-            _timereg,
-            x,
-            t,
-            input_core_dims=[[dim], [dim]],
-            kwargs={"param": param},
-            vectorize=False,
-            dask="parallelized",
-            output_dtypes=[float],
-            keep_attrs=True,
-        )
-
-    return out
-
-
-# to do: vectorized linreg calc
-# possible example:
-
-
-# def _covariance_gufunc(x, y, x_mean, y_mean, dim="time"):
-#     return ((x - x_mean) * (y - y_mean)).mean(dim=dim)
-
-
-# def _regression_gufunc(x, y, dim="time"):
-#     from scipy.stats import t
-
-#     n = (~np.isnan(ds)).sum(dim="time").values
-
-#     x_std = x.std(dim=dim)
-#     y_std = y.std(dim=dim)
-#     x_mean = x.mean(dim=dim)
-#     y_mean = y.mean(dim=dim)
-#     cov = _covariance_gufunc(x, y, x_mean, y_mean)
-#     cor = cov / (x_std * y_std)
-#     slope = cov / (x_std ** 2)
-#     intercept = y_mean - x_mean * slope
-#     tstats = cor * np.sqrt(n - 2) / np.sqrt(1 - cor ** 2)
-
-#     p_val = t.sf(tstats, n - 2) * 2
-#     # Compute r_square and rmse between time series of x_array and y_array over each (lon,lat) grid box.
-#     # r_square also equals to cor**2 in 1-variable lineare regression analysis, which can be used for checking.
-#     r_square = np.nansum((slope * x + intercept - y_mean) ** 2, axis=0) / np.nansum(
-#         (y - y_mean) ** 2, axis=0
-#     )
-#     # rmse = np.sqrt(np.nansum((y - slope * x - intercept) ** 2, axis=0) / n)
-
-#     return intercept, slope, p_val, r_square
-
-
-def _regression_gufunc2(y_array):
+def _regression_gufunc(y_array):
     from scipy.stats import t
 
     y_array = np.moveaxis(y_array, -1, 0)
@@ -685,7 +562,7 @@ def _regression_gufunc2(y_array):
     return intercept, slope, p_val, r_square
 
 
-def _timereg2(x, param):
+def _timereg(x, param):
 
     # avoid all missing
     if allnan(x):
@@ -696,24 +573,49 @@ def _timereg2(x, param):
             return np.stack((np.NaN, np.NaN, np.NaN, np.NaN), axis=-1)
 
     else:
-        intercept, slope, pvalue, rvalue = _regression_gufunc2(x)
-
+        intercept, slope, pvalue, rvalue = _regression_gufunc(x)
+        reg_param = {
+            "intercept": intercept,
+            "slope": slope,
+            "pvalue": pvalue,
+            "rvalue": rvalue,
+        }
         if param != "all":
-            KeyError
-            return getattr(linReg, param)
+            try:
+                return reg_param[param]
+            except KeyError:
+                print(param, "Not available parameter")
 
         else:
             return np.stack((intercept, slope, pvalue, rvalue,), axis=-1,)
 
 
 @set_property("fctype", "ufunc")
-def linear_time_trend2(x, param="all", dim="time", **kwargs):
+def linear_time_trend(x, param="all", dim="time", **kwargs):
 
+    """
+    # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
+
+    Calculate a linear least-squares regression for the values of the time series versus the sequence from 0 to
+    length of the time series minus one.
+    This feature assumes the signal to be uniformly sampled. It will not use the time stamps to fit the model.
+    The parameters control which of the characteristics are returned.
+
+    Possible extracted attributes are "all", "pvalue", "rvalue", "intercept", "slope", "stderr", see the documentation of
+    linregress for more information.
+
+    :param x: the time series to calculate the feature of
+    :type x:  xarray.DataArray
+    :param param: contains text of the attribute name of the regression model
+    :type param: list
+    :return: the value of this feature
+    :return type: int
+    """
     if param == "all":
 
         out = (
             xr.apply_ufunc(
-                _timereg2,
+                _timereg,
                 x,
                 input_core_dims=[[dim]],
                 kwargs={"param": param},
@@ -739,142 +641,6 @@ def linear_time_trend2(x, param="all", dim="time", **kwargs):
         )
 
     return out
-
-
-# @set_property("fctype", "ufunc")
-# def regression_2(x, y, dim="time", **kwargs):
-
-#     return xr.apply_ufunc(
-#         _regression_gufunc,
-#         x,
-#         y,
-#         input_core_dims=[[dim], [dim]],
-#         dask="parallelized",
-#         output_dtypes=[float],
-#         keep_attrs=True,
-#     )
-
-
-# https://stackoverflow.com/questions/52108417/how-to-apply-linear-regression-to-every-pixel-in-a-large-multi-dimensional-array
-# def linregress_3D(y_array):
-#     # y_array is a 3-D array formatted like (time,lon,lat)
-#     # The purpose of this function is to do linear regression using time series of data over each (lon,lat) grid box with consideration of ignoring np.nan
-#     # Construct x_array indicating time indexes of y_array, namely the independent variable.
-#     x_array = np.empty(y_array.shape)
-# for i in range(y_array.shape[0]):
-#     x_array[i, :, :] = (
-#         i + 1
-#     )  # This would be fine if time series is not too long. Or we can use i+yr (e.g. 2019).
-#     x_array[np.isnan(y_array)] = np.nan
-#     # Compute the number of non-nan over each (lon,lat) grid box.
-#     n = np.sum(~np.isnan(x_array), axis=0)
-#     # Compute mean and standard deviation of time series of x_array and y_array over each (lon,lat) grid box.
-#     x_mean = np.nanmean(x_array, axis=0)
-#     y_mean = np.nanmean(y_array, axis=0)
-#     x_std = np.nanstd(x_array, axis=0)
-#     y_std = np.nanstd(y_array, axis=0)
-#     # Compute co-variance between time series of x_array and y_array over each (lon,lat) grid box.
-#     cov = np.nansum((x_array - x_mean) * (y_array - y_mean), axis=0) / n
-#     # Compute correlation coefficients between time series of x_array and y_array over each (lon,lat) grid box.
-#     cor = cov / (x_std * y_std)
-#     # Compute slope between time series of x_array and y_array over each (lon,lat) grid box.
-#     slope = cov / (x_std ** 2)
-#     # Compute intercept between time series of x_array and y_array over each (lon,lat) grid box.
-#     intercept = y_mean - x_mean * slope
-#     # Compute tstats, stderr, and p_val between time series of x_array and y_array over each (lon,lat) grid box.
-#     tstats = cor * np.sqrt(n - 2) / np.sqrt(1 - cor ** 2)
-#     stderr = slope / tstats
-#     from scipy.stats import t
-
-#     p_val = t.sf(tstats, n - 2) * 2
-#     # Compute r_square and rmse between time series of x_array and y_array over each (lon,lat) grid box.
-#     # r_square also equals to cor**2 in 1-variable lineare regression analysis, which can be used for checking.
-#     r_square = np.nansum(
-#         (slope * x_array + intercept - y_mean) ** 2, axis=0
-#     ) / np.nansum((y_array - y_mean) ** 2, axis=0)
-#     rmse = np.sqrt(np.nansum((y_array - slope * x_array - intercept) ** 2, axis=0) / n)
-#     # Do further filteration if needed (e.g. We stipulate at least 3 data records are needed to do regression analysis) and return values
-#     n = n * 1.0  # convert n from integer to float to enable later use of np.nan
-#     n[n < 3] = np.nan
-#     slope[np.isnan(n)] = np.nan
-#     intercept[np.isnan(n)] = np.nan
-#     p_val[np.isnan(n)] = np.nan
-#     r_square[np.isnan(n)] = np.nan
-#     rmse[np.isnan(n)] = np.nan
-#     return n, slope, intercept, p_val, r_square, rmse
-
-
-# ds = xr.open_dataset('sst_2D.nc', chunks={'X': 30, 'Y': 30})
-# def ulinregress(x, y): # the universal function
-#     ny, nx, nt = y.shape ; y = np.moveaxis(y, -1, 0).reshape((nt, -1)) # nt, ny*nx
-#     return np.linalg.lstsq(np.vstack([x, np.ones(nt)]).T, y)[0].T.reshape(ny, nx, 2)
-# time = (ds['time'] - np.datetime64("1950-01-01")) / np.timedelta64(1, 'D')
-# ab = xr.apply_ufunc(ulinregress, time, ds['sst'], dask='parallelized',
-#                     input_core_dims=[['time'], ['time']],
-#                     output_dtypes=['d'], output_sizes={'coef': 2, }, output_core_dims=[['coef']])
-# series = ds['sst'][:, 0, 0].load()
-# line = series.copy() ; line[:] = ab[0, 0, 0] * time + ab[0, 0, 1]
-# series.plot(label='Original') ; line.plot(label='Linear regression') ; plt.legend();
-
-# calculate R2 from SSR/SST https://365datascience.com/sum-squares/
-
-
-# another example
-
-
-# def xarray_trend(xarr):
-#     from scipy import stats
-#     # getting shapes
-
-#     m = np.prod(xarr.shape[1:]).squeeze()
-#     n = xarr.shape[0]
-
-#     # creating x and y variables for linear regression
-#     x = xarr.time.to_pandas().index.to_julian_date().values[:, None]
-#     y = xarr.to_masked_array().reshape(n, -1)
-
-#     # ############################ #
-#     # LINEAR REGRESSION DONE BELOW #
-#     xm = x.mean(0)  # mean
-#     ym = y.mean(0)  # mean
-#     ya = y - ym  # anomaly
-#     xa = x - xm  # anomaly
-
-#     # variance and covariances
-#     xss = (xa ** 2).sum(0) / (n - 1)  # variance of x (with df as n-1)
-#     yss = (ya ** 2).sum(0) / (n - 1)  # variance of y (with df as n-1)
-#     xys = (xa * ya).sum(0) / (n - 1)  # covariance (with df as n-1)
-#     # slope and intercept
-#     slope = xys / xss
-#     intercept = ym - (slope * xm)
-#     # statistics about fit
-#     df = n - 2
-#     r = xys / (xss * yss)**0.5
-#     t = r * (df / ((1 - r) * (1 + r)))**0.5
-#     p = stats.distributions.t.sf(abs(t), df)
-
-#     # misclaneous additional functions
-#     # yhat = dot(x, slope[None]) + intercept
-#     # sse = ((yhat - y)**2).sum(0) / (n - 2)  # n-2 is df
-#     # se = ((1 - r**2) * yss / xss / df)**0.5
-
-#     # preparing outputs
-#     out = xarr[:2].mean('time')
-#     # first create variable for slope and adjust meta
-#     xarr_slope = out.copy()
-#     xarr_slope.name += '_slope'
-#     xarr_slope.attrs['units'] = 'units / day'
-#     xarr_slope.values = slope.reshape(xarr.shape[1:])
-#     # do the same for the p value
-#     xarr_p = out.copy()
-#     xarr_p.name += '_Pvalue'
-#     xarr_p.attrs['info'] = "If p < 0.05 then the results from 'slope' are significant."
-#     xarr_p.values = p.reshape(xarr.shape[1:])
-#     # join these variables
-#     xarr_out = xarr_slope.to_dataset(name='slope')
-#     xarr_out['pval'] = xarr_p
-
-#     return xarr_out
 
 
 # from xclim https://github.com/Ouranosinc/xclim/blob/51123e0bbcaa5ad8882877f6905d9b285e63ddd9/xclim/run_length.py
