@@ -26,7 +26,7 @@ VERSION = '0.0.1'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'dateparser>=0.7.2'
+    'dateparser>=0.7.2',
     'geojson>=2.5.0',
     'h5netcdf>=0.8.0',
     'h5py>=2.10.0',
