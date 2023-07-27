@@ -74,13 +74,11 @@ def abs_energy(X, dim="time", **kwargs):
 
 
 def _abs_energy(x):
-
     return __abs_energy(x)
 
 
 @guvectorize([(float64[:], float64[:])], "(n) -> ()", nopython=True)
 def __abs_energy(x, out):
-
     out[:] = np.sum(np.square(x))
 
 
@@ -209,25 +207,24 @@ def count_below_mean(X, dim="time", **kwargs):
 
 
 def decorrelation_time(da, r=20, dim="time"):
-
     """Calculate the decorrelaton time of a time series.
-https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html
-    .. math::
+    https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html
+        .. math::
 
-        \\tau_{d} = 1 + 2 * \\sum_{k=1}^{r}(\\alpha_{k})^{k}
+            \\tau_{d} = 1 + 2 * \\sum_{k=1}^{r}(\\alpha_{k})^{k}
 
-    Args:
-        da (xarray object): Time series.
-        r (optional int): Number of iterations to run the above formula.
-        dim (optional str): Time dimension for xarray object.
+        Args:
+            da (xarray object): Time series.
+            r (optional int): Number of iterations to run the above formula.
+            dim (optional str): Time dimension for xarray object.
 
-    Returns:
-        Decorrelation time of time series.
+        Returns:
+            Decorrelation time of time series.
 
-    Reference:
-        * Storch, H. v, and Francis W. Zwiers. Statistical Analysis in Climate
-          Research. Cambridge ; New York: Cambridge University Press, 1999.,
-          p.373
+        Reference:
+            * Storch, H. v, and Francis W. Zwiers. Statistical Analysis in Climate
+              Research. Cambridge ; New York: Cambridge University Press, 1999.,
+              p.373
 
     """
     one = xr.ones_like(da.isel({dim: 0}))
@@ -257,7 +254,12 @@ def doy_of_maximum_last(x, dim="time", band="NDVI", **kwargs):
     xr_dates = xr.DataArray(
         dates,
         dims=["time", "band", "y", "x"],
-        coords={"time": x.time, "band": ["doy"], "y": x.y, "x": x.x,},
+        coords={
+            "time": x.time,
+            "band": ["doy"],
+            "y": x.y,
+            "x": x.x,
+        },
     )
     x = xr.concat([x, xr_dates], dim="band")
 
@@ -292,7 +294,12 @@ def doy_of_maximum_first(x, dim="time", band="ppt", **kwargs):
     xr_dates = xr.DataArray(
         dates,
         dims=["time", "band", "y", "x"],
-        coords={"time": x.time, "band": ["doy"], "y": x.y, "x": x.x,},
+        coords={
+            "time": x.time,
+            "band": ["doy"],
+            "y": x.y,
+            "x": x.x,
+        },
     )
     x = xr.concat([x, xr_dates], dim="band")
 
@@ -327,7 +334,12 @@ def doy_of_minimum_last(x, dim="time", band="ppt", **kwargs):
     xr_dates = xr.DataArray(
         dates,
         dims=["time", "band", "y", "x"],
-        coords={"time": x.time, "band": ["doy"], "y": x.y, "x": x.x,},
+        coords={
+            "time": x.time,
+            "band": ["doy"],
+            "y": x.y,
+            "x": x.x,
+        },
     )
     x = xr.concat([x, xr_dates], dim="band")
 
@@ -362,7 +374,12 @@ def doy_of_minimum_first(x, dim="time", band="ppt", **kwargs):
     xr_dates = xr.DataArray(
         dates,
         dims=["time", "band", "y", "x"],
-        coords={"time": x.time, "band": ["doy"], "y": x.y, "x": x.x,},
+        coords={
+            "time": x.time,
+            "band": ["doy"],
+            "y": x.y,
+            "x": x.x,
+        },
     )
     x = xr.concat([x, xr_dates], dim="band")
 
@@ -410,14 +427,14 @@ def _k_cor(x, y, pthres=0.05, direction=True, **kwargs):
 def kendall_time_correlation(X, dim="time", direction=True, **kwargs):
     """
     Returns the significance of a kendall tau test across all time periods in x.
-    
-    If direction is True, return 1 for sigificant + time trend and -1 for 
-    significant - time trend. 
-    
+
+    If direction is True, return 1 for sigificant + time trend and -1 for
+    significant - time trend.
+
     Note: this function is slow. Please use dask see:
         https://examples.dask.org/xarray.html
         https://xarray.pydata.org/en/stable/dask.html
-        
+
     :param x: the time series to calculate the feature of
     :type x:  xarray.DataArray
     :return: the value of this feature
@@ -444,10 +461,9 @@ def kendall_time_correlation(X, dim="time", direction=True, **kwargs):
 
 @set_property("fctype", "ufunc")
 def kurtosis(X, dim="time", fisher=False, **kwargs):
-
     """
     Returns the kurtosis of X (calculated with the adjusted Fisher-Pearson standardized
-    moment coefficient G2). If fisher = True, returns fishers definition centered on 0. 
+    moment coefficient G2). If fisher = True, returns fishers definition centered on 0.
 
     :param X: the time series to calculate the feature of
     :type X: xarray.DataArray
@@ -537,11 +553,11 @@ def _regression_gufunc(y_array):
     # Compute correlation coefficients between time series of x_array and y_array over each (lon,lat) grid box.
     cor = cov / (x_std * y_std)
     # Compute slope between time series of x_array and y_array over each (lon,lat) grid box.
-    slope = cov / (x_std ** 2)
+    slope = cov / (x_std**2)
     # Compute intercept between time series of x_array and y_array over each (lon,lat) grid box.
     intercept = y_mean - x_mean * slope
     # Compute tstats, stderr, and p_val between time series of x_array and y_array over each (lon,lat) grid box.
-    tstats = cor * np.sqrt(n - 2) / np.sqrt(1 - cor ** 2)
+    tstats = cor * np.sqrt(n - 2) / np.sqrt(1 - cor**2)
 
     p_val = t.sf(tstats, n - 2) * 2
     # Compute r_square and rmse between time series of x_array and y_array over each (lon,lat) grid box.
@@ -563,13 +579,11 @@ def _regression_gufunc(y_array):
 
 
 def _timereg(x, param):
-
     # avoid all missing
     if allnan(x):
         if param != "all":
             return np.NaN
         else:
-
             return np.stack((np.NaN, np.NaN, np.NaN, np.NaN), axis=-1)
 
     else:
@@ -587,12 +601,19 @@ def _timereg(x, param):
                 print(param, "Not available parameter")
 
         else:
-            return np.stack((intercept, slope, pvalue, rvalue,), axis=-1,)
+            return np.stack(
+                (
+                    intercept,
+                    slope,
+                    pvalue,
+                    rvalue,
+                ),
+                axis=-1,
+            )
 
 
 @set_property("fctype", "ufunc")
 def linear_time_trend(x, param="all", dim="time", **kwargs):
-
     """
     # look at https://stackoverflow.com/questions/58719696/how-to-apply-a-xarray-u-function-over-netcdf-and-return-a-2d-array-multiple-new/62012973
 
@@ -612,7 +633,6 @@ def linear_time_trend(x, param="all", dim="time", **kwargs):
     :return type: int
     """
     if param == "all":
-
         out = (
             xr.apply_ufunc(
                 _timereg,
@@ -629,7 +649,6 @@ def linear_time_trend(x, param="all", dim="time", **kwargs):
             .to_array()
         )
     else:
-
         out = xr.apply_ufunc(
             _timereg,
             x,
@@ -643,20 +662,36 @@ def linear_time_trend(x, param="all", dim="time", **kwargs):
     return out
 
 
+# another implementation https://stackoverflow.com/questions/52094320/with-xarray-how-to-parallelize-1d-operations-on-a-multidimensional-dataset
+# def new_linregress(x, y):
+#    # Wrapper around scipy linregress to use in apply_ufunc
+#    slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+#    return np.array([slope, intercept, r_value, p_value, std_err])
+#
+## return a new DataArray
+# stats = xr.apply_ufunc(new_linregress, ds[x], ds[y],
+#                       input_core_dims=[['year'], ['year']],
+#                       output_core_dims=[["parameter"]],
+#                       vectorize=True,
+#                       dask="parallelized",
+#                       output_dtypes=['float64'],
+#                       output_sizes={"parameter": 5},
+#                      )
+
+
 # from xclim https://github.com/Ouranosinc/xclim/blob/51123e0bbcaa5ad8882877f6905d9b285e63ddd9/xclim/run_length.py
 @set_property("fctype", "simple")
 def _get_npts(da: xr.DataArray) -> int:
-
     """Return the number of gridpoints in a DataArray.
-        Parameters
-        ----------
-        da : xarray.DataArray
-          N-dimensional input array
-        Returns
-        -------
-        int
-          Product of input DataArray coordinate sizes excluding the dimension 'time'
-        """
+    Parameters
+    ----------
+    da : xarray.DataArray
+      N-dimensional input array
+    Returns
+    -------
+    int
+      Product of input DataArray coordinate sizes excluding the dimension 'time'
+    """
 
     coords = list(da.coords)
     coords.remove("time")
@@ -674,7 +709,7 @@ def longest_run(
     npts_opt=9000,
 ):
     """Return the length of the longest consecutive run of True values.
-    
+
 
     :param da: N-dimensional array (boolean)
     :type da: xr.DataArray
@@ -828,9 +863,9 @@ def mean_abs_change(X, dim="time", **kwargs):
 def mean_change(X, dim="time", **kwargs):
     """
     Returns the mean over the differences between subsequent time series values which is
-    
+
     .. math::
-    
+
         \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
 
     :param X: the time series to calculate the feature of
@@ -865,11 +900,11 @@ def mean_change(X, dim="time", **kwargs):
 def mean_second_derivative_central(X, dim="time", **kwargs):
     """
     Returns the mean over the differences between subsequent time series values which is
-    
+
     .. math::
-    
+
         \\frac{1}{2(n-2)} \\sum_{i=1,\\ldots, n-1}  \\frac{1}{2} (x_{i+2} - 2 \\cdot x_{i+1} + x_i)
-            
+
     :param X: the time series to calculate the feature of
     :type X: xarray.DataArray
     :return: the value of this feature
@@ -911,7 +946,6 @@ def median(X, dim="time", **kwargs):
 
 @set_property("fctype", "simple")
 def minimum(x, dim="time", **kwargs):
-
     """
     Calculates the lowest value of the time series x.
 
@@ -936,7 +970,7 @@ def _pearson_correlation_gufunc(x, y):
 @set_property("fctype", "ufunc")
 def pearson_correlation(x, y, dim="time", **kwargs):
     """
-    Returns the pearsons correlation of two xarray objects, which 
+    Returns the pearsons correlation of two xarray objects, which
     must have the same dimensions.
 
     :param x: the time series to calculate the feature of
@@ -1055,7 +1089,7 @@ def _pearson_r_p_value(a, b, axis, skipna, **kwargs):
     b = np.rollaxis(b, axis)
     dof = np.apply_over_axes(np.sum, np.isnan(a * b), 0).squeeze() - 2
     dof = np.where(dof > 1.0, dof, a.shape[0] - 2)
-    t_squared = r ** 2 * (dof / ((1.0 - r) * (1.0 + r)))
+    t_squared = r**2 * (dof / ((1.0 - r) * (1.0 + r)))
     _x = dof / (dof + t_squared)
     _x = np.asarray(_x)
     _x = np.where(_x < 1.0, _x, 1.0)
@@ -1071,9 +1105,9 @@ def _pearson_r_p_value(a, b, axis, skipna, **kwargs):
 @set_property("fctype", "ufunc")
 def pearson_r(a, b, dim="time", skipna=False, **kwargs):
     """
-    
+
     use corr from xarray  https://github.com/pydata/xarray/blob/master/xarray/core/computation.py
-    
+
     Pearson's correlation coefficient.
 
     Parameters
@@ -1291,8 +1325,8 @@ def ratio_beyond_r_sigma(X, r=2, dim="time", **kwargs):
 def skewness(X, dim="time", **kwargs):
     """
     Returns the sample skewness of X (calculated with the adjusted Fisher-Pearson standardized
-    moment coefficient G1). Normal value = 0, skewness > 0 means more weight in the left tail of 
-    the distribution. 
+    moment coefficient G1). Normal value = 0, skewness > 0 means more weight in the left tail of
+    the distribution.
 
     :param X: the time series to calculate the feature of
     :type X: xarray.DataArray
@@ -1320,7 +1354,7 @@ def _spearman_correlation_gufunc(x, y):
 @set_property("fctype", "ufunc")
 def spearman_correlation(x, y, dim="time", **kwargs):
     """
-    Returns the spearmans correlation of two xarray objects, which 
+    Returns the spearmans correlation of two xarray objects, which
     must have the same dimensions.
 
     :param x: the time series to calculate the feature of
@@ -1475,7 +1509,6 @@ def variance_larger_than_standard_deviation(X, dim="time", **kwargs):
 
 @set_property("fctype", "simple")
 def quantile_slow(x, q, skipna=True, dim="time", **kwargs):
-
     """
     Calculates the q quantile of x. This is the value of x greater than q% of the ordered values from x.
 
@@ -1491,7 +1524,6 @@ def quantile_slow(x, q, skipna=True, dim="time", **kwargs):
 
 
 def _quantile(x, q):
-
     return __quantile(x, q)
 
 
@@ -1507,13 +1539,11 @@ def _quantile(x, q):
     nopython=True,
 )
 def __quantile(x, q: float, out):
-
     out[:] = np.nanquantile(x, q)
 
 
 @set_property("fctype", "simple")
 def quantile(x, q, dim="time", **kwargs):
-
     """
     Ultrafast implimentation of np.nanpercentile.
     Calculates the 95th percentile of x. This is the value of x greater than 95% of the ordered values from x.
@@ -1649,7 +1679,7 @@ def varweighted_mean_period(da, dim="time", **kwargs):
     https://climpred.readthedocs.io/en/stable/_modules/climpred/stats.html
 
     .. math::
-    
+
         P_{x} = \\frac{\\sum_k V(f_k,x)}{\\sum_k f_k  \\cdot V(f_k,x)}
 
     Args:
@@ -1772,4 +1802,3 @@ def varweighted_mean_period(da, dim="time", **kwargs):
 #                    kwargs={ },
 #                    dask='parallelized',
 #                    output_dtypes=[float])
-

@@ -25,24 +25,12 @@ class count_above_mean(gw.TimeModule):
         return jnp.nansum(array > self.mean, axis=0).squeeze()
 
 
-class count_above_mean(gw.TimeModule):
-    def __init__(self, mean=None):
-        super(count_above_mean, self).__init__()
-        self.mean = mean
-
-    def calculate(self, array):
-        if self.mean is None:
-            self.mean = jnp.nanmean(array, axis=0)
-
-        return jnp.nansum(array > self.mean, axis=0).squeeze()
-
-
 with gw.series(
     files,
     nodata=9999,
 ) as src:
     src.apply(
-        func=count_above_mean(mean=295),
+        func=absolute_sum_of_changes(),
         outfile=f"/home/mmann1123/Downloads/test.tif",
         num_workers=1,
         bands=1,
