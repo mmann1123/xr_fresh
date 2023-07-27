@@ -102,14 +102,18 @@ from pathlib import Path
 
 # %%
 
-files = "/mnt/space/Dropbox/USA_Data/MD_Crops/MODIS_NDVI/"
-band_name = "ndvi"
+files = "/home/mmann1123/extra_space/Dropbox/Tanzania_data/Projects/YM_Tanzania_Field_Boundaries/Land_Cover/data/EVI"
+band_name = "evi"
 file_glob = f"{files}/*.tif"
-strp_glob = f"{files}MOD_NDVI_%Y-%m-%dT00_00_00.tif"
+strp_glob = f"{files}/S2_SR_EVI_M_%Y_%m.tif"
+# S2_SR_EVI_M_2022_01.tif
 
+f_list = sorted(glob(file_glob))
+
+dates = sorted(datetime.strptime(string, strp_glob) for string in f_list)
+dates
 
 complete_f = {
-    "linear_time_trend": [{"param": "all"}],
     "minimum": [{}],
     "abs_energy": [{}],
     "mean_abs_change": [{}],
@@ -117,7 +121,10 @@ complete_f = {
     "ratio_beyond_r_sigma": [{"r": 1}, {"r": 2}, {"r": 3}],
     "symmetry_looking": [{}],
     "sum_values": [{}],
-    "autocorr": [{"lag": 1}, {"lag": 2}, {"lag": 4}, {"lag": 8}],  # mostly nan for ndvi
+    "autocorr": [
+        {"lag": 1},
+        {"lag": 2},
+    ],  #  not possible in 2023{"lag": 4}],
     "ts_complexity_cid_ce": [{}],
     "mean_change": [{}],  #  FIX  DONT HAVE
     "mean_second_derivative_central": [{}],
@@ -141,24 +148,19 @@ complete_f = {
     "ratio_value_number_to_time_series_length": [{}],
     "quantile": [{"q": 0.05}, {"q": 0.95}],
     "maximum": [{}],
+    "linear_time_trend": [{"param": "all"}],
 }
-
-
-f_list = sorted(glob(file_glob))
-
-dates = sorted(datetime.strptime(string, strp_glob) for string in f_list)
 
 
 # add data notes
 Path(f"{files}/annual_features").mkdir(parents=False, exist_ok=True)
 with open(f"{files}/annual_features/0_notes.txt", "a") as the_file:
     the_file.write(
-        "Gererated by /mnt/space/Dropbox/GWU_MD_Fields/generate_timeseries_properties.py \t"
+        "Gererated by /home/mmann1123/Documents/github/YM_TZ_crop_classifier/2_xr_fresh_extraction.py \t"
     )
     the_file.write(str(datetime.now()))
+
 # %%
-
-
 # update band name
 complete_f["doy_of_maximum_first"] = [{"band": band_name}]
 complete_f["doy_of_maximum_last"] = [{"band": band_name}]
@@ -166,27 +168,36 @@ complete_f["doy_of_minimum_last"] = [{"band": band_name}]
 complete_f["doy_of_minimum_first"] = [{"band": band_name}]
 
 
+# %%
 # start cluster
 cluster = Cluster()
 cluster.start_large_object()
 
 # open xarray lazy
-with gw.open(sorted(glob(file_glob)), band_names=[band_name], time_names=dates) as ds:
+with gw.open(
+    sorted(glob(file_glob)), band_names=[band_name], time_names=dates, nodata=0
+) as ds:
     ds = ds.chunk({"time": -1, "band": 1, "y": 350, "x": 350})  # rechunk to time
-
-    ds.attrs["nodatavals"] = (0,)
+    ds = ds.gw.mask_nodata()
+    # ds.attrs["nodatavals"] = (0,)
     print(ds)
 
-    # # generate features
-    for year in sorted(list(set([x.year for x in dates]))):
+    # generate features previous Sep - current March ( Masika growing season)
+
+    for year in [2023, 2024]:
+        previous_year = str(year - 1)
         year = str(year)
         print(year)
-        ds_year = ds.sel(time=slice(year + "-05-01", year + "-10-29"))
+        ds_year = ds.sel(time=slice(previous_year + "-08-01", year + "-03-01"))
         print("interpolating")
         ds_year = ds_year.interpolate_na(dim="time", limit=5)
-        ds_year = ds_year.chunk(
-            {"time": -1, "band": 1, "y": 350, "x": 350}
-        )  # rechunk to time
+        # ds_year = ds_year.chunk(
+        #     {"time": -1, "band": 1, "y": 350, "x": 350}
+        # )  # rechunk to time
+
+        # make output folder
+        outpath = os.path.join(files, "annual_features/Sep_Mar_S2")
+        os.makedirs(outpath, exist_ok=True)
 
         # extract growing season year month day
         features = extract_features(
@@ -195,10 +206,10 @@ with gw.open(sorted(glob(file_glob)), band_names=[band_name], time_names=dates) 
             band=band_name,
             na_rm=True,
             persist=True,
-            filepath=os.path.join(files, "annual_features/May_Oct_MODIS"),
-            postfix="_may_oct_" + year,
-        )  #'_may_sep_'+year, '_'+year
-    cluster.restart()
+            filepath=outpath,
+            postfix="_sep_mar_" + year,
+        )
+        cluster.restart()
 
 cluster.close()
 
