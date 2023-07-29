@@ -8,9 +8,11 @@ import geowombat as gw
 import jax.numpy as jnp
 
 sys.path.append("/home/mmann1123/Documents/github/xr_fresh/xr_fresh")
+sys.path.append("/home/mmann1123/Documents/github/xr_fresh/")
 import xr_fresh as xf
 
-files = glob("/home/mmann1123/extra_space/Dropbox/Africa_data/Temperature/*.tif")[0:10]
+# files = glob("/home/mmann1123/extra_space/Dropbox/Africa_data/Temperature/*.tif")[0:10]
+files = glob("/home/mmann1123/Dropbox/Africa_data/Temperature/*.tif")[0:10]
 
 
 class count_above_mean(gw.TimeModule):
@@ -30,7 +32,7 @@ with gw.series(
     nodata=9999,
 ) as src:
     src.apply(
-        func=absolute_sum_of_changes(),
+        func=MeanChange(),
         outfile=f"/home/mmann1123/Downloads/test.tif",
         num_workers=1,
         bands=1,
