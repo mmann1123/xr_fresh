@@ -23,7 +23,28 @@ dates
 
 # %%
 
-from jax import vmap
+
+class ratio_beyond_r_sigma(gw.TimeModule):
+    """Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.
+
+    Args:
+        gw (_type_): _description_
+        r (int, optional):   Defaults to 2.
+    """
+
+    def __init__(self, r=2):
+        super(ratio_beyond_r_sigma, self).__init__()
+        self.r = r
+
+    def calculate(self, array):
+        return (
+            jnp.nansum(
+                jnp.abs(array - jnp.nanmean(array, axis=0))
+                > self.r * jnp.nanstd(array, axis=0),
+                axis=0,
+            )
+            / len(array)
+        ).squeeze()
 
 
 with gw.series(
@@ -32,7 +53,7 @@ with gw.series(
 ) as src:
     print(src)
     src.apply(
-        func=autocorrelation(6),
+        func=ratio_beyond_r_sigma(),
         outfile=f"/home/mmann1123/Downloads/test.tif",
         num_workers=1,
         bands=1,

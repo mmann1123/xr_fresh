@@ -1,10 +1,9 @@
 import jax.numpy as jnp
 import numpy as np
 import geowombat as gw
-import pandas as pd
-
-
 from datetime import datetime
+
+# ratio_beyond_r_sigma
 
 
 # Define a function to apply strftime('%j') to each element
@@ -341,6 +340,29 @@ class median(gw.TimeModule):
         return jnp.nanmedian(x, axis=0).squeeze()
 
 
+class ratio_beyond_r_sigma(gw.TimeModule):
+    """Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.
+
+    Args:
+        gw (_type_): _description_
+        r (int, optional):   Defaults to 2.
+    """
+
+    def __init__(self, r=2):
+        super(ratio_beyond_r_sigma, self).__init__()
+        self.r = r
+
+    def calculate(self, array):
+        return (
+            jnp.nansum(
+                jnp.abs(array - jnp.nanmean(array, axis=0))
+                > self.r * jnp.nanstd(array, axis=0),
+                axis=0,
+            )
+            / len(array)
+        ).squeeze()
+
+
 class skewness(gw.TimeModule):
     """
     # https://medium.com/@pritul.dave/everything-about-moments-skewness-and-kurtosis-using-python-numpy-df305a193e46
@@ -367,8 +389,37 @@ class skewness(gw.TimeModule):
         return jnp.sqrt(beta).squeeze()
 
 
+class standard_deviation(gw.TimeModule):
+    """Calculate the standard_deviation value of the time series.
+
+    Args:
+        gw (_type_): _description_
+    """
+
+    def __init__(self):
+        super(standard_deviation, self).__init__()
+
+    def calculate(self, x):
+        return jnp.nanstd(x, axis=0).squeeze()
+
+
+class variance_larger_than_standard_deviation(gw.TimeModule):
+    """Calculate the variance of the time series is larger than the standard_deviation.
+
+    Args:
+        gw (_type_): _description_
+    Returns:
+        bool:
+    """
+
+    def __init__(self):
+        super(variance_larger_than_standard_deviation, self).__init__()
+
+    def calculate(self, x):
+        return (jnp.var(x, axis=0) > jnp.nanstd(x, axis=0)).astype(np.int8).squeeze()
+
+
 # skipped
 # def pearson_r(a, b, dim="time", skipna=False, **kwargs):
-# def autocorr(X, lag=1, dim="time", return_p=True, **kwargs):
 # linear_time_trend
 # longest_run
