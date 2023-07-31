@@ -1,4 +1,4 @@
-# %% env:testbed
+# %% env:testbed laptop
 
 import os
 import sys
@@ -6,39 +6,40 @@ import numpy as np
 from glob import glob
 import geowombat as gw
 import jax.numpy as jnp
+from datetime import datetime
 
 sys.path.append("/home/mmann1123/Documents/github/xr_fresh/xr_fresh")
 sys.path.append("/home/mmann1123/Documents/github/xr_fresh/")
 import xr_fresh as xf
 
+pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
+
+
 # files = glob("/home/mmann1123/extra_space/Dropbox/Africa_data/Temperature/*.tif")[0:10]
-files = glob("/home/mmann1123/Dropbox/Africa_data/Temperature/*.tif")[0:10]
+files = sorted(glob(f"{pth}*.tif"))[0:10]
+strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
+dates = sorted(datetime.strptime(string, strp_glob) for string in files)
+dates
 
+# %%
 
-class count_above_mean(gw.TimeModule):
-    def __init__(self, mean=None):
-        super(count_above_mean, self).__init__()
-        self.mean = mean
-
-    def calculate(self, array):
-        if self.mean is None:
-            self.mean = jnp.nanmean(array, axis=0)
-
-        return jnp.nansum(array > self.mean, axis=0).squeeze()
+from jax import vmap
 
 
 with gw.series(
     files,
     nodata=9999,
 ) as src:
+    print(src)
     src.apply(
-        func=MeanChange(),
+        func=autocorrelation(6),
         outfile=f"/home/mmann1123/Downloads/test.tif",
         num_workers=1,
         bands=1,
     )
 
 
+# %%
 # %%
 
 
