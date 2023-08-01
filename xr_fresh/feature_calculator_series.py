@@ -30,7 +30,6 @@ def _check_valid_array(obj):
     else:
         raise TypeError("Array must contain only integers, datetime objects.")
 
- 
 
 class abs_energy(gw.TimeModule):
     """
@@ -39,8 +38,25 @@ class abs_energy(gw.TimeModule):
     .. math::
 
         E = \\sum_{i=1,\\ldots, n} x_i^2
+
     Args:
         gw (_type_): _description_
+
+
+    Example:
+
+    with gw.series(
+        files,
+        nodata=9999,
+    ) as src:
+        print(src)
+        src.apply(
+            func=abs_energy(),
+            outfile=f"/home/mmann1123/Downloads/test.tif",
+            num_workers=5,
+            bands=1,
+        )
+
     """
 
     def __init__(self):
