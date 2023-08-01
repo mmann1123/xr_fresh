@@ -18,7 +18,7 @@ def _check_valid_array(obj):
 
     # convert lists to numpy array
     if isinstance(obj, list):
-        obj = jnp.array(obj)
+        obj = np.array(obj)  # must be np array not jnp
 
     # Check if the array contains only integers or datetime objects
     if jnp.issubdtype(obj.dtype, np.integer):
@@ -30,9 +30,7 @@ def _check_valid_array(obj):
     else:
         raise TypeError("Array must contain only integers, datetime objects.")
 
-
-# %% WORKING
-
+ 
 
 class abs_energy(gw.TimeModule):
     """
