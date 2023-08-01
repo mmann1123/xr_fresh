@@ -18,14 +18,14 @@ def _check_valid_array(obj):
 
     # convert lists to numpy array
     if isinstance(obj, list):
-        obj = np.array(obj)
+        obj = jnp.array(obj)
 
     # Check if the array contains only integers or datetime objects
-    if np.issubdtype(obj.dtype, np.integer):
+    if jnp.issubdtype(obj.dtype, np.integer):
         return jnp.array(obj)
 
     # datetime objects are converted to integers
-    elif np.issubdtype(obj.dtype, datetime):
+    elif jnp.issubdtype(obj.dtype, datetime):
         return jnp.array(np.vectorize(_get_day_of_year)(obj))
     else:
         raise TypeError("Array must contain only integers, datetime objects.")
@@ -134,7 +134,7 @@ class count_below_mean(gw.TimeModule):
             return jnp.nansum(array > self.mean, axis=0).squeeze()
 
 
-class doy_of_max(gw.TimeModule):
+class doy_of_maximum(gw.TimeModule):
     """Returns the day of the year (doy) location of the maximum value of the series - treats all years as the same.
 
     pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
@@ -161,7 +161,7 @@ class doy_of_max(gw.TimeModule):
     """
 
     def __init__(self, dates=None):
-        super(doy_of_max, self).__init__()
+        super(doy_of_maximum, self).__init__()
         # check that dates is an array holding datetime objects or integers throw error if not
         dates = _check_valid_array(dates)
         self.dates = dates
@@ -169,13 +169,13 @@ class doy_of_max(gw.TimeModule):
 
     def calculate(self, array):
         # Find the indices of the maximum values along the time axis
-        max_indices = np.argmax(array, axis=0)
+        max_indices = jnp.argmax(array, axis=0)
 
         # Use the indices to extract the corresponding dates from the 'dates' array
         return self.dates[max_indices].squeeze()
 
 
-class doy_of_min(gw.TimeModule):
+class doy_of_minimum(gw.TimeModule):
     """Returns the day of the year (doy) location of the minimum value of the series - treats all years as the same.
 
     pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
@@ -202,7 +202,7 @@ class doy_of_min(gw.TimeModule):
     """
 
     def __init__(self, dates=None):
-        super(doy_of_min, self).__init__()
+        super(doy_of_minimum, self).__init__()
         # check that dates is an array holding datetime objects or integers throw error if not
         dates = _check_valid_array(dates)
         self.dates = dates
@@ -210,7 +210,7 @@ class doy_of_min(gw.TimeModule):
 
     def calculate(self, array):
         # Find the indices of the maximum values along the time axis
-        min_indices = np.argmin(array, axis=0)
+        min_indices = jnp.argmin(array, axis=0)
 
         # Use the indices to extract the corresponding dates from the 'dates' array
         return self.dates[min_indices].squeeze()
@@ -257,6 +257,86 @@ class large_standard_deviation(gw.TimeModule):
         min_val = jnp.nanmin(array, axis=0)
 
         return (std_dev > self.r * (max_val - min_val)).astype(jnp.int8).squeeze()
+
+
+def _count_longest_consecutive(values):
+    max_count = 0
+    current_count = 0
+
+    for value in values:
+        if value:
+            current_count += 1
+            max_count = max(max_count, current_count)
+        else:
+            current_count = 0
+
+    return max_count
+
+
+class longest_strike_above_mean(gw.TimeModule):
+    """Returns the length of the longest consecutive subsequence in X that is larger than the mean of X
+
+    Args:
+        gw (_type_): _description_
+    Returns:
+        bool:
+    """
+
+    def __init__(self, mean=None):
+        super(longest_strike_above_mean, self).__init__()
+        self.mean = mean
+
+    def calculate(self, array):
+        # compare to mean
+        if self.mean is None:
+            below_mean = array > jnp.mean(array, axis=0)
+        else:
+            below_mean = array > self.mean
+
+        # Count the longest consecutive True values along the time dimension
+        consecutive_true = jnp.apply_along_axis(
+            _count_longest_consecutive, axis=0, arr=below_mean
+        ).squeeze()
+
+        # Count the longest consecutive False values along the time dimension
+        consecutive_false = jnp.apply_along_axis(
+            _count_longest_consecutive, axis=0, arr=~below_mean
+        ).squeeze()
+
+        return jnp.maximum(consecutive_true, consecutive_false)
+
+
+class longest_strike_below_mean(gw.TimeModule):
+    """Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X
+
+    Args:
+        gw (_type_): _description_
+    Returns:
+        bool:
+    """
+
+    def __init__(self, mean=None):
+        super(longest_strike_below_mean, self).__init__()
+        self.mean = mean
+
+    def calculate(self, array):
+        # compare to mean
+        if self.mean is None:
+            below_mean = array < jnp.mean(array, axis=0)
+        else:
+            below_mean = array < self.mean
+
+        # Count the longest consecutive True values along the time dimension
+        consecutive_true = jnp.apply_along_axis(
+            _count_longest_consecutive, axis=0, arr=below_mean
+        ).squeeze()
+
+        # Count the longest consecutive False values along the time dimension
+        consecutive_false = jnp.apply_along_axis(
+            _count_longest_consecutive, axis=0, arr=~below_mean
+        ).squeeze()
+
+        return jnp.maximum(consecutive_true, consecutive_false)
 
 
 class maximum(gw.TimeModule):
@@ -321,7 +401,35 @@ class mean_change(gw.TimeModule):
 
     def calculate(self, array):
         diff = array[1:] - array[:-1]
-        return np.nanmean(diff, axis=0).squeeze()
+        return jnp.nanmean(diff, axis=0).squeeze()
+
+
+class mean_second_derivative_central(gw.TimeModule):
+    """
+    Returns the mean over the differences between subsequent time series values which is
+
+    .. math::
+
+        \\frac{1}{2(n-2)} \\sum_{i=1,\\ldots, n-1}  \\frac{1}{2} (x_{i+2} - 2 \\cdot x_{i+1} + x_i)
+
+    :param X: the time series to calculate the feature of
+    :type X: xarray.DataArray
+    :return: the value of this feature
+    :return type: float
+    """
+
+    def __init__(self):
+        super(mean_second_derivative_central, self).__init__()
+
+    def calculate(self, array):
+        series2 = array[:-2]
+        lagged2 = array[2:]
+        lagged1 = array[1:-1]
+        msdc = jnp.sum(0.5 * (lagged2 - 2 * lagged1 + series2), axis=0) / (
+            (2 * (len(array) - 2))
+        )
+
+        return msdc.squeeze()
 
 
 class median(gw.TimeModule):
@@ -338,6 +446,34 @@ class median(gw.TimeModule):
 
     def calculate(self, x):
         return jnp.nanmedian(x, axis=0).squeeze()
+
+
+class quantile(gw.TimeModule):
+    """Compute the q-th quantile of the data along the time axis
+        Args:
+            q (int): Probability or sequence of probabilities for the quantiles to compute. Values must be between 0 and 1 inclusive.
+
+    with gw.series(
+        files,
+        nodata=9999,
+    ) as src:
+        print(src)
+        src.apply(
+            func=quantile(0.90),
+            outfile=f"/home/mmann1123/Downloads/test.tif",
+            num_workers=1,
+            bands=1,
+        )
+
+    """
+
+    def __init__(self, q=None, method="linear"):
+        super(quantile, self).__init__()
+        self.q = q
+        self.method = method
+
+    def calculate(self, array):
+        return jnp.quantile(array, q=self.q, method=self.method, axis=0).squeeze()
 
 
 class ratio_beyond_r_sigma(gw.TimeModule):
@@ -401,6 +537,137 @@ class standard_deviation(gw.TimeModule):
 
     def calculate(self, x):
         return jnp.nanstd(x, axis=0).squeeze()
+
+
+class sum(gw.TimeModule):
+    """Calculate the standard_deviation value of the time series.
+
+    Args:
+        gw (_type_): _description_
+    """
+
+    def __init__(self):
+        super(sum, self).__init__()
+
+    def calculate(self, x):
+        return jnp.sum(x, axis=0).squeeze()
+
+
+class symmetry_looking(gw.TimeModule):
+    """
+    Boolean variable denoting if the distribution of x *looks symmetric*. This is the case if
+
+    .. math::
+
+        | mean(X)-median(X)| < r * (max(X)-min(X))
+
+    :param r: the percentage of the range to compare with (default: 0.1)
+    :type r: float
+    :return: the value of this feature
+    :return type: bool
+    """
+
+    def __init__(self, r=0.1):
+        super(symmetry_looking, self).__init__()
+        self.r = r
+
+    def calculate(self, array):
+        return (
+            jnp.abs(jnp.mean(array, axis=0) - jnp.median(array, axis=0))
+            < (self.r * (jnp.max(array, axis=0) - jnp.min(array, axis=0)))
+        ).squeeze()
+
+
+class ts_complexity_cid_ce(gw.TimeModule):
+    """
+    This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,
+    valleys etc.). It calculates the value of
+
+    .. math::
+
+        \\sqrt{ \\sum_{i=0}^{n-2lag} ( x_{i} - x_{i+1})^2 }
+
+    .. rubric:: References
+
+    |  [1] Batista, Gustavo EAPA, et al (2014).
+    |  CID: an efficient complexity-invariant distance for time series.
+    |  Data Mining and Knowledge Discovery 28.3 (2014): 634-669.
+
+
+    :param normalize: should the time series be z-transformed?
+    :type normalize: bool
+
+    :return: the value of this feature
+    :return type: float
+    """
+
+    def __init__(self, normalize=True):
+        super(ts_complexity_cid_ce, self).__init__()
+        self.normalize = normalize
+
+    def calculate(self, array):
+        if self.normalize:
+            s = jnp.std(array, axis=0)
+
+            array = jnp.where(s != 0, (array - jnp.mean(array, axis=0)) / s, array)
+            array = jnp.where(s == 0, 0.0, array)
+
+        x = jnp.diff(array, axis=0)
+
+        # Compute dot product along the time dimension
+        try:
+            dot_prod = jnp.einsum("tijk, tijk->jk", x, x)
+        except:
+            dot_prod = jnp.einsum("ijk, ijk->jk", x, x)
+        return jnp.sqrt(dot_prod)
+
+
+class unique_value_number_to_time_series_length(gw.TimeModule):
+    """SLOW
+    Returns a factor which is 1 if all values in the time series occur only once,
+    and below one if this is not the case.
+    In principle, it just returns
+
+        # of unique values / # of values
+    """
+
+    def __init__(self):
+        super(unique_value_number_to_time_series_length, self).__init__()
+        print("this is slow and needs more work")
+
+    def calculate(self, array):
+        # Count the number of unique values along the time axis (axis=0)
+        unique_counts = jnp.sum(jnp.unique(array, axis=0), axis=0)
+
+        return (unique_counts / len(array)).squeeze()
+
+        # def count_unique_values(arr):
+        #     unique_counts = jnp.sum(np.unique(arr, axis=0), axis=0)
+        #     return unique_counts
+
+        # # Apply the function along the time axis (axis=0)
+        # result = jnp.apply_along_axis(count_unique_values, axis=0, arr=array)
+
+        # # Divide the count of unique values by the length of time
+        # result /= array.shape[0]
+
+        # return result.squeeze()
+
+
+class variance(gw.TimeModule):
+    """Calculate the variance of the time series
+
+    Args:
+        gw (_type_): _description_
+    Returns:
+        bool:
+    """
+
+    def __init__(self):
+        super(variance, self).__init__()
+
+    def calculate(self, x):
+        return jnp.var(x, axis=0).squeeze()
 
 
 class variance_larger_than_standard_deviation(gw.TimeModule):

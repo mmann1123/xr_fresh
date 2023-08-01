@@ -21,30 +21,39 @@ strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
 dates = sorted(datetime.strptime(string, strp_glob) for string in files)
 dates
 
-# %%
+#  %%
 
 
-class ratio_beyond_r_sigma(gw.TimeModule):
-    """Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.
+class unique_value_number_to_time_series_length(gw.TimeModule):
+    """SLOW
+    Returns a factor which is 1 if all values in the time series occur only once,
+    and below one if this is not the case.
+    In principle, it just returns
 
-    Args:
-        gw (_type_): _description_
-        r (int, optional):   Defaults to 2.
+        # of unique values / # of values
     """
 
-    def __init__(self, r=2):
-        super(ratio_beyond_r_sigma, self).__init__()
-        self.r = r
+    def __init__(self):
+        super(unique_value_number_to_time_series_length, self).__init__()
+        print("this is slow and needs more work")
 
     def calculate(self, array):
-        return (
-            jnp.nansum(
-                jnp.abs(array - jnp.nanmean(array, axis=0))
-                > self.r * jnp.nanstd(array, axis=0),
-                axis=0,
-            )
-            / len(array)
-        ).squeeze()
+        # Count the number of unique values along the time axis (axis=0)
+        unique_counts = jnp.sum(jnp.unique(array, axis=0), axis=0)
+
+        return (unique_counts / len(array)).squeeze()
+
+        # def count_unique_values(arr):
+        #     unique_counts = jnp.sum(np.unique(arr, axis=0), axis=0)
+        #     return unique_counts
+
+        # # Apply the function along the time axis (axis=0)
+        # result = jnp.apply_along_axis(count_unique_values, axis=0, arr=array)
+
+        # # Divide the count of unique values by the length of time
+        # result /= array.shape[0]
+
+        # return result.squeeze()
 
 
 with gw.series(
@@ -53,9 +62,9 @@ with gw.series(
 ) as src:
     print(src)
     src.apply(
-        func=ratio_beyond_r_sigma(),
+        func=unique_value_number_to_time_series_length(),
         outfile=f"/home/mmann1123/Downloads/test.tif",
-        num_workers=1,
+        num_workers=5,
         bands=1,
     )
 
