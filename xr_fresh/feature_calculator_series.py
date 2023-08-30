@@ -32,23 +32,6 @@ def _check_valid_array(obj):
         raise TypeError("Array must contain only integers, datetime objects.")
 
 
-# fill previous DOESN"T SEEM TO BE WORKING - creates edge effects
-# def _interpolate_nans_previous(array):
-#     def scan_fun(carry, x):
-#         last_value = carry
-#         new_value = jnp.where(jnp.isnan(x), last_value, x)
-#         return new_value, new_value
-
-#     _, filled_array = lax.scan(scan_fun, array[0], array[1:])
-#     return jnp.concatenate([array[:1], filled_array])
-
-
-# def vectorized_interpolate_nans_previous(array_4d):
-#     reshaped_array = array_4d.reshape(-1, array_4d.shape[0])
-#     interpolated = vmap(_interpolate_nans_previous)(reshaped_array)
-#     return interpolated.reshape(array_4d.shape)
-
-
 def _interpolate_nans_linear(array):
     if all(np.isnan(array)):
         return array
