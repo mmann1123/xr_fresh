@@ -2,6 +2,7 @@ import jax.numpy as jnp
 import numpy as np
 import geowombat as gw
 from datetime import datetime
+from jax import lax, vmap
 
 # ratio_beyond_r_sigma
 
@@ -29,6 +30,137 @@ def _check_valid_array(obj):
         return jnp.array(np.vectorize(_get_day_of_year)(obj))
     else:
         raise TypeError("Array must contain only integers, datetime objects.")
+
+
+# fill previous DOESN"T SEEM TO BE WORKING - creates edge effects
+# def _interpolate_nans_previous(array):
+#     def scan_fun(carry, x):
+#         last_value = carry
+#         new_value = jnp.where(jnp.isnan(x), last_value, x)
+#         return new_value, new_value
+
+#     _, filled_array = lax.scan(scan_fun, array[0], array[1:])
+#     return jnp.concatenate([array[:1], filled_array])
+
+
+# def vectorized_interpolate_nans_previous(array_4d):
+#     reshaped_array = array_4d.reshape(-1, array_4d.shape[0])
+#     interpolated = vmap(_interpolate_nans_previous)(reshaped_array)
+#     return interpolated.reshape(array_4d.shape)
+
+
+def _interpolate_nans_linear(array):
+    if all(np.isnan(array)):
+        return array
+    else:
+        return np.interp(
+            np.arange(len(array)),
+            np.arange(len(array))[np.isnan(array) == False],
+            array[np.isnan(array) == False],
+        )
+
+
+class interpolate_nan(gw.TimeModule):
+    """Interpolate missing values in the time series using linear interpolation.
+    IMPORTANT: Only returns one image at a time, see example below.
+    This is slow sorry.
+
+    Args:
+        gw (_type_): _description_
+        missing_value (int, optional): The value to be replaced by NaNs. Default is None.
+        interp_type (str, optional): The type of interpolation to use. Default is "linear".
+        index_to_write (int, optional): The index of the interpolated array to return. Default is 0.
+
+    Example:
+
+    pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
+    files = sorted(glob(f"{pth}*.tif"))[0:10]
+    strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
+    dates = sorted(datetime.strptime(string, strp_glob) for string in files)
+    date_strings = [date.strftime("%Y-%m-%d") for date in dates]
+
+    with gw.series(
+        files,
+        nodata=9999,
+    ) as src:
+        for i, name in enumerate(date_strings):
+            src.apply(
+                func=interpolate_nan(
+                    missing_value=0, interp_type="linear", index_to_write=i
+                ),
+                outfile=f"/home/mmann1123/Downloads/Temperature_{name}.tif",
+                num_workers=5,
+                bands=1,
+            )
+    """
+
+    def __init__(self, missing_value=None, interp_type="linear", index_to_write=0):
+        super(interpolate_nan, self).__init__()
+        self.missing_value = missing_value
+        self.interp_type = interp_type
+        self.index_to_write = index_to_write
+
+    def calculate(self, array):
+        # check if missing_value is not None and not np.nan
+        if self.missing_value is not None:
+            if not np.isnan(self.missing_value):
+                array = jnp.where(array == self.missing_value, np.NaN, array)
+            if self.interp_type == "linear":
+                array = np.apply_along_axis(
+                    _interpolate_nans_linear, axis=0, arr=array
+                ).squeeze()
+        # Return one of the interpolated arrays base on the index_to_write
+        return array[self.index_to_write]
+
+
+class abs_energy2(gw.TimeModule):
+    """
+    Returns the absolute energy of the time series which is the sum over the squared values
+
+    .. math::
+
+        E = \\sum_{i=1,\\ldots, n} x_i^2
+
+    Args:
+        gw (_type_): _description_
+
+
+    Example:
+
+    with gw.series(
+        files,
+        nodata=9999,
+    ) as src:
+        print(src)
+        src.apply(
+            func=abs_energy(),
+            outfile=f"/home/mmann1123/Downloads/test.tif",
+            num_workers=5,
+            bands=1,
+        )
+
+    """
+
+    def __init__(self, missing_value=None, interp_type="linear"):
+        super(abs_energy2, self).__init__()
+        self.missing_value = missing_value
+        self.interp_type = interp_type
+
+    def calculate(self, array):
+        # check if missing_value is not None and not np.nan
+        if self.missing_value is not None:
+            if not np.isnan(self.missing_value):
+                array = jnp.where(array == self.missing_value, np.NaN, array)
+            if self.interp_type == "linear":
+                array = np.apply_along_axis(
+                    _interpolate_nans_linear, axis=0, arr=array
+                ).squeeze()
+        print(array.shape)
+        # Calculate the absolute energy
+        array = jnp.sum(jnp.square(array), axis=0).squeeze()
+        print("squeeze", array.shape)
+
+        return array
 
 
 class abs_energy(gw.TimeModule):
