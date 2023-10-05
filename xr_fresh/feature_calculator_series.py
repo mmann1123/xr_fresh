@@ -33,7 +33,8 @@ def _check_valid_array(obj):
 
 
 class interpolate_nan(gw.TimeModule):
-    """Interpolate missing values in the time series using linear interpolation.
+    """Interpolate missing values in the time series using linear interpolation. Assumes a
+    regular time interval between observations.
 
     Args:
         gw (_type_): _description_
