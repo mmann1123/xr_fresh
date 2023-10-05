@@ -8,6 +8,8 @@ import geowombat as gw
 import jax.numpy as jnp
 from datetime import datetime
 from geowombat.data import l8_224078_20200518
+from scipy.interpolate import interp1d
+
 
 sys.path.append("/home/mmann1123/Documents/github/xr_fresh/xr_fresh")
 sys.path.append("/home/mmann1123/Documents/github/xr_fresh/")
@@ -23,7 +25,7 @@ from xr_fresh.feature_calculator_series import (
 pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
 pth = "/home/mmann1123/extra_space/Dropbox/Africa_data/Temperature/"
 
-files = sorted(glob(f"{pth}*.tif"))[0:10]
+files = sorted(glob(f"{pth}*.tif"))[0:3]
 strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
 dates = sorted(datetime.strptime(string, strp_glob) for string in files)
 date_strings = [date.strftime("%Y-%m-%d") for date in dates]
@@ -62,21 +64,30 @@ with gw.series(
 
 
 # %%
-# not working because I can't write out multiple observations
+
+
 def _interpolate_nans_linear(array):
     if all(np.isnan(array)):
         return array
     else:
         return np.interp(
             np.arange(len(array)),
-            np.arange(len(array))[np.isnan(array) == False],
+            np.arange(len(array))[jnp.isnan(array) == False],
             array[np.isnan(array) == False],
         )
 
 
 # %%
+# define interpolate via scipy b spline
+def _interpolate_nans_interp1d(array, kind=None):
+    if all(np.isnan(array)):
+        return array
+    else:
+        inter_fun = interp1d(x=np.arange(len(array)), y=array, kind=kind)
+        return inter_fun(np.arange(len(array)))
 
 
+# %%
 class interpolate_nan(gw.TimeModule):
     def __init__(self, missing_value=None, interp_type="linear", count=1):
         super(interpolate_nan, self).__init__()
@@ -92,28 +103,38 @@ class interpolate_nan(gw.TimeModule):
                 array = jnp.where(array == self.missing_value, np.NaN, array)
             if self.interp_type == "linear":
                 array = np.apply_along_axis(_interpolate_nans_linear, axis=0, arr=array)
+            elif self.interp_type in [
+                "nearest",
+                "nearest-up",
+                "zero",
+                "slinear",
+                "quadratic",
+                "cubic",
+                "previous",
+                "next",
+            ]:
+                array = np.apply_along_axis(
+                    _interpolate_nans_interp1d, axis=0, arr=array, kind=self.interp_type
+                )
         # Return the interpolated array (3d -> time/bands x height x width)
         # If the array is (time x 1 x height x width) then squeeze to 3d
         return array.squeeze()
 
 
-with gw.series(
-    files,
-    nodata=9999,
-) as src:
+with gw.series(files) as src:
     src.apply(
         func=interpolate_nan(
-            missing_value=0,
-            # not sure if your output length matches your input file length
-            # whatever your case is, this is where you define the output band count
+            missing_value=9999,
+            interp_type="nearest",
+            # output band count
             count=len(src.filenames),
         ),
         outfile=f"/home/mmann1123/Downloads/test.tif",
         num_workers=5,
-        # Note that this is the band, or bands, to read
+        # number of bands to read
         bands=1,
     )
-
+# %%
 # not sure this works
 # print("filled", filled)
 # # check if out directory exists and create if not
@@ -135,14 +156,14 @@ with gw.series(
 #     )
 
 
-interpolate_missing(
-    files,
-    missing_value=9999,
-    method="linear",
-    limit=3,
-    outdir="/home/mmann1123/Downloads/smoothed_values",
-    name_append="smoothed",
-)
+# interpolate_missing(
+#     files,
+#     missing_value=9999,
+#     method="linear",
+#     limit=3,
+#     outdir="/home/mmann1123/Downloads/smoothed_values",
+#     name_append="smoothed",
+# )
 # %%
 
 

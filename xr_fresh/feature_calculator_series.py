@@ -38,15 +38,13 @@ def _interpolate_nans_linear(array):
     else:
         return np.interp(
             np.arange(len(array)),
-            np.arange(len(array))[np.isnan(array) == False],
+            np.arange(len(array))[jnp.isnan(array) == False],
             array[np.isnan(array) == False],
         )
 
 
 class interpolate_nan(gw.TimeModule):
     """Interpolate missing values in the time series using linear interpolation.
-    IMPORTANT: Only returns one image at a time, see example below.
-    This is slow sorry.
 
     Args:
         gw (_type_): _description_
@@ -64,24 +62,26 @@ class interpolate_nan(gw.TimeModule):
 
     with gw.series(
         files,
-        nodata=9999,
     ) as src:
-        for i, name in enumerate(date_strings):
-            src.apply(
-                func=interpolate_nan(
-                    missing_value=0, interp_type="linear", index_to_write=i
-                ),
-                outfile=f"/home/mmann1123/Downloads/Temperature_{name}.tif",
-                num_workers=5,
-                bands=1,
-            )
+        src.apply(
+            func=interpolate_nan(
+                missing_value=0,
+                # output band count
+                count=len(src.filenames),
+            ),
+            outfile=f"/home/mmann1123/Downloads/test.tif",
+            num_workers=5,
+            # number of bands to read
+            bands=1,
+        )
     """
 
-    def __init__(self, missing_value=None, interp_type="linear", index_to_write=0):
+    def __init__(self, missing_value=None, interp_type="linear", count=1):
         super(interpolate_nan, self).__init__()
         self.missing_value = missing_value
         self.interp_type = interp_type
-        self.index_to_write = index_to_write
+        # Overrides the default output band count
+        self.count = count
 
     def calculate(self, array):
         # check if missing_value is not None and not np.nan
@@ -89,11 +89,10 @@ class interpolate_nan(gw.TimeModule):
             if not np.isnan(self.missing_value):
                 array = jnp.where(array == self.missing_value, np.NaN, array)
             if self.interp_type == "linear":
-                array = np.apply_along_axis(
-                    _interpolate_nans_linear, axis=0, arr=array
-                ).squeeze()
-        # Return one of the interpolated arrays base on the index_to_write
-        return array[self.index_to_write]
+                array = np.apply_along_axis(_interpolate_nans_linear, axis=0, arr=array)
+        # Return the interpolated array (3d -> time/bands x height x width)
+        # If the array is (time x 1 x height x width) then squeeze to 3d
+        return array.squeeze()
 
 
 class abs_energy2(gw.TimeModule):
@@ -482,6 +481,22 @@ class maximum(gw.TimeModule):
 
     def calculate(self, x):
         return jnp.nanmax(x, axis=0).squeeze()
+
+
+class minimum(gw.TimeModule):
+    """Calculate the lowest value of the time series.
+
+    Args:
+        gw (_type_): _description_
+        dim (str, optional): The name of the dimension along which to calculate the minimum.
+                             Default is "time".
+    """
+
+    def __init__(self):
+        super(minimum, self).__init__()
+
+    def calculate(self, x):
+        return jnp.nanmin(x, axis=0).squeeze()
 
 
 class mean(gw.TimeModule):
