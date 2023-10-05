@@ -2,7 +2,7 @@ import jax.numpy as jnp
 import numpy as np
 import geowombat as gw
 from datetime import datetime
-from scipy.interpolate import interp1d
+from scipy.interpolate import interp1d, CubicSpline
 
 # ratio_beyond_r_sigma
 
@@ -324,7 +324,7 @@ class doy_of_maximum(gw.TimeModule):
         ) as src:
             print(src)
             src.apply(
-                func=doy_of_max(dates),
+                func=doy_of_maximum(dates),
                 outfile=f"/home/mmann1123/Downloads/test.tif",
                 num_workers=1,
                 bands=1,
