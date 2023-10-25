@@ -171,7 +171,14 @@ class interpolate_nan(gw.TimeModule):
         else:
             valid_indices = np.where(np.isnan(array) == False)[0]
             valid_values = array[valid_indices]
-            inter_fun = interp1d(x=valid_indices, y=valid_values, kind=kind)
+            inter_fun = interp1d(
+                x=valid_indices,
+                y=valid_values,
+                kind=kind,
+                bounds_error=False,
+                fill_value="extrapolate",
+            )
+
             return inter_fun(np.arange(len(array)))
 
     @staticmethod
