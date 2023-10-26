@@ -87,7 +87,7 @@ date_strings
 
 
 # %%
-with gw.series(files) as src:
+with gw.series(files, window_size=[32 * 30, 32 * 30]) as src:
     src.apply(
         func=interpolate_nan(
             missing_value=np.nan,
@@ -96,12 +96,12 @@ with gw.series(files) as src:
             count=len(src.filenames),
         ),
         outfile=f"/home/mmann1123/Downloads/test_spline.tif",
-        num_workers=15,
+        num_workers=src.nchunks,
         # number of bands to read
         bands=1,
     )
 # %%
-with gw.series(files) as src:
+with gw.series(files, window_size=[32 * 30, 32 * 30]) as src:
     src.apply(
         func=interpolate_nan(
             missing_value=np.nan,
@@ -111,7 +111,7 @@ with gw.series(files) as src:
             count=len(src.filenames),
         ),
         outfile=f"/home/mmann1123/Downloads/test_linear_dates.tif",
-        num_workers=15,
+        num_workers=src.nchunks,
         # number of bands to read
         bands=1,
     )

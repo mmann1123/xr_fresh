@@ -39,114 +39,19 @@ def _check_valid_array(obj):
         raise TypeError("Array must contain only integers, datetime objects.")
 
 
-class interpolate_nan_dates(gw.TimeModule):
-    """
-    Interpolate missing values in a geospatial time series. This class can handle
-    irregular time intervals between observations.
-
-    Args:
-        dates (list[datetime]): List of datetime objects corresponding to each time slice.
-        missing_value (int or float, optional): The value to be replaced by NaNs. Default is None.
-        interp_type (str, optional): The type of interpolation to use. Default is "linear".
-        count (int, optional): Overrides the default output band count. Default is 1.
-
-    Methods:
-        calculate(array): Applies the interpolation on the input array.
-    """
-
-    def __init__(self, dates, missing_value=None, interp_type="linear", count=1):
-        super(interpolate_nan_dates, self).__init__()
-
-        # Validate dates is a list of datetime objects
-        if not isinstance(dates, list) or not all(
-            isinstance(d, datetime) for d in dates
-        ):
-            raise TypeError("dates must be a list of datetime objects")
-
-        self.dates = dates
-        self.date_indices = np.array(
-            [(date - self.dates[0]).days for date in self.dates]
-        )
-        self.missing_value = missing_value
-        self.interp_type = interp_type
-        self.count = count
-
-    def _interpolate_nans_with_dates(self, array):
-        raise TypeError("interp1d not supported - use splines or linear - ")
-
-        if all(np.isnan(array)):
-            return array
-        else:
-            valid_indices = np.where(np.isnan(array) == False)[0]
-            valid_dates = self.date_indices[valid_indices]
-            valid_values = array[valid_indices]
-            inter_fun = interp1d(
-                x=valid_dates,
-                y=valid_values,
-                kind=self.interp_type,
-                fill_value="extrapolate",
-            )
-            return inter_fun(self.date_indices)
-
-    @staticmethod
-    def _interpolate_nans_linear_with_dates(array, self):
-        if all(np.isnan(array)):
-            return array
-        else:
-            return np.interp(
-                self.date_indices,
-                self.date_indices[np.isnan(array) == False],
-                array[np.isnan(array) == False],
-            )
-
-    @staticmethod
-    def _interpolate_nans_CubicSpline_with_dates(array, self):
-        if all(np.isnan(array)):
-            return array
-        else:
-            valid_indices = np.where(np.isnan(array) == False)[0]
-            valid_dates = self.date_indices[valid_indices]
-            valid_values = array[valid_indices]
-
-            inter_fun = CubicSpline(x=valid_dates, y=valid_values, bc_type="not-a-knot")
-            return inter_fun(self.date_indices)
-
-    def calculate(self, array):
-        # Replace missing_value with NaN
-        if self.missing_value is not None and not np.isnan(self.missing_value):
-            array = np.where(array == self.missing_value, np.NaN, array)
-
-        if self.interp_type == "linear":
-            # Interpolate using date indices
-            array = np.apply_along_axis(
-                self._interpolate_nans_linear_with_dates,
-                axis=0,
-                arr=array,
-                self=self,
-            )
-        elif self.interp_type in [
-            "cubicspline",
-            "spline",
-        ]:
-            array = np.apply_along_axis(
-                self._interpolate_nans_CubicSpline_with_dates,
-                axis=0,
-                arr=array,
-                self=self,
-            )
-        return array.squeeze()
-
-
 class interpolate_nan(gw.TimeModule):
+
     """
-    Interpolate missing values in a geospatial time series. This class assumes a regular time
-    interval between observations.
+    Interpolate missing values in a geospatial time series. Without dates set this class assumes a
+    regular time interval between observations. With dates set this class can handle irregular time,
+    based on the DOY as an index.
 
     Args:
         missing_value (int or float, optional): The value to be replaced by NaNs. Default is None.
         interp_type (str, optional): The type of interpolation algorithm to use. Options include "linear",
                                       "nearest", "zero", "slinear", "quadratic", "cubic", "previous", "next",
                                       "cubicspline", "spline", and "UnivariateSpline". Default is "linear".
+        dates (list[datetime]): List of datetime objects corresponding to each time slice.
         count (int, optional): Overrides the default output band count. Default is 1.
 
     Methods:
@@ -168,7 +73,7 @@ class interpolate_nan(gw.TimeModule):
                     count=len(src.filenames),
                 ),
                 outfile="/home/mmann1123/Downloads/test.tif",
-                num_workers=5,
+                num_workers=src.nchunks,
                 bands=1,
             )
     """
