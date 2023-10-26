@@ -154,7 +154,7 @@ with gw.series(files) as src:
 
 
 plot_interpolated_actual(
-    interpolated_stack="/home/mmann1123/Downloads/test_spline_dates.tif",
+    interpolated_stack="/home/mmann1123/Downloads/test_linear_dates.tif",
     original_image_list=files,
     samples=20,
 )
