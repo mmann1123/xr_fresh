@@ -23,6 +23,7 @@ from xr_fresh.feature_calculator_series import (
     abs_energy2,
     autocorrelation,
     doy_of_maximum,
+    plot_interpolated_actual,
 )
 
 pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
@@ -71,8 +72,6 @@ with gw.series(
         bands=1,
     )
 
-# %%
-
 
 # %%
 
@@ -85,7 +84,7 @@ strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
 dates = sorted(datetime.strptime(string, strp_glob) for string in files)
 date_strings = [date.strftime("%Y-%m-%d") for date in dates]
 date_strings
-
+# %%
 with gw.series(files) as src:
     src.apply(
         func=interpolate_nan(
@@ -113,49 +112,17 @@ with gw.series(files) as src:
         # number of bands to read
         bands=1,
     )
+
 # %%
 
-# create unit tests for this module
-
-# %% visualize interpolation
-
-with gw.open("/home/mmann1123/Downloads/test_dates.tif") as predict:
-    with gw.open(files, stack_dim="band") as actual:
-        df1 = gw.sample(predict, n=20).dropna().reset_index(drop=True)
-        df2 = gw.extract(actual, df1[["point", "geometry"]])
+# plot interpolated vs actual values
 
 
-import matplotlib.pyplot as plt
-
-
-# Time series plot comparing the two DataFrames
-fig, ax = plt.subplots(figsize=(10, 6))
-time_points = list(range(1, 6))
-colors = plt.cm.viridis(np.linspace(0, 1, len(df1)))
-
-
-for idx, row in df2.iterrows():
-    ax.scatter(
-        time_points,
-        row[time_points],
-        color=colors[idx],
-        label=f"actual, Point {row['point']}",
-        linestyle="-",
-    )
-
-for idx, row in df1.iterrows():
-    ax.plot(
-        time_points,
-        row[time_points],
-        color=colors[idx],
-        label=f"predicted, Point {row['point']}",
-        linestyle="--",
-    )
-
-ax.set_xlabel("Time")
-ax.set_ylabel("Value")
-ax.set_title("Time Series Comparison Between Predicted and Actual Values")
-plt.show()
+plot_interpolated_actual(
+    interpolated_stack="/home/mmann1123/Downloads/test_dates.tif",
+    original_image_list=files,
+    samples=20,
+)
 
 
 # %%
