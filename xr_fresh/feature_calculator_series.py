@@ -1,4 +1,5 @@
 import jax.numpy as jnp
+from jax import jit
 import numpy as np
 import geowombat as gw
 from datetime import datetime
@@ -9,7 +10,6 @@ from scipy.interpolate import interp1d
 import numpy as np
 from matplotlib import pyplot as plt
 from typing import List, Union, Any
-
 
 # ratio_beyond_r_sigma
 
@@ -37,66 +37,6 @@ def _check_valid_array(obj):
         return jnp.array(np.vectorize(_get_day_of_year)(obj))
     else:
         raise TypeError("Array must contain only integers, datetime objects.")
-
-
-# visualize interpolation
-def open_files(predict: str, actual: str):
-    with gw.open(predict) as predict:
-        with gw.open(actual, stack_dim="band") as actual:
-            return predict, actual
-
-
-def sample_data(predict, actual, n=20):
-    df1 = gw.sample(predict, n=20).dropna().reset_index(drop=True)
-    df2 = gw.extract(actual, df1[["point", "geometry"]])
-    return df1, df2
-
-
-def plot_data(df1, df2):
-    fig, ax = plt.subplots(figsize=(10, 6))
-    time_points = list(range(1, 6))
-    colors = plt.cm.viridis(np.linspace(0, 1, len(df1)))
-
-    for idx, row in df2.iterrows():
-        ax.scatter(
-            time_points,
-            row[time_points],
-            color=colors[idx],
-            label=f"actual, Point {row['point']}",
-            linestyle="-",
-        )
-
-    for idx, row in df1.iterrows():
-        ax.plot(
-            time_points,
-            row[time_points],
-            color=colors[idx],
-            label=f"predicted, Point {row['point']}",
-            linestyle="--",
-        )
-
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Value")
-    ax.set_title("Time Series Comparison Between Predicted and Actual Values")
-    plt.show()
-
-
-def plot_interpolated_actual(
-    interpolated_stack: str, original_image_list: list, samples: int = 20
-):
-    """Plots the interpolated and actual values for a given time series.
-
-    Args:
-        interpolated_stack (str): multiband stack of images representing interpolated time series. Defaults to None.
-        original_image_list (list): list of files used in interpolation. Defaults to None.
-        samples (int, optional): number of random points to compare time series. Defaults to 20.
-    """
-    predict, actual = open_files(
-        interpolated_stack,
-        original_image_list,
-    )
-    df1, df2 = sample_data(predict, actual, n=samples)
-    plot_data(df1, df2)
 
 
 class interpolate_nan_dates(gw.TimeModule):
@@ -132,6 +72,8 @@ class interpolate_nan_dates(gw.TimeModule):
         self.count = count
 
     def _interpolate_nans_with_dates(self, array):
+        raise TypeError("interp1d not supported - use splines or linear - ")
+
         if all(np.isnan(array)):
             return array
         else:
@@ -147,27 +89,51 @@ class interpolate_nan_dates(gw.TimeModule):
             return inter_fun(self.date_indices)
 
     @staticmethod
-    def _interpolate_nans_linear_with_dates(self, array):
-        print("testing phase   ")
-        if all(jnp.isnan(array)):
+    def _interpolate_nans_linear_with_dates(array, self):
+        if all(np.isnan(array)):
             return array
         else:
-            return jnp.interp(
+            return np.interp(
                 self.date_indices,
-                self.date_indices[jnp.isnan(array) == False],
-                array[jnp.isnan(array) == False],
+                self.date_indices[np.isnan(array) == False],
+                array[np.isnan(array) == False],
             )
+
+    @staticmethod
+    def _interpolate_nans_CubicSpline_with_dates(array, self):
+        if all(np.isnan(array)):
+            return array
+        else:
+            valid_indices = np.where(np.isnan(array) == False)[0]
+            valid_dates = self.date_indices[valid_indices]
+            valid_values = array[valid_indices]
+
+            inter_fun = CubicSpline(x=valid_dates, y=valid_values, bc_type="not-a-knot")
+            return inter_fun(self.date_indices)
 
     def calculate(self, array):
         # Replace missing_value with NaN
         if self.missing_value is not None and not np.isnan(self.missing_value):
             array = np.where(array == self.missing_value, np.NaN, array)
 
-        # Interpolate using date indices
-        array = np.apply_along_axis(
-            self._interpolate_nans_linear_with_dates, axis=0, arr=array
-        )
-
+        if self.interp_type == "linear":
+            # Interpolate using date indices
+            array = np.apply_along_axis(
+                self._interpolate_nans_linear_with_dates,
+                axis=0,
+                arr=array,
+                self=self,
+            )
+        elif self.interp_type in [
+            "cubicspline",
+            "spline",
+        ]:
+            array = np.apply_along_axis(
+                self._interpolate_nans_CubicSpline_with_dates,
+                axis=0,
+                arr=array,
+                self=self,
+            )
         return array.squeeze()
 
 
@@ -211,12 +177,14 @@ class interpolate_nan(gw.TimeModule):
         super(interpolate_nan, self).__init__()
         # Validate dates is a list of datetime objects
         if dates is None:
+            print("NOTE: Dates are unknown, assuming regular time interval")
             self.dates = dates
         elif not isinstance(dates, list) or not all(
             isinstance(d, datetime) for d in dates
         ):
             raise TypeError("dates must be a list of datetime objects")
         else:
+            print("NOTE: Dates will be used to index the time series for interpolation")
             self.dates = dates
             self.date_indices = np.array(
                 [(date - self.dates[0]).days for date in self.dates]
@@ -227,22 +195,8 @@ class interpolate_nan(gw.TimeModule):
         self.count = count
 
     @staticmethod
-    def _interpolate_nans_linear(array):
-        if all(np.isnan(array)):
-            return array
-        else:
-            return np.interp(
-                np.arange(len(array)),
-                np.arange(len(array))[jnp.isnan(array) == False],
-                array[np.isnan(array) == False],
-            )
-
-    @staticmethod
     def _interpolate_nans_interp1d(array, kind=None):
-        # seems to overwrite the first band with bad values
-
-        raise TypeError("interp1d not supported - use splines or linear - ")
-
+        # TO DO: seems to overwrite the first band with bad values
         if all(np.isnan(array)):
             return array
         else:
@@ -258,8 +212,47 @@ class interpolate_nan(gw.TimeModule):
 
             return inter_fun(np.arange(len(array)))
 
+    def _interpolate_nans_interp1d_with_dates(array, self):
+        # TO DO: seems to overwrite the first band with bad values
+
+        if all(np.isnan(array)):
+            return array
+        else:
+            valid_indices = np.where(np.isnan(array) == False)[0]
+            valid_dates = self.date_indices[valid_indices]
+            valid_values = array[valid_indices]
+            inter_fun = interp1d(
+                x=valid_dates,
+                y=valid_values,
+                kind=self.interp_type,
+                fill_value="extrapolate",
+            )
+            return inter_fun(self.date_indices)
+
     @staticmethod
-    def _interpolate_nans_CubicSpline(array, kind=None):
+    def _interpolate_nans_linear(array):
+        if all(np.isnan(array)):
+            return array
+        else:
+            return np.interp(
+                np.arange(len(array)),
+                np.arange(len(array))[jnp.isnan(array) == False],
+                array[np.isnan(array) == False],
+            )
+
+    @staticmethod
+    def _interpolate_nans_linear_with_dates(array, self):
+        if all(np.isnan(array)):
+            return array
+        else:
+            return np.interp(
+                self.date_indices,
+                self.date_indices[np.isnan(array) == False],
+                array[np.isnan(array) == False],
+            )
+
+    @staticmethod
+    def _interpolate_nans_CubicSpline(array):
         if all(np.isnan(array)):
             return array
         else:
@@ -271,7 +264,31 @@ class interpolate_nan(gw.TimeModule):
             return inter_fun(np.arange(len(array)))
 
     @staticmethod
-    def _interpolate_nans_UnivariateSpline(array, kind=None, s=1):
+    def _interpolate_nans_CubicSpline_with_dates(array, self):
+        if all(np.isnan(array)):
+            return array
+        else:
+            valid_indices = np.where(np.isnan(array) == False)[0]
+            valid_dates = self.date_indices[valid_indices]
+            valid_values = array[valid_indices]
+
+            inter_fun = CubicSpline(x=valid_dates, y=valid_values, bc_type="not-a-knot")
+            return inter_fun(self.date_indices)
+
+    @staticmethod
+    def _interpolate_nans_CubicSpline_with_dates(array, self):
+        if all(np.isnan(array)):
+            return array
+        else:
+            valid_indices = np.where(np.isnan(array) == False)[0]
+            valid_dates = self.date_indices[valid_indices]
+            valid_values = array[valid_indices]
+
+            inter_fun = CubicSpline(x=valid_dates, y=valid_values, bc_type="not-a-knot")
+            return inter_fun(self.date_indices)
+
+    @staticmethod
+    def _interpolate_nans_UnivariateSpline(array, s=1):
         if all(np.isnan(array)):
             return array
         else:
@@ -280,15 +297,36 @@ class interpolate_nan(gw.TimeModule):
             inter_fun = UnivariateSpline(x=valid_indices, y=valid_values, s=s)
             return inter_fun(np.arange(len(array)))
 
+    @staticmethod
+    def _interpolate_nans_UnivariateSpline_with_dates(array, self, s=1):
+        if all(np.isnan(array)):
+            return array
+        else:
+            valid_indices = np.where(np.isnan(array) == False)[0]
+            valid_date_indices = self.date_indices[valid_indices]
+            valid_values = array[valid_indices]
+            inter_fun = UnivariateSpline(x=valid_date_indices, y=valid_values, s=s)
+            return inter_fun(self.date_indices)
+
     def calculate(self, array):
         # check if missing_value is not None and not np.nan
         if self.missing_value is not None:
             if not np.isnan(self.missing_value):
                 array = np.where(array == self.missing_value, np.NaN, array)
             if self.interp_type == "linear":
-                array = np.apply_along_axis(
-                    self._interpolate_nans_linear, axis=0, arr=array
-                )
+                # check for dates as index
+                if self.dates is None:
+                    array = np.apply_along_axis(
+                        self._interpolate_nans_linear, axis=0, arr=array
+                    )
+                else:
+                    array = np.apply_along_axis(
+                        self._interpolate_nans_linear_with_dates,
+                        axis=0,
+                        arr=array,
+                        self=self,
+                    )
+
             elif self.interp_type in [
                 "nearest",
                 "nearest-up",
@@ -299,31 +337,54 @@ class interpolate_nan(gw.TimeModule):
                 "previous",
                 "next",
             ]:
-                array = np.apply_along_axis(
-                    self._interpolate_nans_interp1d,
-                    axis=0,
-                    arr=array,
-                    kind=self.interp_type,
-                )
+                raise TypeError("interp1d not supported - use splines or linear - ")
+                if self.dates is None:
+                    array = np.apply_along_axis(
+                        self._interpolate_nans_interp1d,
+                        axis=0,
+                        arr=array,
+                        kind=self.interp_type,
+                    )
+                else:
+                    array = np.apply_along_axis(
+                        self._interpolate_nans_interp1d_with_dates,
+                        axis=0,
+                        arr=array,
+                        self=self,
+                        kind=self.interp_type,
+                    )
             elif self.interp_type in [
                 "cubicspline",
                 "spline",
             ]:
-                array = np.apply_along_axis(
-                    self._interpolate_nans_CubicSpline,
-                    axis=0,
-                    arr=array,
-                    kind=self.interp_type,
-                )
+                if self.dates is None:
+                    array = np.apply_along_axis(
+                        self._interpolate_nans_CubicSpline,
+                        axis=0,
+                        arr=array,
+                    )
+                else:
+                    array = np.apply_along_axis(
+                        self._interpolate_nans_CubicSpline_with_dates,
+                        axis=0,
+                        arr=array,
+                        self=self,
+                    )
             elif self.interp_type in [
                 "UnivariateSpline",
             ]:
-                array = np.apply_along_axis(
-                    self._interpolate_nans_CubicSpline,
-                    axis=0,
-                    arr=array,
-                    kind=self.interp_type,
-                )
+                if self.dates is None:
+                    array = np.apply_along_axis(
+                        self._interpolate_nans_UnivariateSpline, axis=0, arr=array, s=1
+                    )
+                else:
+                    array = np.apply_along_axis(
+                        self._interpolate_nans_UnivariateSpline_with_dates,
+                        axis=0,
+                        arr=array,
+                        self=self,
+                        s=1,
+                    )
         # Return the interpolated array (3d -> time/bands x height x width)
         # If the array is (time x 1 x height x width) then squeeze to 3d
         return array.squeeze()
@@ -1062,6 +1123,66 @@ class variance_larger_than_standard_deviation(gw.TimeModule):
 
     def calculate(self, x):
         return (jnp.var(x, axis=0) > jnp.nanstd(x, axis=0)).astype(np.int8).squeeze()
+
+
+# visualize interpolation
+def open_files(predict: str, actual: str):
+    with gw.open(predict) as predict:
+        with gw.open(actual, stack_dim="band") as actual:
+            return predict, actual
+
+
+def sample_data(predict, actual, n=20):
+    df1 = gw.sample(predict, n=20).dropna().reset_index(drop=True)
+    df2 = gw.extract(actual, df1[["point", "geometry"]])
+    return df1, df2
+
+
+def plot_data(df1, df2):
+    fig, ax = plt.subplots(figsize=(10, 6))
+    time_points = list(range(1, 6))
+    colors = plt.cm.viridis(np.linspace(0, 1, len(df1)))
+
+    for idx, row in df2.iterrows():
+        ax.scatter(
+            time_points,
+            row[time_points],
+            color=colors[idx],
+            label=f"actual, Point {row['point']}",
+            linestyle="-",
+        )
+
+    for idx, row in df1.iterrows():
+        ax.plot(
+            time_points,
+            row[time_points],
+            color=colors[idx],
+            label=f"predicted, Point {row['point']}",
+            linestyle="--",
+        )
+
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Value")
+    ax.set_title("Time Series Comparison Between Predicted and Actual Values")
+    plt.show()
+
+
+def plot_interpolated_actual(
+    interpolated_stack: str, original_image_list: list, samples: int = 20
+):
+    """Plots the interpolated and actual values for a given time series.
+
+    Args:
+        interpolated_stack (str): multiband stack of images representing interpolated time series. Defaults to None.
+        original_image_list (list): list of files used in interpolation. Defaults to None.
+        samples (int, optional): number of random points to compare time series. Defaults to 20.
+    """
+    predict, actual = open_files(
+        interpolated_stack,
+        original_image_list,
+    )
+    df1, df2 = sample_data(predict, actual, n=samples)
+    plot_data(df1, df2)
 
 
 # skipped

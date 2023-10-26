@@ -84,6 +84,8 @@ strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
 dates = sorted(datetime.strptime(string, strp_glob) for string in files)
 date_strings = [date.strftime("%Y-%m-%d") for date in dates]
 date_strings
+
+
 # %%
 with gw.series(files) as src:
     src.apply(
@@ -101,9 +103,42 @@ with gw.series(files) as src:
 # %%
 with gw.series(files) as src:
     src.apply(
+        func=interpolate_nan(
+            missing_value=np.nan,
+            dates=dates,
+            interp_type="linear",
+            # output band count
+            count=len(src.filenames),
+        ),
+        outfile=f"/home/mmann1123/Downloads/test_linear_dates.tif",
+        num_workers=15,
+        # number of bands to read
+        bands=1,
+    )
+
+# %%
+with gw.series(files) as src:
+    src.apply(
+        func=interpolate_nan(
+            missing_value=np.nan,
+            dates=dates,
+            interp_type="UnivariateSpline",
+            # output band count
+            count=len(src.filenames),
+        ),
+        outfile=f"/home/mmann1123/Downloads/test_UnivariateSpline_dates.tif",
+        num_workers=15,
+        # number of bands to read
+        bands=1,
+    )
+
+# %%
+with gw.series(files) as src:
+    src.apply(
         func=interpolate_nan_dates(
             missing_value=np.nan,
             dates=dates,
+            interp_type="linear",
             # output band count
             count=len(src.filenames),
         ),
@@ -119,7 +154,7 @@ with gw.series(files) as src:
 
 
 plot_interpolated_actual(
-    interpolated_stack="/home/mmann1123/Downloads/test_dates.tif",
+    interpolated_stack="/home/mmann1123/Downloads/test_spline_dates.tif",
     original_image_list=files,
     samples=20,
 )
