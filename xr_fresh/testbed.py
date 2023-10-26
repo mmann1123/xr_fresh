@@ -99,21 +99,32 @@ with gw.series(files) as src:
         # number of bands to read
         bands=1,
     )
-
-
+# %%
+with gw.series(files) as src:
+    src.apply(
+        func=interpolate_nan_dates(
+            missing_value=np.nan,
+            dates=dates,
+            # output band count
+            count=len(src.filenames),
+        ),
+        outfile=f"/home/mmann1123/Downloads/test_dates.tif",
+        num_workers=15,
+        # number of bands to read
+        bands=1,
+    )
 # %%
 
 # create unit tests for this module
 
 # %% visualize interpolation
 
-with gw.open("/home/mmann1123/Downloads/test_linear.tif") as predict:
+with gw.open("/home/mmann1123/Downloads/test_dates.tif") as predict:
     with gw.open(files, stack_dim="band") as actual:
         df1 = gw.sample(predict, n=20).dropna().reset_index(drop=True)
         df2 = gw.extract(actual, df1[["point", "geometry"]])
 
 
-# %%
 import matplotlib.pyplot as plt
 
 
@@ -123,21 +134,21 @@ time_points = list(range(1, 6))
 colors = plt.cm.viridis(np.linspace(0, 1, len(df1)))
 
 
-for idx, row in df1.iterrows():
+for idx, row in df2.iterrows():
     ax.scatter(
         time_points,
         row[time_points],
         color=colors[idx],
-        label=f"predict, Point {row['point']}",
+        label=f"actual, Point {row['point']}",
         linestyle="-",
     )
 
-for idx, row in df2.iterrows():
+for idx, row in df1.iterrows():
     ax.plot(
         time_points,
         row[time_points],
         color=colors[idx],
-        label=f"actual, Point {row['point']}",
+        label=f"predicted, Point {row['point']}",
         linestyle="--",
     )
 
@@ -145,4 +156,6 @@ ax.set_xlabel("Time")
 ax.set_ylabel("Value")
 ax.set_title("Time Series Comparison Between Predicted and Actual Values")
 plt.show()
+
+
 # %%
