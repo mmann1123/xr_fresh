@@ -4,6 +4,16 @@
 
 from .backends import Cluster
 
+from .feature_calculator_series import (
+    interpolate_nan_dates,
+    interpolate_nan,
+    doy_of_maximum,
+    abs_energy,
+    abs_energy2,
+    autocorrelation,
+    doy_of_maximum,
+    plot_interpolated_actual,
+)
 
 __all__ = ["Cluster"]
 

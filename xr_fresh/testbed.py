@@ -16,15 +16,15 @@ sys.path.append("/home/mmann1123/Documents/github/xr_fresh/")
 import xr_fresh as xf
 
 from xr_fresh.feature_calculator_series import (
-    interpolate_nan_dates,
-    interpolate_nan,
     doy_of_maximum,
     abs_energy,
-    abs_energy2,
     autocorrelation,
     doy_of_maximum,
-    plot_interpolated_actual,
+    ols_slope_intercept,
+    kurtosis,
 )
+from xr_fresh.interpolate_series import interpolate_nan
+from xr_fresh.visualizer import plot_interpolated_actual
 
 pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
 pth = "/home/mmann1123/extra_space/Dropbox/Africa_data/Temperature/"
@@ -43,11 +43,12 @@ with gw.series(
     nodata=9999,
 ) as src:
     src.apply(
-        func=abs_energy(),
+        func=ols_slope_intercept(returns="all"),
         outfile=f"/home/mmann1123/Downloads/test.tif",
         num_workers=5,
         bands=1,
     )
+
 # %%
 with gw.series(
     files,
