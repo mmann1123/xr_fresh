@@ -1,15 +1,6 @@
 # This module contains some missing ops from jax
-import functools
-
 import jax.numpy as np
-from jax import vmap
-from jax.numpy import array
-from jax.numpy import concatenate
-from jax.numpy import ones
-from jax.numpy import zeros
-from jax.tree_util import register_pytree_node_class
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.interpolate import CubicSpline
 from scipy.interpolate import UnivariateSpline
@@ -43,15 +34,15 @@ class interpolate_nan(gw.TimeModule):
         dates = sorted(datetime.strptime(string, strp_glob) for string in files)
         date_strings = [date.strftime("%Y-%m-%d") for date in dates]
 
-        # window size controls RAM usage
-        with gw.series(files, window_size=[640,640]) as src:
+        # window size controls RAM usage, transfer lab can be jax if using GPU
+        with gw.series(files, window_size=[640,640],transfer_lib="numpy") as src:
             src.apply(
                 func=interpolate_nan(
                     missing_value=0,
                     count=len(src.filenames),
                 ),
                 outfile="/home/mmann1123/Downloads/test.tif",
-                num_workers=src.nchunks,
+                num_workers=min(12,src.nchunks),
                 bands=1,
             )
     """
