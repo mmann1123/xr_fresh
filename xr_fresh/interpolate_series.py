@@ -119,7 +119,7 @@ class interpolate_nan(gw.TimeModule):
         else:
             return np.interp(
                 np.arange(len(array)),
-                np.arange(len(array))[jnp.isnan(array) == False],
+                np.arange(len(array))[np.isnan(array) == False],
                 array[np.isnan(array) == False],
             )
 

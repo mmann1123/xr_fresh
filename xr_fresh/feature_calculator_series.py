@@ -12,7 +12,6 @@ from matplotlib import pyplot as plt
 from typing import List, Union, Any
 
 __all__ = [
-    "abs_energy2",
     "abs_energy",
     "absolute_sum_of_changes",
     "autocorrelation",
@@ -40,7 +39,8 @@ __all__ = [
     "sum",
     "symmetry_looking",
     "ts_complexity_cid_ce",
-    "unique_value_number_to_time_series_length" "variance",
+    "unique_value_number_to_time_series_length",
+    "variance",
     "variance_larger_than_standard_deviation",
 ]
 
