@@ -71,7 +71,10 @@ class interpolate_nan(gw.TimeModule):
     @staticmethod
     def _interpolate_nans_interp1d(array, kind=None):
         # TO DO: seems to overwrite the first band with bad values
-        if all(np.isnan(array)):
+        nan_check = np.isnan(array)
+        if all(nan_check):
+            return array
+        elif all(~nan_check):
             return array
         else:
             valid_indices = np.where(np.isnan(array) == False)[0]
@@ -89,7 +92,10 @@ class interpolate_nan(gw.TimeModule):
     def _interpolate_nans_interp1d_with_dates(array, self):
         # TO DO: seems to overwrite the first band with bad values
 
-        if all(np.isnan(array)):
+        nan_check = np.isnan(array)
+        if all(nan_check):
+            return array
+        elif all(~nan_check):
             return array
         else:
             valid_indices = np.where(np.isnan(array) == False)[0]
@@ -105,7 +111,10 @@ class interpolate_nan(gw.TimeModule):
 
     @staticmethod
     def _interpolate_nans_linear(array):
-        if all(np.isnan(array)):
+        nan_check = np.isnan(array)
+        if all(nan_check):
+            return array
+        elif all(~nan_check):
             return array
         else:
             return np.interp(
@@ -116,7 +125,10 @@ class interpolate_nan(gw.TimeModule):
 
     @staticmethod
     def _interpolate_nans_linear_with_dates(array, self):
-        if all(np.isnan(array)):
+        nan_check = np.isnan(array)
+        if all(nan_check):
+            return array
+        elif all(~nan_check):
             return array
         else:
             return np.interp(
@@ -127,7 +139,10 @@ class interpolate_nan(gw.TimeModule):
 
     @staticmethod
     def _interpolate_nans_CubicSpline(array):
-        if all(np.isnan(array)):
+        nan_check = np.isnan(array)
+        if all(nan_check):
+            return array
+        elif all(~nan_check):
             return array
         else:
             valid_indices = np.where(np.isnan(array) == False)[0]
@@ -139,7 +154,10 @@ class interpolate_nan(gw.TimeModule):
 
     @staticmethod
     def _interpolate_nans_CubicSpline_with_dates(array, self):
-        if all(np.isnan(array)):
+        nan_check = np.isnan(array)
+        if all(nan_check):
+            return array
+        elif all(~nan_check):
             return array
         else:
             valid_indices = np.where(np.isnan(array) == False)[0]
@@ -151,7 +169,10 @@ class interpolate_nan(gw.TimeModule):
 
     @staticmethod
     def _interpolate_nans_CubicSpline_with_dates(array, self):
-        if all(np.isnan(array)):
+        nan_check = np.isnan(array)
+        if all(nan_check):
+            return array
+        elif all(~nan_check):
             return array
         else:
             valid_indices = np.where(np.isnan(array) == False)[0]
@@ -163,7 +184,10 @@ class interpolate_nan(gw.TimeModule):
 
     @staticmethod
     def _interpolate_nans_UnivariateSpline(array, s=1):
-        if all(np.isnan(array)):
+        nan_check = np.isnan(array)
+        if all(nan_check):
+            return array
+        elif all(~nan_check):
             return array
         else:
             valid_indices = np.where(np.isnan(array) == False)[0]
@@ -173,7 +197,10 @@ class interpolate_nan(gw.TimeModule):
 
     @staticmethod
     def _interpolate_nans_UnivariateSpline_with_dates(array, self, s=1):
-        if all(np.isnan(array)):
+        nan_check = np.isnan(array)
+        if all(nan_check):
+            return array
+        elif all(~nan_check):
             return array
         else:
             valid_indices = np.where(np.isnan(array) == False)[0]
