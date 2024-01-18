@@ -1,3 +1,42 @@
+# %%
+import os
+import sys
+import numpy as np
+from glob import glob
+import geowombat as gw
+from datetime import datetime
+
+# import xr_fresh as xr
+from xr_fresh.extractors import extract_features
+
+os.chdir("~/xr_fresh/xr_fresh/data")
+
+files = sorted(glob("evi*.tif"))
+files
+
+feature_list = {
+    "minimum": [{}],
+    "abs_energy": [{}],
+    "mean_abs_change": [{}],
+    "variance_larger_than_standard_deviation": [{}],
+    "ratio_beyond_r_sigma": [{"r": 1}, {"r": 2}, {"r": 3}],
+    "symmetry_looking": [{}],
+    "sum_values": [{}],
+}
+outpath = "/home/mmann1123/Downloads/"
+with gw.open(files, band_names=["evi"]) as ds:
+    display(ds)
+
+    features = extract_features(
+        xr_data=ds,
+        band="evi",
+        feature_dict=feature_list,
+        na_rm=True,
+        persist=True,
+        filepath=outpath,
+        postfix="_2016_2017_",
+    )
+
 # %% env:testbed laptop
 
 import os
@@ -5,10 +44,8 @@ import sys
 import numpy as np
 from glob import glob
 import geowombat as gw
-import jax.numpy as jnp
 from datetime import datetime
 from geowombat.data import l8_224078_20200518
-from scipy.interpolate import interp1d, CubicSpline
 
 
 sys.path.append("/home/mmann1123/Documents/github/xr_fresh/xr_fresh")
