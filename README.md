@@ -9,6 +9,10 @@ It allows feature extraction, dimension reduction and applications of machine le
 - extracted features: Mean, minimum, maximum, variance, standard deviation... of the input data
 - output: rasters with features as columns or raster file with features as bands
 
+Example outputs:
+
+![png](examples/output_8_0.png)
+
 # Install
 
 *Linux & Windows Install*
