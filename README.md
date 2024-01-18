@@ -83,6 +83,22 @@ with gw.open(files, band_names=["evi"]) as ds:
 
 ```
 
+This creates a set of files in our `outpath` named:
+
+```
+evi__symmetry_looking__2016_2017_.tif
+evi__sum_values__2016_2017_.tif
+evi__ratio_beyond_r_sigma_r_3_2016_2017_.tif
+evi__ratio_beyond_r_sigma_r_2_2016_2017_.tif
+evi__ratio_beyond_r_sigma_r_1_2016_2017_.tif
+evi__variance_larger_than_standard_deviation__2016_2017_.tif
+evi__mean_abs_change__2016_2017_.tif
+evi__abs_energy__2016_2017_.tif
+evi__minimum__2016_2017_.tif
+```
+
+# Example 2
+
 example including interpolation of missing values and date time slicing
 
 ``` python
