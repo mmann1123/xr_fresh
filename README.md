@@ -131,11 +131,8 @@ with gw.open(
         year = str(year)
         print(year)
         ds_year = ds.sel(time=slice(previous_year + "-08-01", year + "-03-01"))
-        print("interpolating")
+        print("interpolating missing values")
         ds_year = ds_year.interpolate_na(dim="time", limit=5)
-        # ds_year = ds_year.chunk(
-        #     {"time": -1, "band": 1, "y": 350, "x": 350}
-        # )  # rechunk to time
 
         # make output folder
         outpath = os.path.join(files, "annual_features/Sep_Mar_S2")
