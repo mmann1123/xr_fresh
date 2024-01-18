@@ -1,73 +1,30 @@
 # xr_fresh
- 
-xr_fresh is designed to quickly generate a broad set of temporal features from gridded raster data time series. 
 
+xr_fresh is designed to quickly generate a broad set of temporal features from gridded raster data time series.
 
 # Install
-Installs easily on Linux, I recommend creating a conda environment for TimeFraym 
-and activating it before installation.  
 
 *Linux & Windows Install*
 
 ```
-# clone environment
-git clone https://github.com/fraymio/xr_fresh.git
-cd ./xr_fresh 
-
-# create conda environment 
-conda env create -f conda_environment.yml
-activate xr_fresh
-
-```
-
-# Working Conda Env
-```
-
-# - xr_fresh
-sudo apt install libspatialindex-dev libgdal-dev
-sudo echo '
-name: xr_fresh
-channels:
-- defaults
-- conda-forge
-
-dependencies:
-- python=3.7
-- cython
-- scipy
-- numpy
-- scandir
-- zarr
-- requests
-- libspatialindex
-- bottleneck
-#- sphinx
-- xskillscore
-- libgdal=2.3.3
-- gdal=2.3.3
-#- jupyter
-#- nb_conda
-- climpred
-- spyder
- 
-- pip
-- pip:
-  - GDAL==2.3.3
-  - pip-tools
-  - git+https://github.com/jgrss/geowombat.git' > xr_fresh.yml
-
-conda env create -f xr_fresh.yml 
+# add dependency
+conda create -n xr_fresh geowombat -c conda-forge
 conda activate xr_fresh
-python -c "import geowombat as gw;print(gw.__version__)"
-conda deactivate
-
-```
+# clone repository
+cd # to desired location
+git clone https://github.com/fraymio/xr_fresh.git
+cd xr_fresh 
+pip install . e
+```  
 
 # Documentation
 
 After cloning the repository navigate locally to and open the following:
+
 ```
+
 /xr_fresh/docs/build/html/index.html
+
 ```
 
 # Example
@@ -78,14 +35,14 @@ import xarray as xr
 import geowombat as gw
 import os, sys
 
-sys.path.append("/home/mmann1123/Documents/github/xr_fresh/")
+sys.path.append("/path/to/xr_fresh/")  # if import above doesn't work point to xr_fresh directory
 from xr_fresh.feature_calculators import *
 from xr_fresh.backends import Cluster
 from xr_fresh.extractors import extract_features
 from glob import glob
 from datetime import datetime
 import matplotlib.pyplot as plt
-from xr_fresh.utils import *
+from xr_fresh.utils import*
 import logging
 import warnings
 import xarray as xr
@@ -102,11 +59,12 @@ from pathlib import Path
 
 # %%
 
-files = "/home/mmann1123/extra_space/Dropbox/Tanzania_data/Projects/YM_Tanzania_Field_Boundaries/Land_Cover/data/EVI"
+files = "/home/Land_Cover/data/EVI"
 band_name = "evi"
 file_glob = f"{files}/*.tif"
+# exmple naming convension S2_SR_EVI_M_2022_01.tif
 strp_glob = f"{files}/S2_SR_EVI_M_%Y_%m.tif"
-# S2_SR_EVI_M_2022_01.tif
+
 
 f_list = sorted(glob(file_glob))
 
@@ -124,9 +82,8 @@ complete_f = {
     "autocorr": [
         {"lag": 1},
         {"lag": 2},
-    ],  #  not possible in 2023{"lag": 4}],
+    ],  
     "ts_complexity_cid_ce": [{}],
-    "mean_change": [{}],  #  FIX  DONT HAVE
     "mean_second_derivative_central": [{}],
     "median": [{}],
     "mean": [{}],
@@ -141,7 +98,7 @@ complete_f = {
     "count_below_mean": [{}],
     "doy_of_maximum_first": [
         {"band": band_name}
-    ],  # figure out how to remove arg for band
+    ],   
     "doy_of_maximum_last": [{"band": band_name}],
     "doy_of_minimum_last": [{"band": band_name}],
     "doy_of_minimum_first": [{"band": band_name}],
@@ -150,36 +107,21 @@ complete_f = {
     "maximum": [{}],
     "linear_time_trend": [{"param": "all"}],
 }
-
-
-# add data notes
-Path(f"{files}/annual_features").mkdir(parents=False, exist_ok=True)
-with open(f"{files}/annual_features/0_notes.txt", "a") as the_file:
-    the_file.write(
-        "Gererated by /home/mmann1123/Documents/github/YM_TZ_crop_classifier/2_xr_fresh_extraction.py \t"
-    )
-    the_file.write(str(datetime.now()))
-
-# %%
-# update band name
-complete_f["doy_of_maximum_first"] = [{"band": band_name}]
-complete_f["doy_of_maximum_last"] = [{"band": band_name}]
-complete_f["doy_of_minimum_last"] = [{"band": band_name}]
-complete_f["doy_of_minimum_first"] = [{"band": band_name}]
-
-
-# %%
+ 
+ 
+ 
 # start cluster
+
 cluster = Cluster()
 cluster.start_large_object()
 
 # open xarray lazy
+
 with gw.open(
     sorted(glob(file_glob)), band_names=[band_name], time_names=dates, nodata=0
 ) as ds:
     ds = ds.chunk({"time": -1, "band": 1, "y": 350, "x": 350})  # rechunk to time
     ds = ds.gw.mask_nodata()
-    # ds.attrs["nodatavals"] = (0,)
     print(ds)
 
     # generate features previous Sep - current March ( Masika growing season)
@@ -212,6 +154,5 @@ with gw.open(
         cluster.restart()
 
 cluster.close()
-
 
 ```
