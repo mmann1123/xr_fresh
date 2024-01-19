@@ -44,6 +44,7 @@ __all__ = [
     "variance_larger_than_standard_deviation",
 ]
 
+
 # skipped
 # def pearson_r(a, b, dim="time", skipna=False, **kwargs):
 # linear_time_trend
@@ -727,7 +728,7 @@ class sum(gw.TimeModule):
         super(sum, self).__init__()
 
     def calculate(self, x):
-        return jnp.sum(x, axis=0).squeeze()
+        return jnp.nansum(x, axis=0).squeeze()
 
 
 class symmetry_looking(gw.TimeModule):
@@ -849,3 +850,37 @@ class variance_larger_than_standard_deviation(gw.TimeModule):
 
     def calculate(self, x):
         return (jnp.var(x, axis=0) > jnp.nanstd(x, axis=0)).astype(np.int8).squeeze()
+
+
+function_mapping = {
+    "abs_energy": abs_energy,
+    "absolute_sum_of_changes": absolute_sum_of_changes,
+    "autocorrelation": autocorrelation,
+    "count_above_mean": count_above_mean,
+    "count_below_mean": count_below_mean,
+    "doy_of_maximum": doy_of_maximum,
+    "doy_of_minimum": doy_of_minimum,
+    "kurtosis": kurtosis,
+    "kurtosis_excess": kurtosis_excess,
+    "large_standard_deviation": large_standard_deviation,
+    "longest_strike_above_mean": longest_strike_above_mean,
+    "longest_strike_below_mean": longest_strike_below_mean,
+    "maximum": maximum,
+    "minimum": minimum,
+    "mean": mean,
+    "mean_abs_change": mean_abs_change,
+    "mean_change": mean_change,
+    "mean_second_derivative_central": mean_second_derivative_central,
+    "median": median,
+    "ols_slope_intercept": ols_slope_intercept,
+    "quantile": quantile,
+    "ratio_beyond_r_sigma": ratio_beyond_r_sigma,
+    "skewness": skewness,
+    "standard_deviation": standard_deviation,
+    "sum": sum,
+    "symmetry_looking": symmetry_looking,
+    "ts_complexity_cid_ce": ts_complexity_cid_ce,
+    "unique_value_number_to_time_series_length": unique_value_number_to_time_series_length,
+    "variance": variance,
+    "variance_larger_than_standard_deviation": variance_larger_than_standard_deviation,
+}
