@@ -1,5 +1,5 @@
 import jax.numpy as jnp
-from jax import jit
+import jax
 import numpy as np
 import geowombat as gw
 from datetime import datetime
@@ -52,6 +52,19 @@ __all__ = [
 # potential_predictability
 # spearman_correlation
 # varweighted_mean_period
+
+
+def _get_jax_backend():
+    # Get a list of available GPU devices
+    gpu_devices = [device for device in jax.devices() if device.device_kind == "GPU"]
+    print("jax running on : ", gpu_devices)
+    # If there are GPU devices, use 'gpu' as the backend; otherwise, use 'cpu'
+    return "gpu" if gpu_devices else "cpu"
+
+
+# Set JAX to use the determined backend
+jax_backend = _get_jax_backend()
+jax.config.update("jax_platform_name", jax_backend)
 
 
 # Define a function to apply strftime('%j') to each element

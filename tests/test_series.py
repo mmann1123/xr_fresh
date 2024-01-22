@@ -8,11 +8,17 @@ import unittest
 import geowombat as gw
 from pathlib import Path
 import unittest
-from xr_fresh.feature_calculator_series import abs_energy, maximum
+from xr_fresh.feature_calculator_series import abs_energy, maximum, _get_jax_backend
+import jax
+
+# %% check for cpu or gpu
+# Set JAX to use the determined backend
+jax_backend = _get_jax_backend()
+jax.config.update("jax_platform_name", jax_backend)
+
 
 # set change directory to location of this file
 pth = os.path.dirname(os.path.abspath(__file__))
-# %%
 os.chdir(pth)
 pth = f"{pth}/data/"
 files = glob(f"{pth}*.tif")
@@ -20,11 +26,6 @@ print(files)
 strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
 dates = sorted(datetime.strptime(string, strp_glob) for string in files)
 date_strings = [date.strftime("%Y-%m-%d") for date in dates]
-
-# %%
-with gw.series(files) as src:
-    src.apply(abs_energy(), bands=1, num_workers=2, outfile="test2.tif")
-src
 
 
 class TestSeries(unittest.TestCase):
