@@ -163,7 +163,7 @@ class autocorrelation(gw.TimeModule):
         series = array[: -self.lag]
         lagged_series = array[self.lag :]
         autocor = (
-            jnp.sum(series * lagged_series, axis=0) / jnp.sum(series**2, axis=0)
+            jnp.nansum(series * lagged_series, axis=0) / jnp.nansum(series**2, axis=0)
         ).squeeze()
 
         return autocor
@@ -328,10 +328,10 @@ class kurtosis_excess(gw.TimeModule):
         super(kurtosis_excess, self).__init__()
 
     def calculate(self, array):
-        mean_x = jnp.mean(array)
-        var_x = jnp.var(array)
+        mean_x = jnp.nanmean(array)
+        var_x = jnp.nanvar(array)
         centered_x = array - mean_x
-        fourth_moment = jnp.mean(centered_x**4)
+        fourth_moment = jnp.nanmean(centered_x**4)
         kurt = fourth_moment / (var_x**2)
         return kurt
 
@@ -538,7 +538,7 @@ class mean_second_derivative_central(gw.TimeModule):
         series2 = array[:-2]
         lagged2 = array[2:]
         lagged1 = array[1:-1]
-        msdc = jnp.sum(0.5 * (lagged2 - 2 * lagged1 + series2), axis=0) / (
+        msdc = jnp.nansum(0.5 * (lagged2 - 2 * lagged1 + series2), axis=0) / (
             (2 * (len(array) - 2))
         )
 
@@ -624,7 +624,7 @@ class ols_slope_intercept(gw.TimeModule):
             array, SSR = jnp.apply_along_axis(_lstsq, axis=0, arr=array)
             x_mean = jnp.nanmean(array, axis=0)
             y = jnp.arange(0, array.shape[0])
-            TSS = jnp.sum((y - jnp.mean(y)) ** 2)
+            TSS = jnp.nansum((y - jnp.nanmean(y)) ** 2)
 
             return (1 - SSR / TSS).squeeze()
         # TODO: create multiband output
@@ -664,7 +664,7 @@ class quantile(gw.TimeModule):
         self.method = method
 
     def calculate(self, array):
-        return jnp.quantile(array, q=self.q, method=self.method, axis=0).squeeze()
+        return jnp.nanquantile(array, q=self.q, method=self.method, axis=0).squeeze()
 
 
 class ratio_beyond_r_sigma(gw.TimeModule):
@@ -764,8 +764,8 @@ class symmetry_looking(gw.TimeModule):
 
     def calculate(self, array):
         return (
-            jnp.abs(jnp.nanmean(array, axis=0) - jnp.median(array, axis=0))
-            < (self.r * (jnp.max(array, axis=0) - jnp.min(array, axis=0)))
+            jnp.abs(jnp.nanmean(array, axis=0) - jnp.nanmedian(array, axis=0))
+            < (self.r * (jnp.nanmax(array, axis=0) - jnp.nanmin(array, axis=0)))
         ).squeeze()
 
 
@@ -846,7 +846,7 @@ class variance(gw.TimeModule):
         super(variance, self).__init__()
 
     def calculate(self, x):
-        return jnp.var(x, axis=0).squeeze()
+        return jnp.nanvar(x, axis=0).squeeze()
 
 
 class variance_larger_than_standard_deviation(gw.TimeModule):
@@ -862,7 +862,7 @@ class variance_larger_than_standard_deviation(gw.TimeModule):
         super(variance_larger_than_standard_deviation, self).__init__()
 
     def calculate(self, x):
-        return (jnp.var(x, axis=0) > jnp.nanstd(x, axis=0)).astype(np.int8).squeeze()
+        return (jnp.nanvar(x, axis=0) > jnp.nanstd(x, axis=0)).astype(np.int8).squeeze()
 
 
 function_mapping = {
