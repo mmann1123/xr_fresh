@@ -24,6 +24,16 @@ REQUIRES_PYTHON = ">=3.6.7"
 VERSION = "0.1.3"
 
 
+import platform
+from setuptools import setup, find_packages
+
+# Determine the correct dependency
+if platform.system() == "Windows":
+    jax_dependency = "jax[cpu]"
+else:
+    jax_dependency = "jax"
+
+
 # What packages are required for this module to be executed?
 REQUIRED = [
     "dateparser>=0.7.2",
@@ -41,8 +51,9 @@ REQUIRED = [
     "xskillscore>=0.0.12",
     "pyproj>=2.4.2",
     "bokeh>=2.0.0",
-    "gdal>=2.3.3"  # ,
+    "gdal>=2.3.3",
     # 'xclim>=0.14.0'
+    jax_dependency,
 ]
 
 
