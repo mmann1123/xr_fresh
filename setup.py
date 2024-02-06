@@ -36,8 +36,8 @@ else:
 
 REQUIRED = [
     "cython>=0.29.0,<3.0.0",
-    "dask[array,dataframe]>=2023.1.0",
-    "distributed>=2023.1.0",
+    "dask[array,dataframe]>=2022.1.1,<=2022.8.0",
+    "distributed>=2022.1.1,<=2022.8.0",
     "dateparser>=0.7.2",
     "h5netcdf>=0.8.0",
     "h5py>=2.10.0",
@@ -54,7 +54,6 @@ REQUIRED = [
     "gdal>=2.3.3",
     jax_dependency,
 ]
-
 
 here = os.path.abspath(os.path.dirname(__file__))
 
