@@ -21,7 +21,7 @@ URL = "https://github.com/mmann/xr_fresh"
 EMAIL = "mmann1123@gmail.com"
 AUTHOR = "Michael Mann"
 REQUIRES_PYTHON = ">=3.6.7"
-VERSION = "0.1.3"
+VERSION = "0.1.5"
 
 
 import platform
