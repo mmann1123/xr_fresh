@@ -2,8 +2,6 @@ import numpy as np
 import xarray as xr
 from bottleneck import rankdata
 
-# from xskillscore import pearson_r, pearson_r_p_value
-# from xclim import run_length as rl
 from typing import Sequence
 from typing import Tuple
 from typing import Union

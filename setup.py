@@ -34,10 +34,11 @@ else:
     jax_dependency = "jax"
 
 
-# What packages are required for this module to be executed?
 REQUIRED = [
+    "cython>=0.29.0,<3.0.0",
+    "dask[array,dataframe]>=2023.1.0",
+    "distributed>=2023.1.0",
     "dateparser>=0.7.2",
-    "geojson>=2.5.0",
     "h5netcdf>=0.8.0",
     "h5py>=2.10.0",
     "matplotlib>=3.1.3",
@@ -48,11 +49,9 @@ REQUIRED = [
     "scipy>=1.4.1",
     "xarray>=0.15.0",
     "bottleneck>=1.3.2",
-    "xskillscore>=0.0.12",
     "pyproj>=2.4.2",
     "bokeh>=2.0.0",
     "gdal>=2.3.3",
-    # 'xclim>=0.14.0'
     jax_dependency,
 ]
 
