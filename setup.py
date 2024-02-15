@@ -34,9 +34,7 @@ else:
     jax_dependency = "jax"
 
 REQUIRED = [
-    "cython>=0.29.0,<3.0.0",
     "dask[array,dataframe]>=2023.1.0",
-    "distributed>=2023.1.0",
     "dateparser>=0.7.2",
     "h5netcdf>=0.8.0",
     "h5py>=2.10.0",
