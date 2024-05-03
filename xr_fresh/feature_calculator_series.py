@@ -61,7 +61,7 @@ def _check_valid_array(obj):
         return jnp.array(np.vectorize(_get_day_of_year)(obj))
     else:
         raise TypeError("Array must contain only integers, datetime objects.")
-    
+
 
 class abs_energy(gw.TimeModule):
     """
@@ -231,12 +231,14 @@ class kurtosis_excess(gw.TimeModule):
         super(kurtosis_excess, self).__init__()
 
     def calculate(self, array):
-        mean_x = jnp.nanmean(array)
-        var_x = jnp.nanvar(array)
+        mean_x = jnp.nanmean(array, axis=0)
+        var_x = jnp.nanvar(array, axis=0)
         centered_x = array - mean_x
-        fourth_moment = jnp.nanmean(centered_x**4)
+        fourth_moment = jnp.nanmean(centered_x**4, axis=0)
+
         kurt = fourth_moment / (var_x**2)
-        return kurt
+        return kurt.squeeze()
+
 
 class large_standard_deviation(gw.TimeModule):
     """
@@ -473,6 +475,7 @@ class ols_slope_intercept(gw.TimeModule):
             TSS = jnp.nansum((y - jnp.nanmean(y)) ** 2)
             return (1 - SSR / TSS).squeeze()
 
+
 class quantile(gw.TimeModule):
     """
     Compute the q-th quantile of the data along the time axis.
@@ -488,6 +491,7 @@ class quantile(gw.TimeModule):
 
     def calculate(self, array):
         return jnp.nanquantile(array, q=self.q, method=self.method, axis=0).squeeze()
+
 
 class ratio_beyond_r_sigma(gw.TimeModule):
     """
@@ -513,6 +517,7 @@ class ratio_beyond_r_sigma(gw.TimeModule):
         ).squeeze()
         return jnp.where(jnp.isnan(out), 0, out)
 
+
 class skewness(gw.TimeModule):
     """
     Returns the sample skewness of X.
@@ -536,6 +541,7 @@ class skewness(gw.TimeModule):
         beta = _mu3**2 / _mu2**3
         return jnp.sqrt(beta).squeeze()
 
+
 class standard_deviation(gw.TimeModule):
     """Calculate the standard deviation value of the time series.
     Args:
@@ -548,6 +554,7 @@ class standard_deviation(gw.TimeModule):
     def calculate(self, x):
         return jnp.nanstd(x, axis=0).squeeze()
 
+
 class sum(gw.TimeModule):
     """Calculate the sum of the time series values."""
 
@@ -556,6 +563,7 @@ class sum(gw.TimeModule):
 
     def calculate(self, x):
         return jnp.nansum(x, axis=0).squeeze()
+
 
 class symmetry_looking(gw.TimeModule):
     """
@@ -575,6 +583,7 @@ class symmetry_looking(gw.TimeModule):
             < (self.r * (jnp.nanmax(array, axis=0) - jnp.nanmin(array, axis=0)))
         ).squeeze()
         return jnp.where(jnp.isnan(out), 0, out)
+
 
 class ts_complexity_cid_ce(gw.TimeModule):
     """
@@ -599,6 +608,7 @@ class ts_complexity_cid_ce(gw.TimeModule):
         except:
             dot_prod = jnp.einsum("ijk, ijk->jk", x, x)
         return jnp.sqrt(dot_prod)
+
 
 class unique_value_number_to_time_series_length(gw.TimeModule):
     """SLOW
@@ -653,6 +663,7 @@ class variance_larger_than_standard_deviation(gw.TimeModule):
 
         return jnp.where(jnp.isnan(out), 0, out)
 
+
 function_mapping = {
     "abs_energy": abs_energy,
     "absolute_sum_of_changes": absolute_sum_of_changes,
@@ -685,4 +696,3 @@ function_mapping = {
     "variance": variance,
     "variance_larger_than_standard_deviation": variance_larger_than_standard_deviation,
 }
-
