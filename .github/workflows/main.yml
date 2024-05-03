@@ -46,7 +46,10 @@ jobs:
         pip install GDAL==$GDAL_VERSION --no-cache-dir
     - name: Install GeoWombat
       run: |
-        pip install ".[perf,tests]"
+        pip install "geowombat[perf,tests]@git+https://github.com/jgrss/geowombat.git"
+    - name: Install xr_fresh
+      run: |
+        pip install "." 
     - name: Run Unittests
       run: |
         pip install testfixtures
