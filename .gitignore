@@ -2,7 +2,7 @@
 .DS_Store
 tsraster/__pycache__
 examples/.ipynb_checkpoints
-.github/
+# .github/
 .vscode/
 .Rhistory
 
