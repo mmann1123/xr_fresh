@@ -5,6 +5,7 @@ import os
 
 class Cluster(object):
     """
+
     Wrapper for ``dask`` clients
     Best practices:
        "By "node" people typically mean a physical or virtual machine. That node can run several programs or processes
