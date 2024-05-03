@@ -24,7 +24,6 @@ class Cluster:
         self.cluster = None
         self.client = None
 
-
     def __enter__(self):
         return self
 
@@ -102,6 +101,7 @@ class Cluster:
             logger.error(f'Failed to start cluster for large I/O-bound computations: {e}')
             raise RuntimeError("Error starting cluster for large I/O-bound computations") from e
 
+
     def restart(self):
         """
         Restart the Dask client.
@@ -115,7 +115,6 @@ class Cluster:
         except Exception as e:
             logger.error(f'Failed to restart client: {e}')
             raise
-
 
     def close(self):
         """
@@ -132,3 +131,4 @@ class Cluster:
         except Exception as e:
             logger.error(f'Failed to close cluster: {e}')
             raise RuntimeError("Error closing cluster") from e
+
