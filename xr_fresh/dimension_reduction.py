@@ -70,6 +70,7 @@ import numpy as np
 import numba
 from sklearn.decomposition import KernelPCA, PCA
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 os.getcwd()
 with gw.open(
@@ -91,9 +92,8 @@ features = features[~np.isnan(features).any(axis=1)]
 features
 # %%
 
-
 # Number of random coordinates to select
-num_samples = 10000
+num_samples = 20000
 
 # Generate random coordinates
 np.random.seed(42)  # For reproducibility
@@ -104,14 +104,15 @@ sampled_features = features[
 ]
 
 # Fit Kernel PCA on the sampled features
-kpca = KernelPCA(kernel="rbf", gamma=15, n_components=3)
+kpca = KernelPCA(kernel="rbf", gamma=15, n_components=4, n_jobs=-1)
 kpca.fit(sampled_features)
 
 # Extract necessary attributes from kpca for transformation
 X_fit_ = kpca.X_fit_
-eigenvector = kpca.eigenvectors_[:, 1]  # Take the first component
-eigenvalue = kpca.eigenvalues_[1]
+eigenvector = kpca.eigenvectors_[:, 3]  # Take the first component
+eigenvalue = kpca.eigenvalues_[3]
 gamma = kpca.gamma
+# %%
 
 
 @numba.jit(nopython=True, parallel=True)
@@ -143,61 +144,52 @@ plt.colorbar()
 plt.title("Transformed Data")
 plt.show()
 
+# %% same but using gw.apply()
+
+
+class transform_PCA_kernel(gw.TimeModule):
+    """
+    Returns the absolute energy of the time series which is the sum over the squared values
+
+    Args:
+        gw (_type_): _description_
+    """
+
+    def __init__(self, X_fit_=None, eigenvector=None, eigenvalue=None, gamma=None):
+        super(transform_PCA_kernel, self).__init__()
+        self.X_fit_ = X_fit_
+        self.eigenvector = eigenvector
+        self.eigenvalue = eigenvalue
+        self.gamma = gamma
+
+    def calculate(self, data):
+        data = data[:, 0, :, :]
+        num_features, height, width = data.shape
+        transformed_data = np.zeros((height, width))
+
+        for i in numba.prange(height):
+            for j in range(width):
+                feature_vector = data[:, i, j]
+                k = np.exp(
+                    -self.gamma * np.sum((feature_vector - self.X_fit_) ** 2, axis=1)
+                )
+                transformed_feature = np.dot(
+                    k, self.eigenvector / np.sqrt(self.eigenvalue)
+                )
+                transformed_data[i, j] = transformed_feature
+
+        return transformed_data
+
+
+with gw.series(sorted(glob("./tests/data/R*.tif"))) as src:
+    src.apply(
+        func=transform_PCA_kernel(
+            X_fit_=X_fit_,
+            eigenvector=eigenvector,
+            eigenvalue=eigenvalue,
+            gamma=gamma,
+        ),
+        outfile="./transformed.tif",
+        bands=1,
+    )
 # %%
-
-
-# %%
-import geowombat as gw
-from glob import glob
-import os
-from sklearn.decomposition import KernelPCA, PCA
-
-os.getcwd()
-with gw.open(sorted(glob("./xr_fresh/data/r*.tif")), stack_dim="band") as src:
-    display(src)
-    print(src.values.shape)
-# %%
-
-# Example data shape (15, 4000, 3000)
-num_features, height, width = src.shape
-data = src.values
-
-# Number of random coordinates to select
-num_samples = 10000
-
-# Generate random coordinates
-np.random.seed(42)  # For reproducibility
-x_coords = np.arange(0, height)  # np.random.randint(0, height, num_samples)
-y_coords = np.arange(0, width)  # np.random.randint(0, width, num_samples)
-random_coords = list(zip(x_coords, y_coords))
-
-# create range by with np
-
-
-# Extract features for these coordinates
-sampled_features = np.array([data[:, x, y] for x, y in random_coords])
-# drop rows with nans
-sampled_features = sampled_features[~np.isnan(sampled_features).any(axis=1)]
-
-# Fit Kernel PCA on the sampled features
-kpca = lPCA(kernel="rbf", gamma=5, n_components=1)
-kpca.fit(sampled_features)
-
-# Extract necessary attributes from kpca for transformation
-X_fit_ = kpca.X_fit_
-eigenvector = kpca.eigenvectors_[:, 0]  # Take the first component
-eigenvalue = kpca.eigenvalues_[0]
-
-
-@numba.jit(nopython=True, parallel=True)
-def transform_entire_dataset_numba_pca(data, components):
-    num_features, height, width = data.shape
-    transformed_data = np.zeros((height, width))
-
-    for i in numba.prange(height):
-        for j in range(width):
-            feature_vector = data[:, i, j]
-            transformed_feature = np.dot(feature_vector, components.T)
-            transformed_data[i, j] = transformed_feature
-
-    return transformed_data
