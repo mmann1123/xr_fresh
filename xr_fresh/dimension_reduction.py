@@ -1,3 +1,4 @@
+# %%
 import numba
 import ray
 import geowombat as gw
@@ -17,7 +18,7 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
     def k_pca(
         self,
         gamma: float,
-        n_components: int,
+        n_component: int,
         n_workers: int,
         chunk_size: int,
     ) -> xr.DataArray:
@@ -26,7 +27,7 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
 
         Args:
             gamma (float): The gamma parameter for the RBF kernel.
-            n_components (int): The number of components to keep.
+            n_component (int): The number of component that will be kept
             n_workers (int): The number of parallel jobs for KernelPCA and ParallelTask.
             chunk_size (int): The size of the chunks for processing.
 
@@ -35,29 +36,27 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
 
         Examples:
         # Initialize Ray
-        ray.init()
-
-        # Example usage
-        with gw.open(
-            sorted(
-                [
-                    "./tests/data/RadT_tavg_202301.tif",
-                    "./tests/data/RadT_tavg_202302.tif",
-                    "./tests/data/RadT_tavg_202304.tif",
-                    "./tests/data/RadT_tavg_202305.tif",
-                ]
-            ),
-            stack_dim="band",
-            band_names=[0, 1, 2, 3],
-        ) as src:
-            transformed_dataarray = src.gw_ext.k_pca(
-                gamma=15, n_components=4, n_workers=8, chunk_size=256
-            )
-            transformed_dataarray.isel(component=0).plot()
+        with ray.init(num_cpus=8) as rays:
 
 
-        # Shutdown Ray
-        ray.shutdown()
+            # Example usage
+            with gw.open(
+                sorted(
+                    [
+                        "./tests/data/RadT_tavg_202301.tif",
+                        "./tests/data/RadT_tavg_202302.tif",
+                        "./tests/data/RadT_tavg_202304.tif",
+                        "./tests/data/RadT_tavg_202305.tif",
+                    ]
+                ),
+                stack_dim="band",
+                band_names=[0, 1, 2, 3],
+            ) as src:
+                # get third k principal components - base zero counting
+                transformed_dataarray = src.gw_ext.k_pca(
+                    gamma=15, n_component=3, n_workers=8, chunk_size=256
+                )
+                transformed_dataarray.sel(component=3).plot()
         """
 
         # Transpose data to have shape (height, width, num_features)
@@ -79,14 +78,14 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
 
         # Fit Kernel PCA on the sampled features
         kpca = KernelPCA(
-            kernel="rbf", gamma=gamma, n_components=n_components, n_jobs=n_workers
+            kernel="rbf", gamma=gamma, n_components=n_component + 1, n_jobs=n_workers
         )
         kpca.fit(sampled_features)
 
         # Extract necessary attributes from kpca for transformation
         X_fit_ = kpca.X_fit_
-        eigenvectors = kpca.eigenvectors_[:, 0]  # [:, :n_components]
-        eigenvalues = kpca.eigenvalues_[0]  # [:n_components]
+        eigenvectors = kpca.eigenvectors_[:, n_component - 1]
+        eigenvalues = kpca.eigenvalues_[n_component - 1]
 
         @numba.jit(nopython=True, parallel=True)
         def transform_entire_dataset_numba(
@@ -135,7 +134,7 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
         futures = pt.map(process_window, X_fit_, eigenvectors, eigenvalues, gamma)
 
         # Combine the results
-        transformed_data = np.zeros((height, width, n_components), dtype=np.float64)
+        transformed_data = np.zeros((height, width, 1), dtype=np.float64)
 
         # Combine the results
         transformed_data = np.zeros((height, width))
@@ -156,7 +155,9 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
             coords={
                 "y": self._obj.y,
                 "x": self._obj.x,
-                "component": [0],  # [f"component_{i+1}" for i in range(n_components)],
+                "component": [
+                    n_component
+                ],  # [f"component_{i+1}" for i in range(n_components)],
             },
             attrs=self._obj.attrs,
         )
@@ -169,26 +170,30 @@ xr.register_dataarray_accessor("gw_ext")(ExtendedGeoWombatAccessor)
 
 # %%
 # Initialize Ray
-ray.init()
+with ray.init(num_cpus=8) as rays:
+    # Example usage
+    with gw.open(
+        sorted(
+            [
+                "./tests/data/RadT_tavg_202301.tif",
+                "./tests/data/RadT_tavg_202302.tif",
+                "./tests/data/RadT_tavg_202304.tif",
+                "./tests/data/RadT_tavg_202305.tif",
+            ]
+        ),
+        stack_dim="band",
+        band_names=[0, 1, 2, 3],
+    ) as src:
+        # get first k principal components
+        # transformed_dataarray = src.gw_ext.k_pca(
+        #     gamma=15, n_component=1, n_workers=8, chunk_size=256
+        # )
+        # transformed_dataarray.isel(component=1).plot()
+        # get second k principal components
+        transformed_dataarray = src.gw_ext.k_pca(
+            gamma=15, n_component=4, n_workers=8, chunk_size=256
+        )
+        transformed_dataarray.sel(component=4).plot()
 
-# Example usage
-with gw.open(
-    sorted(
-        [
-            "./tests/data/RadT_tavg_202301.tif",
-            "./tests/data/RadT_tavg_202302.tif",
-            "./tests/data/RadT_tavg_202304.tif",
-            "./tests/data/RadT_tavg_202305.tif",
-        ]
-    ),
-    stack_dim="band",
-    band_names=[0, 1, 2, 3],
-) as src:
-    transformed_dataarray = src.gw_ext.k_pca(
-        gamma=15, n_components=4, n_workers=8, chunk_size=256
-    )
-    transformed_dataarray.isel(component=0).plot()
 
-
-# Shutdown Ray
-ray.shutdown()
+# %%
