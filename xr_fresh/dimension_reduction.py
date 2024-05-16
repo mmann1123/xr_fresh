@@ -169,31 +169,3 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
 xr.register_dataarray_accessor("gw_ext")(ExtendedGeoWombatAccessor)
 
 # %%
-# Initialize Ray
-with ray.init(num_cpus=8) as rays:
-    # Example usage
-    with gw.open(
-        sorted(
-            [
-                "./tests/data/RadT_tavg_202301.tif",
-                "./tests/data/RadT_tavg_202302.tif",
-                "./tests/data/RadT_tavg_202304.tif",
-                "./tests/data/RadT_tavg_202305.tif",
-            ]
-        ),
-        stack_dim="band",
-        band_names=[0, 1, 2, 3],
-    ) as src:
-        # get first k principal components
-        # transformed_dataarray = src.gw_ext.k_pca(
-        #     gamma=15, n_component=1, n_workers=8, chunk_size=256
-        # )
-        # transformed_dataarray.isel(component=1).plot()
-        # get second k principal components
-        transformed_dataarray = src.gw_ext.k_pca(
-            gamma=15, n_component=4, n_workers=8, chunk_size=256
-        )
-        transformed_dataarray.sel(component=4).plot()
-
-
-# %%
