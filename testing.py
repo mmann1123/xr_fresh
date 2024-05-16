@@ -1,3 +1,344 @@
+# %%
+import numba
+import ray
+import geowombat as gw
+from geowombat.core.parallel import ParallelTask
+from sklearn.decomposition import KernelPCA
+import numpy as np
+import xarray as xr
+import typing as T
+from pathlib import Path as _Path
+import logging
+
+# Import the original GeoWombatAccessor class
+from geowombat.core.geoxarray import GeoWombatAccessor
+
+
+# Initialize the logger
+logger = logging.getLogger(__name__)
+
+
+# Extend the GeoWombatAccessor class
+class ExtendedGeoWombatAccessor(GeoWombatAccessor):
+
+    def k_pca(
+        self,
+        gamma: float,
+        n_components: int,
+        n_workers: int,
+        chunk_size: int,
+    ) -> xr.DataArray:
+        """
+        Applies Kernel PCA to the dataset and returns a DataArray with the components as bands.
+
+        Args:
+            gamma (float): The gamma parameter for the RBF kernel.
+            n_components (int): The number of components to keep.
+            n_workers (int): The number of parallel jobs for KernelPCA and ParallelTask.
+            chunk_size (int): The size of the chunks for processing.
+
+        Returns:
+            xr.DataArray: A DataArray with the Kernel PCA components as bands.
+        """
+
+        # Transpose data to have shape (height, width, num_features)
+        data = self._obj.transpose("y", "x", "band").values
+        height, width, num_features = data.shape
+
+        # Reshape data to 2D array
+        transposed_data = data.reshape(-1, num_features)
+
+        # Drop rows with NaNs
+        transposed_data = transposed_data[~np.isnan(transposed_data).any(axis=1)]
+
+        # Sample data for fitting Kernel PCA
+        num_samples = 10000
+        np.random.seed(42)  # For reproducibility
+        sampled_features = transposed_data[
+            np.random.choice(transposed_data.shape[0], num_samples, replace=False)
+        ]
+
+        # Fit Kernel PCA on the sampled features
+        kpca = KernelPCA(
+            kernel="rbf", gamma=gamma, n_components=n_components, n_jobs=n_workers
+        )
+        kpca.fit(sampled_features)
+
+        # Extract necessary attributes from kpca for transformation
+        X_fit_ = kpca.X_fit_
+        eigenvectors = kpca.eigenvectors_[:, 0]  # [:, :n_components]
+        eigenvalues = kpca.eigenvalues_[0]  # [:n_components]
+
+        @numba.jit(nopython=True, parallel=True)
+        def transform_entire_dataset_numba(
+            data, X_fit_, eigenvector, eigenvalue, gamma
+        ):
+            height, width = data.shape[1], data.shape[2]
+            transformed_data = np.zeros((height, width))
+
+            for i in numba.prange(height):
+                for j in range(width):
+                    feature_vector = data[:, i, j]
+                    k = np.exp(-gamma * np.sum((feature_vector - X_fit_) ** 2, axis=1))
+                    transformed_feature = np.dot(k, eigenvector / np.sqrt(eigenvalue))
+                    transformed_data[i, j] = transformed_feature
+
+            return transformed_data
+
+        @ray.remote
+        def process_window(
+            data_block_id,
+            data_slice,
+            window_id,
+            X_fit_,
+            eigenvector,
+            eigenvalue,
+            gamma,
+            num_workers=n_workers,
+        ):
+            data_chunk = data_block_id[
+                data_slice
+            ].data.compute()  # Convert Dask array to NumPy array
+            return transform_entire_dataset_numba(
+                data_chunk, X_fit_, eigenvector, eigenvalue, gamma
+            )
+
+        # Perform transformation in parallel
+        pt = ParallelTask(
+            self._obj,
+            row_chunks=chunk_size,
+            col_chunks=chunk_size,
+            scheduler="ray",
+            n_workers=n_workers,
+        )
+
+        # Map the process_window function to each chunk of the dataset
+        futures = pt.map(process_window, X_fit_, eigenvectors, eigenvalues, gamma)
+
+        # Combine the results
+        transformed_data = np.zeros((height, width, n_components), dtype=np.float64)
+
+        # Combine the results
+        transformed_data = np.zeros((height, width))
+        for window_id, future in enumerate(ray.get(futures)):
+            window = pt.windows[window_id]
+            row_start, col_start = window.row_off, window.col_off
+            row_end, col_end = row_start + window.height, col_start + window.width
+            transformed_data[row_start:row_end, col_start:col_end] = future
+
+        # extend dimension of transformed_data
+        if len(transformed_data.shape) == 2:
+            transformed_data = np.expand_dims(transformed_data, axis=2)
+        print("transformed_data", transformed_data.shape)
+        # Create a new DataArray with the transformed data
+        transformed_dataarray = xr.DataArray(
+            transformed_data,
+            dims=("y", "x", "component"),
+            coords={
+                "y": self._obj.y,
+                "x": self._obj.x,
+                "component": [0],  # [f"component_{i+1}" for i in range(n_components)],
+            },
+            attrs=self._obj.attrs,
+        )
+
+        return transformed_dataarray
+
+
+# Register the new accessor
+xr.register_dataarray_accessor("gw_ext")(ExtendedGeoWombatAccessor)
+
+# Initialize Ray
+ray.init()
+
+# Example usage
+with gw.open(
+    sorted(
+        [
+            "./tests/data/RadT_tavg_202301.tif",
+            "./tests/data/RadT_tavg_202302.tif",
+            "./tests/data/RadT_tavg_202304.tif",
+            "./tests/data/RadT_tavg_202305.tif",
+        ]
+    ),
+    stack_dim="band",
+    band_names=[0, 1, 2, 3],
+) as src:
+    transformed_dataarray = src.gw_ext.k_pca(
+        gamma=15, n_components=4, n_workers=8, chunk_size=256
+    )
+    print(transformed_dataarray)
+    transformed_dataarray.isel(component=0).plot()
+    # plt.show()
+
+
+# Shutdown Ray
+ray.shutdown()
+
+# %%
+# plot transformed_dataarray
+import matplotlib.pyplot as plt
+
+plt.imshow(transformed_dataarray, cmap="viridis", interpolation="none")
+
+# %%
+import numba
+import ray
+import geowombat as gw
+from geowombat.core.parallel import ParallelTask
+from sklearn.decomposition import KernelPCA
+import numpy as np
+import xarray as xr
+import typing as T
+from geowombat.core.geoxarray import GeoWombatAccessor
+
+
+@xr.register_dataarray_accessor("gw")
+class ExtendedGeoWombatAccessor(GeoWombatAccessor):
+    def k_pca(
+        self,
+        gamma: float,
+        n_components: int,
+        n_jobs: int,
+        chunk_size: int,
+    ) -> xr.DataArray:
+        """
+        Applies Kernel PCA to the dataset and returns a DataArray with the components as bands.
+
+        Args:
+            gamma (float): The gamma parameter for the RBF kernel.
+            n_components (int): The number of components to keep.
+            n_jobs (int): The number of parallel jobs for KernelPCA and ParallelTask.
+            chunk_size (int): The size of the chunks for processing.
+
+        Returns:
+            xr.DataArray: A DataArray with the Kernel PCA components as bands.
+        """
+
+        # Transpose data to have shape (height, width, num_features)
+        data = self._obj.transpose("y", "x", "band").values
+        height, width, num_features = data.shape
+
+        # Reshape data to 2D array
+        transposed_data = data.reshape(-1, num_features)
+
+        # Drop rows with NaNs
+        transposed_data = transposed_data[~np.isnan(transposed_data).any(axis=1)]
+
+        # Sample data for fitting Kernel PCA
+        num_samples = 10000
+        sampled_features = transposed_data[
+            np.random.choice(transposed_data.shape[0], num_samples, replace=False)
+        ]
+
+        # Fit Kernel PCA on the sampled features
+        kpca = KernelPCA(
+            kernel="rbf", gamma=gamma, n_components=n_components, n_jobs=n_jobs
+        )
+        kpca.fit(sampled_features)
+
+        # Extract necessary attributes from kpca for transformation
+        X_fit_ = kpca.X_fit_
+        eigenvectors = kpca.eigenvectors_[:, :n_components]
+        eigenvalues = kpca.eigenvalues_[:n_components]
+
+        @numba.jit(nopython=True, parallel=False)
+        def transform_entire_dataset_numba(
+            data, X_fit_, eigenvectors, eigenvalues, gamma
+        ):
+            height, width, num_features = data.shape
+            transformed_data = np.zeros((height, width, n_components))
+
+            for i in numba.prange(height):
+                for j in range(width):
+                    feature_vector = data[i, j, :]
+                    k = np.exp(-gamma * np.sum((feature_vector - X_fit_) ** 2, axis=1))
+                    for n in range(n_components):
+                        transformed_feature = np.dot(
+                            k, eigenvectors[:, n] / np.sqrt(eigenvalues[n])
+                        )
+                        transformed_data[i, j, n] = transformed_feature
+            print(transformed_data.shape)
+            return transformed_data
+
+        @ray.remote
+        def process_window(
+            data_block_id,
+            data_slice,
+            window_id,
+            X_fit_,
+            eigenvectors,
+            eigenvalues,
+            gamma,
+            n_components,
+        ):
+            data_chunk = data_block_id[
+                data_slice
+            ].data.compute()  # Convert Dask array to NumPy array
+            return transform_entire_dataset_numba(
+                data_chunk, X_fit_, eigenvectors, eigenvalues, gamma
+            )
+
+        # Perform transformation in parallel
+        pt = ParallelTask(
+            self._obj,
+            row_chunks=chunk_size,
+            col_chunks=chunk_size,
+            scheduler="ray",
+            n_workers=n_jobs,
+        )
+
+        # Map the process_window function to each chunk of the dataset
+        futures = pt.map(
+            process_window, X_fit_, eigenvectors, eigenvalues, gamma, n_components
+        )
+        out = ray.get(futures)
+        print("out", out)
+        print("out", out.shape)
+        # Combine the results
+        transformed_data = np.zeros((height, width, n_components))
+        for window_id, future in enumerate(ray.get(futures)):
+            window = pt.windows[window_id]
+            row_start, col_start = window.row_off, window.col_off
+            row_end, col_end = row_start + window.height, col_start + window.width
+            transformed_data[row_start:row_end, col_start:col_end, :] = future
+
+        # Create a new DataArray with the transformed data
+        transformed_dataarray = xr.DataArray(
+            transformed_data,
+            dims=("y", "x", "component"),
+            coords={
+                "y": self._obj.y,
+                "x": self._obj.x,
+                "component": [f"component_{i+1}" for i in range(n_components)],
+            },
+            attrs=self._obj.attrs,
+        )
+
+        return transformed_dataarray
+
+
+# Example usage
+with gw.open(
+    sorted(
+        [
+            "./tests/data/RadT_tavg_202301.tif",
+            "./tests/data/RadT_tavg_202302.tif",
+            "./tests/data/RadT_tavg_202304.tif",
+            "./tests/data/RadT_tavg_202305.tif",
+        ]
+    ),
+    stack_dim="band",
+    band_names=[0, 1, 2, 3],
+) as src:
+    transformed_dataarray = src.gw.k_pca(
+        gamma=15, n_components=4, n_jobs=8, chunk_size=256
+    )
+    print(transformed_dataarray)
+    transformed_dataarray.isel(component=0).plot()
+    plt.show()
+
+
 # %%import numpy as np
 import numba
 import ray
@@ -8,7 +349,7 @@ from sklearn.decomposition import KernelPCA
 import numpy as np
 import numpy as np
 import matplotlib.pyplot as plt
-
+import cProfile
 
 with gw.open(
     sorted(
@@ -37,7 +378,7 @@ features = features[~np.isnan(features).any(axis=1)]
 features
 
 # Number of random coordinates to select
-num_samples = 20000
+num_samples = 10000
 
 # Generate random coordinates
 np.random.seed(42)  # For reproducibility
@@ -117,6 +458,7 @@ with gw.open(
 
     # Map the process_window function to each chunk of the dataset
     futures = pt.map(process_window, X_fit_, eigenvector, eigenvalue, gamma, 8)
+
 
 # Combine the results
 transformed_data = np.zeros((height, width))
