@@ -47,34 +47,34 @@ def add_time_targets(
     append_to_X=False,
 ):
     """
-    Adds multiple time periods of target data to existing xarray obj. 
+    Adds multiple time periods of target data to existing xarray obj.
 
     Examples
     ========
 
     with gw.open(vrts, time_names = time_names, chunks=400) as ds:
-        ds = add_time_targets(  data = ds, 
-                            target= loss_poly, 
+        ds = add_time_targets(  data = ds,
+                            target= loss_poly,
                             target_col_list = ['w_dam_2010','w_dam_2011','w_dam_2012',
-                                                'w_dam_2013','w_dam_2014','w_dam_2015','w_dam_2016'], 
-                            target_name='weather_damage', 
+                                                'w_dam_2013','w_dam_2014','w_dam_2015','w_dam_2016'],
+                            target_name='weather_damage',
                             missing_value=np.nan,
                             append_to_X=True )
 
 
-    :param data: xarray to add target data to 
+    :param data: xarray to add target data to
     :type data:  xarray.DataArray
     :param target: path or df to shapefile with target data data
     :type target:  path or gpd.geodataframe
     :param target_col_list: list of columns holding target data
          All column names must be in acceding order e.g. ['t_2010','t_2011']
-    :type target_col_list:  list 
+    :type target_col_list:  list
     :param target_name: single name assigned to target data dimension. Default is 'target'
-    :type target_name:  str   
-    :param missing_value: missing value for pixels not overlapping polygon or points 
+    :type target_name:  str
+    :param missing_value: missing value for pixels not overlapping polygon or points
     :type missing_value:  int
     :param append_to_X: should the target data be appended to the far right of other X variables. Default is False.
-    :type append_to_X:  bool              
+    :type append_to_X:  bool
     """
 
     assert len(target_col_list) == len(
@@ -166,22 +166,22 @@ def add_categorical(
 
     climatecluster = ' ./ClusterEco15_Y5.shp'
 
-    with gw.open(vrts, 
+    with gw.open(vrts,
              time_names = [str(x) for x in range(len(vrts))],
              ) as ds:
-        ds.attrs['filename'] = vrts 
+        ds.attrs['filename'] = vrts
         ds = add_categorical(ds, climatecluster,col='ClusterN_2',variable_name='clim_clust')
-        print(ds) 
+        print(ds)
 
-    :param data: xarray to add categorical data to 
+    :param data: xarray to add categorical data to
     :type data:  xarray.DataArray
     :param labels: path or df to shapefile or raster with categorical data
     :type labels:  path or gpd.geodataframe or path to tif
     :param col: Column to create get values from
-    :type col:  str 
-    :param variable_name: name assigned to categorical data 
-    :type variable_name:  str   
-    :param missing_value: missing value for pixels not overlapping polygon or points 
+    :type col:  str
+    :param variable_name: name assigned to categorical data
+    :type variable_name:  str
+    :param missing_value: missing value for pixels not overlapping polygon or points
     :type missing_value:  int
     """
 
@@ -258,12 +258,12 @@ def add_categorical(
 
 def check_variable_lengths(variable_list):
     """
-    Check if a list of variable files are of equal length 
+    Check if a list of variable files are of equal length
 
     Parameters
     ----------
     variable_list : list
-         
+
 
     Returns
     -------
@@ -304,7 +304,7 @@ def find_variable_year(path_glob, digits=4, strp_glob="%Y.tif"):
     find_variable_names(path_glob)
 
     :param path_glob: path with * for file glob
-    :type path_glob: path       
+    :type path_glob: path
     :param digits: number of digits used to store year
     :type digits: int
     :param strp_glob: strptime pattern with year format and file type
@@ -327,15 +327,15 @@ def find_variable_year(path_glob, digits=4, strp_glob="%Y.tif"):
 def downcast_pandas(data):
     """
     Dtype cast to smallest numerical dtype possible for pandas dataframes.
-    Saves considerable space. 
+    Saves considerable space.
     Objects are cast to categorical, int and float are cast to the smallest dtype
-    
-    https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric  
+
+    https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric
 
     Note: could be problematic with chunks if different dtypes are assigned to same column
 
 
-    :param data: input dataframe 
+    :param data: input dataframe
     :type data: DataFrame
 
     :return: downcast dataframe
@@ -352,6 +352,29 @@ def downcast_pandas(data):
     data[int_features] = data[int_features].apply(to_numeric, downcast="int")
 
     return data
+
+
+def convert_to_min_dtype(arr):
+    """Convert a numpy array to the smallest data type possible
+    :param arr: numpy array
+    :type arr: np.array
+    :return: numpy array with smallest data type
+    :rtype: np.array
+
+    Examples
+    ========
+    >>> arr = np.array([1, 2, 3, 4, 5])
+    >>> convert_to_min_dtype(arr)
+    array([1, 2, 3, 4, 5], dtype=int8)
+
+    """
+    # Find the smallest data type that can represent all the values
+    min_dtype = np.min_scalar_type(arr.max())
+
+    # Convert the array to the smallest data type
+    arr_min_dtype = arr.astype(min_dtype)
+
+    return arr_min_dtype
 
 
 def compressed_pickle(data, filename, compress="gz"):
@@ -400,32 +423,32 @@ def open_pickle(path):
 
 def xarray_to_rasterio(xr_data, path="", postfix="", bands=None):
     """
-    
+
     Writes xarray bands to disk by band
 
 
     Examples
     ========
 
-    >>>  f_dict = { 'maximum':[{}] ,  
+    >>>  f_dict = { 'maximum':[{}] ,
                    'quantile': [{'q':"0.5"},{'q':'0.95'}]}
     >>>  features = extract_features(xr_data=ds,
     >>>                     feature_dict=f_dict,
-    >>>                     band='aet', 
+    >>>                     band='aet',
     >>>                     na_rm = True)
     >>>  xarray_to_rasterio(features,'/home/mmann1123/Desktop/', postfix='test')
 
-    
-    
-    :param xr_data: xarray to write 
+
+
+    :param xr_data: xarray to write
     :type xr_data:  xarray.DataArray
     :param path: file destination path
     :type path:  str
     :param output_postfix: text to append to back of written image
-    :type output_postfix:  str 
+    :type output_postfix:  str
     :param output_postfix: list of character strings or locations of band names, if None all bands are written
-    :type output_postfix:  list   
-    
+    :type output_postfix:  list
+
     """
 
     Path(path).mkdir(parents=True, exist_ok=True)
@@ -458,7 +481,6 @@ def to_vrt(
     init_dest_nodata=True,
     warp_mem_limit=128,
 ):
-
     """
     Writes a file to a VRT file
     Args:

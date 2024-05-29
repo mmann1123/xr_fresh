@@ -1,14 +1,7 @@
 import jax.numpy as jnp
-import jax
 import numpy as np
 import geowombat as gw
 from datetime import datetime
-from scipy.interpolate import interp1d, CubicSpline, UnivariateSpline
-
-from datetime import datetime
-from scipy.interpolate import interp1d
-import numpy as np
-from matplotlib import pyplot as plt
 from typing import List, Union, Any
 
 __all__ = [
@@ -45,22 +38,6 @@ __all__ = [
 ]
 
 
-# skipped
-# def pearson_r(a, b, dim="time", skipna=False, **kwargs):
-# linear_time_trend
-# longest_run
-# potential_predictability
-# spearman_correlation
-# varweighted_mean_period
-# ratio_value_number_to_time_series_length
-
-
-from jax.lib import xla_bridge
-
-print(f"Jax is running on: {xla_bridge.get_backend().platform}")
-
-
-# Define a function to apply strftime('%j') to each element
 def _get_day_of_year(dt):
     return int(dt.strftime("%j"))
 
@@ -89,28 +66,8 @@ class abs_energy(gw.TimeModule):
     """
     Returns the absolute energy of the time series which is the sum over the squared values
 
-    .. math::
-
-        E = \\sum_{i=1,\\ldots, n} x_i^2
-
     Args:
         gw (_type_): _description_
-
-
-    Example:
-
-    with gw.series(
-        files,
-        nodata=9999,
-    ) as src:
-        print(src)
-        src.apply(
-            func=abs_energy(),
-            outfile=f"/home/mmann1123/Downloads/test.tif",
-            num_workers=5,
-            bands=1,
-        )
-
     """
 
     def __init__(self):
@@ -124,10 +81,6 @@ class absolute_sum_of_changes(gw.TimeModule):
     """
     Returns the sum over the absolute value of consecutive changes in the series x
 
-    .. math::
-
-        \\sum_{i=1, \\ldots, n-1} \\mid x_{i+1}- x_i \\mid
-
     Args:
         gw (_type_): _description_
     """
@@ -136,7 +89,7 @@ class absolute_sum_of_changes(gw.TimeModule):
         super(absolute_sum_of_changes, self).__init__()
 
     def calculate(self, array):
-        return jnp.nansum(np.abs(jnp.diff(array, n=1, axis=0)), axis=0).squeeze()
+        return jnp.nansum(jnp.abs(jnp.diff(array, n=1, axis=0)), axis=0).squeeze()
 
 
 class autocorrelation(gw.TimeModule):
@@ -152,7 +105,6 @@ class autocorrelation(gw.TimeModule):
         self.lag = lag
 
     def calculate(self, array):
-        # Extract the series and its lagged version
         series = array[: -self.lag]
         lagged_series = array[self.lag :]
         autocor = (
@@ -176,7 +128,6 @@ class count_above_mean(gw.TimeModule):
 
     def calculate(self, array):
         if self.mean is None:
-            # Calculate the mean along the time dimension (axis=0) and broadcast it to match the shape of 'array'
             return jnp.nansum(array > jnp.nanmean(array, axis=0), axis=0).squeeze()
         else:
             return jnp.nansum(array > self.mean, axis=0).squeeze()
@@ -205,24 +156,6 @@ class count_below_mean(gw.TimeModule):
 class doy_of_maximum(gw.TimeModule):
     """Returns the day of the year (doy) location of the maximum value of the series - treats all years as the same.
 
-    pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
-    files = sorted(glob(f"{pth}*.tif"))[0:10]
-    strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
-    dates = sorted(datetime.strptime(string, strp_glob) for string in files)
-    dates
-
-    with gw.series(
-    files,
-    nodata=9999,
-        ) as src:
-            print(src)
-            src.apply(
-                func=doy_of_maximum(dates),
-                outfile=f"/home/mmann1123/Downloads/test.tif",
-                num_workers=1,
-                bands=1,
-            )
-
     Args:
         gw (_type_): _description_
         dates (np.array): An array holding the dates of the time series as integers or as datetime objects.
@@ -232,37 +165,19 @@ class doy_of_maximum(gw.TimeModule):
         super(doy_of_maximum, self).__init__()
         # check that dates is an array holding datetime objects or integers throw error if not
         dates = _check_valid_array(dates)
-        self.dates = dates
-        print("Day of the year found as:", self.dates)
+        self.dates = jnp.array(dates) if dates is not None else None
 
     def calculate(self, array):
+        if self.dates is None:
+            raise ValueError("Dates array is not provided.")
         # Find the indices of the maximum values along the time axis
         max_indices = jnp.argmax(array, axis=0)
-
         # Use the indices to extract the corresponding dates from the 'dates' array
         return self.dates[max_indices].squeeze()
 
 
 class doy_of_minimum(gw.TimeModule):
     """Returns the day of the year (doy) location of the minimum value of the series - treats all years as the same.
-
-    pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
-    files = sorted(glob(f"{pth}*.tif"))[0:10]
-    strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
-    dates = sorted(datetime.strptime(string, strp_glob) for string in files)
-    dates
-
-    with gw.series(
-    files,
-    nodata=9999,
-        ) as src:
-            print(src)
-            src.apply(
-                func=doy_of_max(dates),
-                outfile=f"/home/mmann1123/Downloads/test.tif",
-                num_workers=1,
-                bands=1,
-            )
 
     Args:
         gw (_type_): _description_
@@ -271,16 +186,13 @@ class doy_of_minimum(gw.TimeModule):
 
     def __init__(self, dates=None):
         super(doy_of_minimum, self).__init__()
-        # check that dates is an array holding datetime objects or integers throw error if not
         dates = _check_valid_array(dates)
-        self.dates = dates
-        print("Day of the year found as:", self.dates)
+        self.dates = jnp.array(dates) if dates is not None else None
 
     def calculate(self, array):
-        # Find the indices of the maximum values along the time axis
+        if self.dates is None:
+            raise ValueError("Dates array is not provided.")
         min_indices = jnp.argmin(array, axis=0)
-
-        # Use the indices to extract the corresponding dates from the 'dates' array
         return self.dates[min_indices].squeeze()
 
 
@@ -309,31 +221,29 @@ class kurtosis(gw.TimeModule):
 
 class kurtosis_excess(gw.TimeModule):
     """
-    # https://medium.com/@pritul.dave/everything-about-moments-skewness-and-kurtosis-using-python-numpy-df305a193e46
-    Returns the excess kurtosis of X (calculated with the adjusted Fisher-Pearson standardized
-    moment coefficient G2).
+    Returns the excess kurtosis of X (calculated with the adjusted Fisher-Pearson standardized moment coefficient G2).
     Args:
         gw (_type_): _description_
-
     """
 
     def __init__(self, Fisher=True):
         super(kurtosis_excess, self).__init__()
 
     def calculate(self, array):
-        mean_x = jnp.nanmean(array)
-        var_x = jnp.nanvar(array)
+        mean_x = jnp.nanmean(array, axis=0)
+        var_x = jnp.nanvar(array, axis=0)
         centered_x = array - mean_x
-        fourth_moment = jnp.nanmean(centered_x**4)
+        fourth_moment = jnp.nanmean(centered_x**4, axis=0)
+
         kurt = fourth_moment / (var_x**2)
-        return kurt
+        return kurt.squeeze()
 
 
 class large_standard_deviation(gw.TimeModule):
-    """Boolean variable denoting if the standard dev of x is higher than 'r' times the range.
+    """
+    Boolean variable denoting if the standard dev of x is higher than 'r' times the range.
 
     Args:
-        gw (_type_): _description_
         r (float, optional): The percentage of the range to compare with. Default is 2.0.
     """
 
@@ -356,20 +266,26 @@ def _count_longest_consecutive(values):
     for value in values:
         if value:
             current_count += 1
-            max_count = jnp.nanmax(max_count, current_count)
+            max_count = jnp.nanmax(jnp.array([max_count, current_count]))
         else:
             current_count = 0
 
     return max_count
 
 
-class longest_strike_above_mean(gw.TimeModule):
-    """Returns the length of the longest consecutive subsequence in X that is larger than the mean of X
+# try importing rle
+try:
+    from xr_fresh import rle
 
-    Args:
-        gw (_type_): _description_
-    Returns:
-        bool:
+    longest_true_run = rle.longest_true_run
+except ImportWarning:
+    print("C++ rle not found, using slow version")
+    longest_true_run = _count_longest_consecutive
+
+
+class longest_strike_above_mean(gw.TimeModule):
+    """
+    Returns the length of the longest consecutive subsequence in X that is larger than the mean of X
     """
 
     def __init__(self, mean=None):
@@ -382,27 +298,22 @@ class longest_strike_above_mean(gw.TimeModule):
             below_mean = array > jnp.nanmean(array, axis=0)
         else:
             below_mean = array > self.mean
-
         # Count the longest consecutive True values along the time dimension
-        consecutive_true = jnp.apply_along_axis(
-            _count_longest_consecutive, axis=0, arr=below_mean
+        consecutive_true = np.apply_along_axis(
+            func1d=longest_true_run, axis=0, arr=below_mean
         ).squeeze()
 
         # Count the longest consecutive False values along the time dimension
-        consecutive_false = jnp.apply_along_axis(
-            _count_longest_consecutive, axis=0, arr=~below_mean
+        consecutive_false = np.apply_along_axis(
+            func1d=longest_true_run, axis=0, arr=~below_mean
         ).squeeze()
 
         return jnp.maximum(consecutive_true, consecutive_false)
 
 
 class longest_strike_below_mean(gw.TimeModule):
-    """Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X
-
-    Args:
-        gw (_type_): _description_
-    Returns:
-        bool:
+    """
+    Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X
     """
 
     def __init__(self, mean=None):
@@ -417,25 +328,21 @@ class longest_strike_below_mean(gw.TimeModule):
             below_mean = array < self.mean
 
         # Count the longest consecutive True values along the time dimension
-        consecutive_true = jnp.apply_along_axis(
-            _count_longest_consecutive, axis=0, arr=below_mean
+        consecutive_true = np.apply_along_axis(
+            longest_true_run, axis=0, arr=below_mean
         ).squeeze()
 
         # Count the longest consecutive False values along the time dimension
-        consecutive_false = jnp.apply_along_axis(
-            _count_longest_consecutive, axis=0, arr=~below_mean
+        consecutive_false = np.apply_along_axis(
+            longest_true_run, axis=0, arr=~below_mean
         ).squeeze()
 
         return jnp.maximum(consecutive_true, consecutive_false)
 
 
 class maximum(gw.TimeModule):
-    """Calculate the highest value of the time series.
-
-    Args:
-        gw (_type_): _description_
-        dim (str, optional): The name of the dimension along which to calculate the maximum.
-                             Default is "time".
+    """
+    Calculate the highest value of the time series.
     """
 
     def __init__(self):
@@ -446,12 +353,8 @@ class maximum(gw.TimeModule):
 
 
 class minimum(gw.TimeModule):
-    """Calculate the lowest value of the time series.
-
-    Args:
-        gw (_type_): _description_
-        dim (str, optional): The name of the dimension along which to calculate the minimum.
-                             Default is "time".
+    """
+    Calculate the lowest value of the time series.
     """
 
     def __init__(self):
@@ -462,12 +365,8 @@ class minimum(gw.TimeModule):
 
 
 class mean(gw.TimeModule):
-    """Calculate the mean value of the time series.
-
-    Args:
-        gw (_type_): _description_
-        dim (str, optional): The name of the dimension along which to calculate the mean.
-                             Default is "time".
+    """
+    Calculate the mean value of the time series.
     """
 
     def __init__(self):
@@ -478,12 +377,8 @@ class mean(gw.TimeModule):
 
 
 class mean_abs_change(gw.TimeModule):
-    """Calculate the mean over the absolute differences between subsequent time series values.
-
-    Args:
-        gw (_type_): _description_
-        dim (str, optional): The name of the dimension along which to calculate the mean.
-                             Default is "time".
+    """
+    Calculate the mean over the absolute differences between subsequent time series values.
     """
 
     def __init__(self):
@@ -495,11 +390,8 @@ class mean_abs_change(gw.TimeModule):
 
 
 class mean_change(gw.TimeModule):
-    """Calculate the mean over the differences between subsequent time series values.
-
-    Args:
-        gw (_type_): _description_
-
+    """
+    Calculate the mean over the differences between subsequent time series values.
     """
 
     def __init__(self):
@@ -512,16 +404,7 @@ class mean_change(gw.TimeModule):
 
 class mean_second_derivative_central(gw.TimeModule):
     """
-    Returns the mean over the differences between subsequent time series values which is
-
-    .. math::
-
-        \\frac{1}{2(n-2)} \\sum_{i=1,\\ldots, n-1}  \\frac{1}{2} (x_{i+2} - 2 \\cdot x_{i+1} + x_i)
-
-    :param X: the time series to calculate the feature of
-    :type X: xarray.DataArray
-    :return: the value of this feature
-    :return type: float
+    Returns the mean over the differences between subsequent time series values.
     """
 
     def __init__(self):
@@ -539,12 +422,8 @@ class mean_second_derivative_central(gw.TimeModule):
 
 
 class median(gw.TimeModule):
-    """Calculate the mean value of the time series.
-
-    Args:
-        gw (_type_): _description_
-        dim (str, optional): The name of the dimension along which to calculate the mean.
-                             Default is "time".
+    """
+    Calculate the median value of the time series.
     """
 
     def __init__(self):
@@ -557,13 +436,8 @@ class median(gw.TimeModule):
 def _lstsq(data):
     """
     Calculate the least-squares solution to a linear matrix equation.
-
-    Args:
-        data (jnp.array): data array with shape (time, band, x, y)
-
-    Returns:
-        array: Returns array where first dim is band, second dim is slope and intercept.
     """
+
     M = data
     x = jnp.arange(0, M.shape[0])
     reg = jnp.linalg.lstsq(jnp.c_[x, jnp.ones_like(x)], M, rcond=None)
@@ -574,25 +448,15 @@ def _lstsq(data):
 
 
 class ols_slope_intercept(gw.TimeModule):
-    """Calculate the slope, intercept and R2 of the time series using ordinary least squares.
+    """
+    Calculate the slope, intercept, and R2 of the time series using ordinary least squares.
+
     Args:
         gw (array): the time series data
         returns (str, optional): What to return, "slope", "intercept" or "rsquared". Defaults to "slope".
+
     Returns:
         array: Return desired time series property array.
-
-    Example:
-    with gw.series(
-            files,
-            nodata=9999,
-        ) as src:
-            src.apply(
-                func=ols_slope_intercept(returns="intercept"),
-                outfile=f"/home/mmann1123/Downloads/test.tif",
-                num_workers=5,
-                bands=1,
-    )
-
     """
 
     def __init__(self, returns="slope"):
@@ -615,40 +479,17 @@ class ols_slope_intercept(gw.TimeModule):
             return intercept.squeeze()
         elif self.returns == "rsquared":
             array, SSR = jnp.apply_along_axis(_lstsq, axis=0, arr=array)
-            # x_mean = jnp.nanmean(array, axis=0)
             y = jnp.arange(0, array.shape[0])
             TSS = jnp.nansum((y - jnp.nanmean(y)) ** 2)
-
             return (1 - SSR / TSS).squeeze()
-        # TODO: create multiband output
-        # else:
-        #     array, SSR = jnp.apply_along_axis(_lstsq, axis=0, arr=array)
-        #     slope = array[0, 0, :, :].squeeze()
-        #     intercept = array[0, 1, :, :].squeeze()
-        #     x_mean = jnp.nanmean(array, axis=0)
-        #     y = jnp.arange(0, array.shape[0])
-        #     TSS = jnp.sum((y - jnp.mean(y)) ** 2)
-        #     R2 = (1 - SSR / TSS).squeeze()
-        #     return jnp.concatenate((slope, intercept, R2), axis=1)
 
 
 class quantile(gw.TimeModule):
-    """Compute the q-th quantile of the data along the time axis
-        Args:
-            q (int): Probability or sequence of probabilities for the quantiles to compute. Values must be between 0 and 1 inclusive.
+    """
+    Compute the q-th quantile of the data along the time axis.
 
-    with gw.series(
-        files,
-        nodata=9999,
-    ) as src:
-        print(src)
-        src.apply(
-            func=quantile(0.90),
-            outfile=f"/home/mmann1123/Downloads/test.tif",
-            num_workers=1,
-            bands=1,
-        )
-
+    Args:
+        q (int): Probability or sequence of probabilities for the quantiles to compute. Values must be between 0 and 1 inclusive.
     """
 
     def __init__(self, q=None, method="linear"):
@@ -661,7 +502,8 @@ class quantile(gw.TimeModule):
 
 
 class ratio_beyond_r_sigma(gw.TimeModule):
-    """Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.
+    """
+    Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.
 
     Args:
         gw (_type_): _description_
@@ -686,10 +528,8 @@ class ratio_beyond_r_sigma(gw.TimeModule):
 
 class skewness(gw.TimeModule):
     """
-    # https://medium.com/@pritul.dave/everything-about-moments-skewness-and-kurtosis-using-python-numpy-df305a193e46
-    Returns the sample skewness of X (calculated with the adjusted Fisher-Pearson standardized
-    moment coefficient G1). Normal value = 0, skewness > 0 means more weight in the left tail of
-    the distribution.
+    Returns the sample skewness of X.
+
     Args:
         gw (_type_): _description_
         axis (int, optional): Axis along which to compute the kurtosis. Default is 0.
@@ -711,8 +551,7 @@ class skewness(gw.TimeModule):
 
 
 class standard_deviation(gw.TimeModule):
-    """Calculate the standard_deviation value of the time series.
-
+    """Calculate the standard deviation value of the time series.
     Args:
         gw (_type_): _description_
     """
@@ -725,11 +564,7 @@ class standard_deviation(gw.TimeModule):
 
 
 class sum(gw.TimeModule):
-    """Calculate the standard_deviation value of the time series.
-
-    Args:
-        gw (_type_): _description_
-    """
+    """Calculate the sum of the time series values."""
 
     def __init__(self):
         super(sum, self).__init__()
@@ -740,16 +575,10 @@ class sum(gw.TimeModule):
 
 class symmetry_looking(gw.TimeModule):
     """
-    Boolean variable denoting if the distribution of x *looks symmetric*. This is the case if
+    Boolean variable denoting if the distribution of x *looks symmetric*.
 
-    .. math::
-
-        | mean(X)-median(X)| < r * (max(X)-min(X))
-
-    :param r: the percentage of the range to compare with (default: 0.1)
-    :type r: float
-    :return: the value of this feature
-    :return type: bool
+    Args:
+        r: the percentage of the range to compare with (default: 0.1)
     """
 
     def __init__(self, r=0.1):
@@ -766,25 +595,10 @@ class symmetry_looking(gw.TimeModule):
 
 class ts_complexity_cid_ce(gw.TimeModule):
     """
-    This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,
-    valleys etc.). It calculates the value of
+    This function calculator is an estimate for a time series complexity.
 
-    .. math::
-
-        \\sqrt{ \\sum_{i=0}^{n-2lag} ( x_{i} - x_{i+1})^2 }
-
-    .. rubric:: References
-
-    |  [1] Batista, Gustavo EAPA, et al (2014).
-    |  CID: an efficient complexity-invariant distance for time series.
-    |  Data Mining and Knowledge Discovery 28.3 (2014): 634-669.
-
-
-    :param normalize: should the time series be z-transformed?
-    :type normalize: bool
-
-    :return: the value of this feature
-    :return type: float
+    Args:
+        normalize: should the time series be z-transformed? (default: True)
     """
 
     def __init__(self, normalize=True):
@@ -794,13 +608,9 @@ class ts_complexity_cid_ce(gw.TimeModule):
     def calculate(self, array):
         if self.normalize:
             s = jnp.std(array, axis=0)
-
             array = jnp.where(s != 0, (array - jnp.nanmean(array, axis=0)) / s, array)
             array = jnp.where(s == 0, 0.0, array)
-
         x = jnp.diff(array, axis=0)
-
-        # Compute dot product along the time dimension
         try:
             dot_prod = jnp.einsum("tijk, tijk->jk", x, x)
         except:

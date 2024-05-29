@@ -15,7 +15,14 @@ Example outputs:
 
 # Install
 
-*Linux & Windows Install*
+To install xr_fresh, you can use pip. However, since xr_fresh includes a C++ extension module, it requires compilation during the installation process. Here are the steps to install xr_fresh:
+
+## Prerequisites
+
+- Conda or mamba [Instructions here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
+- C++ compiler (e.g., g++ on Linux, clang on macOS, or MSVC on Windows)
+
+*Linux, OSx & Windows Install*
 
 ```
 # add dependency
@@ -23,7 +30,7 @@ conda create -n xr_fresh geowombat -c conda-forge
 conda activate xr_fresh
 # clone repository
 cd # to desired location
-git clone https://github.com/fraymio/xr_fresh.git
+git clone https://github.com/mmann1123/xr_fresh
 cd xr_fresh 
 pip install . 
 ```  
@@ -98,6 +105,29 @@ evi__minimum__2016_2017_.tif
 ```
 
 # Example 2
+
+This example uses the `.apply` method which is much faster:
+
+```
+from glob import glob
+import geowombat as gw
+from xr_fresh.feature_calculator_series import *
+
+files = glob("tests/data/*.tif")
+
+out_path = "test.tif"
+# use rasterio to create a new file tif file
+
+with gw.series(files) as src:
+    src.apply(
+        longest_strike_above_mean(mean=299),
+        bands=1,
+        num_workers=12,
+        outfile=out_path,
+    )
+```
+
+# Example 3
 
 example including interpolation of missing values and date time slicing
 
