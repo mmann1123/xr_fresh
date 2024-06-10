@@ -28,7 +28,7 @@ class TestFeatureCalculators(unittest.TestCase):
         cls.pth = os.path.dirname(os.path.abspath(__file__))
         os.chdir(cls.pth)
         cls.pth = f"{cls.pth}/data/"
-        cls.files = sorted(glob(f"{cls.pth}*.tif"))
+        cls.files = sorted(glob(f"{cls.pth}RadT_tavg_*.tif"))
         print(cls.files)
         cls.strp_glob = f"{cls.pth}RadT_tavg_%Y%m.tif"
         cls.dates = sorted(
