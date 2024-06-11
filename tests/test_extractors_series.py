@@ -1,8 +1,8 @@
-import unittest
-from xr_fresh.extractors_series import extract_features_series, extract_key_value_names, extract_grid
-from pathlib import Path
-import shutil
-import os
+# import unittest
+# from xr_fresh.extractors_series import extract_features_series, extract_key_value_names, extract_grid
+# from pathlib import Path
+# import shutil
+# import os
 
 # # Define a test class for extractors_series.py
 # class TestExtractorsSeries(unittest.TestCase):
@@ -60,5 +60,5 @@ import os
 #                 output_file = output_path / f"{self.band_name}_{feature_name}_{key_names}_{value_names}_{grid}.tif"
 #                 self.assertTrue(output_file.exists())
 
-if __name__ == "__main__":
-    unittest.main()
+# if __name__ == "__main__":
+#     unittest.main()
