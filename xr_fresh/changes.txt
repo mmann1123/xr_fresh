@@ -16,14 +16,6 @@
 5. Utility Functions: Added two utility functions (extract_key_value_names and extract_grid) to extract key and value names from the band name and the grid value, respectively, using regular expressions.
 6. Documentation: Added docstrings to the extract_features_series, extract_key_value_names, and extract_grid functions to describe their purpose, parameters, and return values.
 
-#extractors.py
-
-1. Removed Unused Imports: Removed unused imports like where, ProgressBar, expanduser, path_join.
-2. Refactored Code for Clarity: Renamed the function_mapping variable to _get_xr_attr for better readability and to avoid confusion with other similar variables.
-3. Improved Error Handling: Added warnings for cases where the feature_dict is not formatted correctly, providing a clear message to the user.
-4. Documentation and Comments: Added docstrings to the extract_features function to describe its purpose, parameters, and return value. Added comments for clarity and to explain the logic of certain functions and sections of code.
-5. Minor Improvements: Updated the check_dictionary function to use a more descriptive warning message and removed some commented-out code and unused variables to improve code readability and cleanliness.
-
 #feature_calculator_series.py
 
 1. Removed redundant _type_ and _description_ placeholders from class docstrings.
