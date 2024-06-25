@@ -189,59 +189,59 @@ class TestFeatureCalculators(unittest.TestCase):
                 self.assertEqual(dst.gw.nbands, 1)
                 self.assertEqual(dst.shape, (1, 1613, 2313))
 
-    # def test_longest_strike_above_mean(self):
-    #     with self.tmp_dir as tmp:
-    #         if not os.path.exists(tmp):
-    #             os.mkdir(tmp)
-    #         out_path = Path(tmp) / "test.tif"
-    #         # use rasterio to create a new file tif file
+    def test_longest_strike_above_mean(self):
+        with self.tmp_dir as tmp:
+            if not os.path.exists(tmp):
+                os.mkdir(tmp)
+            out_path = Path(tmp) / "test.tif"
+            # use rasterio to create a new file tif file
 
-    #         with gw.series(self.files) as src:
-    #             src.apply(
-    #                 longest_strike_above_mean(),
-    #                 bands=1,
-    #                 num_workers=2,
-    #                 outfile=out_path,
-    #             )
-    #         with gw.open(out_path) as dst:
-    #             self.assertEqual(dst.gw.nbands, 1)
-    #             self.assertEqual(dst.shape, (1, 1613, 2313))
+            with gw.series(self.files) as src:
+                src.apply(
+                    longest_strike_above_mean(),
+                    bands=1,
+                    num_workers=2,
+                    outfile=out_path,
+                )
+            with gw.open(out_path) as dst:
+                self.assertEqual(dst.gw.nbands, 1)
+                self.assertEqual(dst.shape, (1, 1613, 2313))
 
-    # def test_longest_strike_above_set_mean(self):
-    #     with self.tmp_dir as tmp:
-    #         if not os.path.exists(tmp):
-    #             os.mkdir(tmp)
-    #         out_path = Path(tmp) / "test.tif"
-    #         # use rasterio to create a new file tif file
+    def test_longest_strike_above_set_mean(self):
+        with self.tmp_dir as tmp:
+            if not os.path.exists(tmp):
+                os.mkdir(tmp)
+            out_path = Path(tmp) / "test.tif"
+            # use rasterio to create a new file tif file
 
-    #         with gw.series(self.files) as src:
-    #             src.apply(
-    #                 longest_strike_above_mean(mean=8),
-    #                 bands=1,
-    #                 num_workers=2,
-    #                 outfile=out_path,
-    #             )
-    #         with gw.open(out_path) as dst:
-    #             self.assertEqual(dst.gw.nbands, 1)
-    #             self.assertEqual(dst.shape, (1, 1613, 2313))
+            with gw.series(self.files) as src:
+                src.apply(
+                    longest_strike_above_mean(mean=8),
+                    bands=1,
+                    num_workers=2,
+                    outfile=out_path,
+                )
+            with gw.open(out_path) as dst:
+                self.assertEqual(dst.gw.nbands, 1)
+                self.assertEqual(dst.shape, (1, 1613, 2313))
 
-    # def test_longest_strike_below_mean(self):
-    #     with self.tmp_dir as tmp:
-    #         if not os.path.exists(tmp):
-    #             os.mkdir(tmp)
-    #         out_path = Path(tmp) / "test.tif"
-    #         # use rasterio to create a new file tif file
+    def test_longest_strike_below_mean(self):
+        with self.tmp_dir as tmp:
+            if not os.path.exists(tmp):
+                os.mkdir(tmp)
+            out_path = Path(tmp) / "test.tif"
+            # use rasterio to create a new file tif file
 
-    #         with gw.series(self.files) as src:
-    #             src.apply(
-    #                 longest_strike_below_mean(),
-    #                 bands=1,
-    #                 num_workers=2,
-    #                 outfile=out_path,
-    #             )
-    #         with gw.open(out_path) as dst:
-    #             self.assertEqual(dst.gw.nbands, 1)
-    #             self.assertEqual(dst.shape, (1, 1613, 2313))
+            with gw.series(self.files) as src:
+                src.apply(
+                    longest_strike_below_mean(),
+                    bands=1,
+                    num_workers=2,
+                    outfile=out_path,
+                )
+            with gw.open(out_path) as dst:
+                self.assertEqual(dst.gw.nbands, 1)
+                self.assertEqual(dst.shape, (1, 1613, 2313))
 
     def test_maximum(self):
         with self.tmp_dir as tmp:
