@@ -12,38 +12,7 @@ import os
 import sys
 from shutil import rmtree
 
-from setuptools import find_packages, setup, Command, Extension
-from setuptools.command.build_ext import build_ext as _build_ext
-
-# Define the C++ extension module
-ext_modules = [
-    Extension(
-        "xr_fresh.rle",  # Adjust package name as needed
-        ["xr_fresh/rle.cpp"],  # Path to your C++ source file
-        include_dirs=[],  # Add any include directories if needed
-        language="c++",
-    )
-]
-
-
-class build_ext(_build_ext):
-    def run(self):
-        # Build the C++ extension only if not already built
-        if sys.platform == "win32" and self.compiler.compiler_type == "msvc":
-            # Use MSVC on Windows
-            self.compiler.initialize()
-            self.compiler.customize(self.distribution)
-            self.compiler.finalize()
-            _build_ext.run(self)
-        elif sys.platform == "darwin":
-            # Use clang on macOS
-            self.compiler.compiler_so = ["clang++"]
-            self.compiler.linker_exe = ["clang++"]
-            _build_ext.run(self)
-        else:
-            # Use default compiler on Linux
-            _build_ext.run(self)
-
+from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = "xr_fresh"
@@ -153,20 +122,19 @@ setup(
     packages=find_packages(exclude=("tests",)),
     install_requires=REQUIRED,
     include_package_data=True,
-    ext_modules=ext_modules,  # Include the C++ extension module
-    cmdclass={"build_ext": build_ext},  # Override build_ext command
     # license='MIT',
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         #'License :: OSI Approved :: MIT License',
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.8 :: 3.9 :: 3.10 :: 3.11",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
     # $ setup.py publish support.
-    # cmdclass={
-    #     "upload": UploadCommand,
-    # },
+    cmdclass={
+        "upload": UploadCommand,
+    },
 )
