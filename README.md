@@ -23,8 +23,10 @@ conda create -n xr_fresh geowombat -c conda-forge
 conda activate xr_fresh
 # clone repository
 cd # to desired location
-git clone https://github.com/fraymio/xr_fresh.git
-cd xr_fresh 
+
+git clone https://github.com/mmann1123/xr_fresh
+cd xr_fresh
+pip install -U pip setuptools wheel
 pip install . 
 ```  
 
