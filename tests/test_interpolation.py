@@ -7,7 +7,6 @@ import numpy as np
 # import jax.numpy as jnp
 from xr_fresh.interpolate_series import *
 
-# from xr_fresh.feature_calculator_series import _get_jax_backend
 from pathlib import Path
 from glob import glob
 from datetime import datetime

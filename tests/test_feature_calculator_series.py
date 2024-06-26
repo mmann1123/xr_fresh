@@ -4,7 +4,6 @@ import numpy as np
 # import jax.numpy as jnp
 from xr_fresh.feature_calculator_series import *
 
-# from xr_fresh.feature_calculator_series import _get_jax_backend
 from pathlib import Path
 from glob import glob
 from datetime import datetime
@@ -13,10 +12,6 @@ import warnings
 import os
 import jax
 import tempfile
-
-
-# jax_backend = _get_jax_backend()
-# jax.config.update("jax_platform_name", jax_backend)
 
 
 class TestFeatureCalculators(unittest.TestCase):
