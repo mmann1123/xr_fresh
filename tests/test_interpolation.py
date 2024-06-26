@@ -7,7 +7,6 @@ import numpy as np
 # import jax.numpy as jnp
 from xr_fresh.interpolate_series import *
 
-# from xr_fresh.feature_calculator_series import _get_jax_backend
 from pathlib import Path
 from glob import glob
 from datetime import datetime
@@ -24,12 +23,16 @@ class TestInterpolation(unittest.TestCase):
     def setUpClass(cls):
         # Create temporary directory
         cls.tmp_dir = tempfile.TemporaryDirectory()
-        # set change directory to location of this file
-        cls.pth = os.path.dirname(os.path.abspath(__file__))
-        os.chdir(cls.pth)
-        cls.pth = f"{cls.pth}/data/"
-        cls.files = sorted(glob(f"{cls.pth}values_equal_*.tif"))
-        print(cls.files)
+
+        # Set path to the directory containing this file (test script)
+        cls.base_path = Path(__file__).parent
+
+        # Access data directory relative to this script
+        cls.data_path = cls.base_path / "data"
+
+        # Gather all .tif files that match the pattern
+        cls.files = sorted(cls.data_path.glob("values_equal_*.tif"))
+        print([str(file) for file in cls.files])  # Print file paths for debugging
 
     @classmethod
     def tearDownClass(cls):

@@ -3,6 +3,7 @@ from xr_fresh.backends import Cluster
 from dask.distributed import Client
 from dask.distributed.comm.core import CommClosedError as DistributedCommError
 
+
 class TestCluster(unittest.TestCase):
 
     def setUp(self):
@@ -17,28 +18,28 @@ class TestCluster(unittest.TestCase):
         # Test starting a general Dask cluster
         self.cluster.start()
         self.assertIsInstance(self.cluster.client, Client)
-        self.assertTrue(self.cluster.client.status == 'running')
+        self.assertTrue(self.cluster.client.status == "running")
         self.cluster.close()  # Ensure clean up
 
     def test_start_small_object(self):
         # Test starting a Dask cluster optimized for small object computations
         self.cluster.start_small_object()
         self.assertIsInstance(self.cluster.client, Client)
-        self.assertTrue(self.cluster.client.status == 'running')
+        self.assertTrue(self.cluster.client.status == "running")
         self.cluster.close()  # Ensure clean up
 
     def test_start_large_object(self):
         # Test starting a Dask cluster optimized for large object computations
         self.cluster.start_large_object()
         self.assertIsInstance(self.cluster.client, Client)
-        self.assertTrue(self.cluster.client.status == 'running')
+        self.assertTrue(self.cluster.client.status == "running")
         self.cluster.close()  # Ensure clean up
 
     def test_start_large_IO_object(self):
         # Test starting a Dask cluster optimized for large I/O-bound computations
         self.cluster.start_large_IO_object()
         self.assertIsInstance(self.cluster.client, Client)
-        self.assertTrue(self.cluster.client.status == 'running')
+        self.assertTrue(self.cluster.client.status == "running")
         self.cluster.close()  # Ensure clean up
 
     def test_restart(self):
@@ -49,7 +50,6 @@ class TestCluster(unittest.TestCase):
         # Check that the client is different after restart
         self.assertNotEqual(self.cluster.client, original_client)
         self.assertIsInstance(self.cluster.client, Client)
-
 
     def test_close(self):
         # Test closing the Dask client and cluster resources
@@ -65,6 +65,5 @@ class TestCluster(unittest.TestCase):
             invalid_cluster.start()
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

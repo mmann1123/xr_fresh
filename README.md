@@ -35,6 +35,9 @@ cd xr_fresh
 pip install -U pip setuptools wheel
 pip install . 
 ```  
+Note: If you run into problems related to `rle` try running `python setup.py build_ext --inplace` from the `xr_fresh` directory
+
+
 
 # Documentation
 
