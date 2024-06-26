@@ -48,7 +48,7 @@ jobs:
 
     - name: Install xr_fresh
       run: |
-        pip install "." 
+        pip install -e "." 
 
     - name: Run Unittests
       run: |
