@@ -53,6 +53,7 @@ jobs:
     - name: Run Unittests
       run: |
         pip install testfixtures
+        python setup.py build_ext --inplace
         python -m unittest discover -s tests -p 'test_*.py'
 
     # Debug: Display Action Environment Variables
