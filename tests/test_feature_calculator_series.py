@@ -1,16 +1,10 @@
 import unittest
-import numpy as np
-
-# import jax.numpy as jnp
 from xr_fresh.feature_calculator_series import *
-
 from pathlib import Path
 from glob import glob
 from datetime import datetime
 import geowombat as gw
-import warnings
 import os
-import jax
 import tempfile
 
 
@@ -19,18 +13,20 @@ class TestFeatureCalculators(unittest.TestCase):
     def setUpClass(cls):
         # Create temporary directory
         cls.tmp_dir = tempfile.TemporaryDirectory()
-        # set change directory to location of this file
-        cls.pth = os.path.dirname(os.path.abspath(__file__))
-        os.chdir(cls.pth)
-        cls.pth = f"{cls.pth}/data/"
-        cls.files = sorted(glob(f"{cls.pth}RadT_tavg_*.tif"))
-        print(cls.files)
-        cls.strp_glob = f"{cls.pth}RadT_tavg_%Y%m.tif"
+
+        # Set path to the directory containing this file (test script)
+        cls.base_path = Path(__file__).parent
+
+        # Access data directory relative to this script
+        cls.data_path = cls.base_path / "data"
+
+        # Gather all .tif files
+        cls.files = sorted(cls.data_path.glob("RadT_tavg_*.tif"))
+        print([str(file) for file in cls.files])  # Print file paths for debugging
+
+        # Process dates from filenames
         cls.dates = sorted(
-            datetime.strptime(
-                os.path.basename(string).split("_")[2].split(".")[0], "%Y%m"
-            )
-            for string in cls.files
+            datetime.strptime(file.stem.split("_")[2], "%Y%m") for file in cls.files
         )
         cls.date_strings = [date.strftime("%Y-%m-%d") for date in cls.dates]
 
