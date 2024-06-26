@@ -34,6 +34,9 @@ git clone https://github.com/mmann1123/xr_fresh
 cd xr_fresh 
 pip install . 
 ```  
+Note: If you run into problems related to `rle` try running `python setup.py build_ext --inplace` from the `xr_fresh` directory
+
+
 
 # Documentation
 
