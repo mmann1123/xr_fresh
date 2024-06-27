@@ -50,6 +50,12 @@ jobs:
       run: |
         pip install "." 
 
+    - name: Install C++ bindings for xr_fresh
+      run: |
+        cd xr_fresh
+        pip install -U pip setuptools wheel
+        pip install .
+
     - name: Run Unittests
       run: |
         pip install testfixtures
