@@ -3,12 +3,11 @@ name: Python Unit Tests
 on:
   push:
     branches:
-      - main
+      - '*'
   pull_request:
     branches:
-      - main
+      - '*'
   workflow_dispatch:  # This line adds the manual trigger option
-
 
 jobs:
   build:
@@ -24,7 +23,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-
 
     - name: Install GDAL binaries
       run: |
@@ -50,6 +48,12 @@ jobs:
       run: |
         pip install "." 
 
+    - name: Build and install C++ extension
+      run: |
+        cd xr_fresh
+        pip install -U pip setuptools wheel
+        pip install .
+
     - name: Run Unittests
       run: |
         pip install testfixtures
@@ -62,4 +66,3 @@ jobs:
     # Debug: List all files in the current directory (Debug)
     - name: List files in the current directory (Debug)
       run: ls -la
-
