@@ -6,7 +6,6 @@
 [![](https://github.com/mmann1123/xr_fresh/actions/workflows/python-tests.yml/badge.svg)](https://github.com/mmann1123/xr_fresh/actions/workflows/python-tests.yml)
 -->
 
-[![DOI](https://zenodo.org/badge/246113186.svg)](https://zenodo.org/doi/10.5281/zenodo.12519006)
 
 xr_fresh is designed to quickly generate a broad set of temporal features from gridded raster data time series. NOTE: This only works on single band images, not multiband e.g. rgb etc
 
@@ -150,3 +149,4 @@ Please cite work as:
 ```
 Michael Mann. (2024). mmann1123/xr_fresh: SpeedySeries (0.2.0). Zenodo. https://doi.org/10.5281/zenodo.12701466
 ```
+[![DOI](https://zenodo.org/badge/246113186.svg)](https://zenodo.org/doi/10.5281/zenodo.12519006)
