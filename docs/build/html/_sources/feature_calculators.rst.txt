@@ -1,4 +1,4 @@
-.. _feature_calculators:
+.. _feature_calculator_series:
 
 Feature Generators
 =====================================
@@ -12,7 +12,7 @@ Feature Generators
 
 Functions
 ------------------------ 
-.. automodule:: xr_fresh.feature_calculators
+.. automodule:: xr_fresh.feature_calculator_series
     :members:
 
 

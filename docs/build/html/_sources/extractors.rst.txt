@@ -1,4 +1,4 @@
-.. _extractors:
+.. _extractors_series:
  
 Extractor Function
 =====================================
@@ -13,7 +13,7 @@ Extractor Function
 
 Functions
 ----------------------- 
-.. automodule:: xr_fresh.extractors
+.. automodule:: xr_fresh.extractors_series
     :members:
 
 
