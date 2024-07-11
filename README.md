@@ -140,7 +140,7 @@ with gw.series( files) as src:
  
 ## Documentation
 
-After cloning the repository navigate locally to and open the [documentation](https://mmann1123.github.io/xr_fresh/build/html/index.html)
+After cloning the repository navigate locally to and open the [documentation](mmann1123.github.io/xr_fresh/)
 
  
 ## Citation
