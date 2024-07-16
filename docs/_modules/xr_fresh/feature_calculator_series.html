@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xr_fresh.feature_calculator_series &mdash; xr_fresh 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=7026087e"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            xr_fresh
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_calculators.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../extractors.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interpolate_series.html">Interpolate Series Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Other Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../io.html">Utilities for reading and writing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">xr_fresh</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">xr_fresh.feature_calculator_series</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for xr_fresh.feature_calculator_series</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">geowombat</span> <span class="k">as</span> <span class="nn">gw</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;abs_energy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;absolute_sum_of_changes&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;autocorrelation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;count_above_mean&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;count_below_mean&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;doy_of_maximum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;doy_of_minimum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;kurtosis&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;kurtosis_excess&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;large_standard_deviation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;longest_strike_above_mean&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;longest_strike_below_mean&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;maximum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;minimum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mean_abs_change&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mean_change&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mean_second_derivative_central&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;median&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ols_slope_intercept&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;quantile&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ratio_beyond_r_sigma&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;skewness&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;standard_deviation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;symmetry_looking&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ts_complexity_cid_ce&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;unique_value_number_to_time_series_length&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;variance&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;variance_larger_than_standard_deviation&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_get_day_of_year</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%j&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_check_valid_array</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="c1"># Check if the object is a NumPy or JAX array or list</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>  <span class="c1"># jnp.DeviceArray,</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Object must be a NumPy array or list.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># convert lists to numpy array</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>  <span class="c1"># must be np array not jnp</span>
+
+    <span class="c1"># Check if the array contains only integers or datetime objects</span>
+    <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="c1"># datetime objects are converted to integers</span>
+    <span class="k">elif</span> <span class="n">jnp</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">_get_day_of_year</span><span class="p">)(</span><span class="n">obj</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Array must contain only integers, datetime objects.&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="abs_energy">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.abs_energy">[docs]</a>
+<span class="k">class</span> <span class="nc">abs_energy</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the absolute energy of the time series which is the sum over the squared values</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">abs_energy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="abs_energy.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.abs_energy.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="absolute_sum_of_changes">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.absolute_sum_of_changes">[docs]</a>
+<span class="k">class</span> <span class="nc">absolute_sum_of_changes</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the sum over the absolute value of consecutive changes in the series x</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">absolute_sum_of_changes</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="absolute_sum_of_changes.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="autocorrelation">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.autocorrelation">[docs]</a>
+<span class="k">class</span> <span class="nc">autocorrelation</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the autocorrelation of the time series data at a specified lag</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">        lag (int): lag at which to calculate the autocorrelation (default: {1})</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">autocorrelation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lag</span> <span class="o">=</span> <span class="n">lag</span>
+
+<div class="viewcode-block" id="autocorrelation.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.autocorrelation.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">array</span><span class="p">[:</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lag</span><span class="p">]</span>
+        <span class="n">lagged_series</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lag</span> <span class="p">:]</span>
+        <span class="n">autocor</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">series</span> <span class="o">*</span> <span class="n">lagged_series</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">series</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">autocor</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="count_above_mean">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.count_above_mean">[docs]</a>
+<span class="k">class</span> <span class="nc">count_above_mean</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the number of values in X that are higher than the mean of X</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">        mean (int): An integer to use as the &quot;mean&quot; value of the raster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">count_above_mean</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+
+<div class="viewcode-block" id="count_above_mean.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.count_above_mean.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">array</span> <span class="o">&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">array</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="count_below_mean">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.count_below_mean">[docs]</a>
+<span class="k">class</span> <span class="nc">count_below_mean</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the number of values in X that are lower than the mean of X</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">        mean (int): An integer to use as the &quot;mean&quot; value of the raster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">count_below_mean</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+
+<div class="viewcode-block" id="count_below_mean.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.count_below_mean.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Calculate the mean along the time dimension (axis=0) and broadcast it to match the shape of &#39;array&#39;</span>
+            <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">array</span> <span class="o">&lt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">array</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="doy_of_maximum">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.doy_of_maximum">[docs]</a>
+<span class="k">class</span> <span class="nc">doy_of_maximum</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the day of the year (doy) location of the maximum value of the series - treats all years as the same.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">        dates (np.array): An array holding the dates of the time series as integers or as datetime objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">doy_of_maximum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># check that dates is an array holding datetime objects or integers throw error if not</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="n">_check_valid_array</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dates</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span> <span class="k">if</span> <span class="n">dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="doy_of_maximum.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.doy_of_maximum.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dates array is not provided.&quot;</span><span class="p">)</span>
+        <span class="c1"># Find the indices of the maximum values along the time axis</span>
+        <span class="n">max_indices</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Use the indices to extract the corresponding dates from the &#39;dates&#39; array</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="n">max_indices</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="doy_of_minimum">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.doy_of_minimum">[docs]</a>
+<span class="k">class</span> <span class="nc">doy_of_minimum</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the day of the year (doy) location of the minimum value of the series - treats all years as the same.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">        dates (np.array): An array holding the dates of the time series as integers or as datetime objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">doy_of_minimum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="n">_check_valid_array</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dates</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span> <span class="k">if</span> <span class="n">dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="doy_of_minimum.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.doy_of_minimum.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dates array is not provided.&quot;</span><span class="p">)</span>
+        <span class="n">min_indices</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="n">min_indices</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="kurtosis">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.kurtosis">[docs]</a>
+<span class="k">class</span> <span class="nc">kurtosis</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the sample kurtosis of a given array along the time axis.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        array (GeoWombat series object): An object that contains geospatial and temporal metadata.</span>
+<span class="sd">        fisher (bool, optional): If True, Fisher’s definition is used (normal ==&gt; 0.0).</span>
+<span class="sd">                                 If False, Pearson’s definition is used (normal ==&gt; 3.0).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fisher</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">kurtosis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fisher</span> <span class="o">=</span> <span class="n">fisher</span>
+
+<div class="viewcode-block" id="kurtosis.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.kurtosis.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="n">mean_</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">mu4</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">((</span><span class="n">array</span> <span class="o">-</span> <span class="n">mean_</span><span class="p">)</span> <span class="o">**</span> <span class="mi">4</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">mu2</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">((</span><span class="n">array</span> <span class="o">-</span> <span class="n">mean_</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">beta2</span> <span class="o">=</span> <span class="n">mu4</span> <span class="o">/</span> <span class="p">(</span><span class="n">mu2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">gamma2</span> <span class="o">=</span> <span class="n">beta2</span> <span class="o">-</span> <span class="mi">3</span>
+        <span class="k">return</span> <span class="n">gamma2</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="kurtosis_excess">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.kurtosis_excess">[docs]</a>
+<span class="k">class</span> <span class="nc">kurtosis_excess</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the excess kurtosis of X (calculated with the adjusted Fisher-Pearson standardized moment coefficient G2).</span>
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Fisher</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">kurtosis_excess</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="kurtosis_excess.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.kurtosis_excess.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="n">mean_x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">var_x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanvar</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">centered_x</span> <span class="o">=</span> <span class="n">array</span> <span class="o">-</span> <span class="n">mean_x</span>
+        <span class="n">fourth_moment</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">centered_x</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">kurt</span> <span class="o">=</span> <span class="n">fourth_moment</span> <span class="o">/</span> <span class="p">(</span><span class="n">var_x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">kurt</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="large_standard_deviation">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.large_standard_deviation">[docs]</a>
+<span class="k">class</span> <span class="nc">large_standard_deviation</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Boolean variable denoting if the standard dev of x is higher than &#39;r&#39; times the range.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        r (float, optional): The percentage of the range to compare with. Default is 2.0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">large_standard_deviation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">r</span>
+
+<div class="viewcode-block" id="large_standard_deviation.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.large_standard_deviation.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="n">std_dev</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">min_val</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">std_dev</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_val</span> <span class="o">-</span> <span class="n">min_val</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="k">def</span> <span class="nf">_count_longest_consecutive</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+    <span class="n">max_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">current_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">current_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">max_count</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">max_count</span><span class="p">,</span> <span class="n">current_count</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">current_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">max_count</span>
+
+
+<span class="c1"># try importing rle</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">xr_fresh</span> <span class="kn">import</span> <span class="n">rle</span>
+
+    <span class="n">longest_true_run</span> <span class="o">=</span> <span class="n">rle</span><span class="o">.</span><span class="n">longest_true_run</span>
+<span class="k">except</span> <span class="ne">ImportWarning</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;C++ rle not found, using slow version&quot;</span><span class="p">)</span>
+    <span class="n">longest_true_run</span> <span class="o">=</span> <span class="n">_count_longest_consecutive</span>
+
+
+<div class="viewcode-block" id="longest_strike_above_mean">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.longest_strike_above_mean">[docs]</a>
+<span class="k">class</span> <span class="nc">longest_strike_above_mean</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the length of the longest consecutive subsequence in X that is larger than the mean of X</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">longest_strike_above_mean</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+
+<div class="viewcode-block" id="longest_strike_above_mean.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="c1"># compare to mean</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">below_mean</span> <span class="o">=</span> <span class="n">array</span> <span class="o">&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">below_mean</span> <span class="o">=</span> <span class="n">array</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
+        <span class="c1"># Count the longest consecutive True values along the time dimension</span>
+        <span class="n">consecutive_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+            <span class="n">func1d</span><span class="o">=</span><span class="n">longest_true_run</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">below_mean</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+        <span class="c1"># Count the longest consecutive False values along the time dimension</span>
+        <span class="n">consecutive_false</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+            <span class="n">func1d</span><span class="o">=</span><span class="n">longest_true_run</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="o">=~</span><span class="n">below_mean</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">consecutive_true</span><span class="p">,</span> <span class="n">consecutive_false</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="longest_strike_below_mean">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.longest_strike_below_mean">[docs]</a>
+<span class="k">class</span> <span class="nc">longest_strike_below_mean</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">longest_strike_below_mean</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+
+<div class="viewcode-block" id="longest_strike_below_mean.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="c1"># compare to mean</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">below_mean</span> <span class="o">=</span> <span class="n">array</span> <span class="o">&lt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">below_mean</span> <span class="o">=</span> <span class="n">array</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
+
+        <span class="c1"># Count the longest consecutive True values along the time dimension</span>
+        <span class="n">consecutive_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+            <span class="n">longest_true_run</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">below_mean</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+        <span class="c1"># Count the longest consecutive False values along the time dimension</span>
+        <span class="n">consecutive_false</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+            <span class="n">longest_true_run</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="o">=~</span><span class="n">below_mean</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">consecutive_true</span><span class="p">,</span> <span class="n">consecutive_false</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="maximum">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.maximum">[docs]</a>
+<span class="k">class</span> <span class="nc">maximum</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the highest value of the time series.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">maximum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="maximum.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.maximum.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="minimum">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.minimum">[docs]</a>
+<span class="k">class</span> <span class="nc">minimum</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the lowest value of the time series.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="minimum.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.minimum.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="mean">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.mean">[docs]</a>
+<span class="k">class</span> <span class="nc">mean</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the mean value of the time series.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="mean.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.mean.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="mean_abs_change">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.mean_abs_change">[docs]</a>
+<span class="k">class</span> <span class="nc">mean_abs_change</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the mean over the absolute differences between subsequent time series values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">mean_abs_change</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="mean_abs_change.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.mean_abs_change.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">abs_diff</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">abs_diff</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="mean_change">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.mean_change">[docs]</a>
+<span class="k">class</span> <span class="nc">mean_change</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the mean over the differences between subsequent time series values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">mean_change</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="mean_change.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.mean_change.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">array</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="mean_second_derivative_central">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.mean_second_derivative_central">[docs]</a>
+<span class="k">class</span> <span class="nc">mean_second_derivative_central</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the mean over the differences between subsequent time series values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">mean_second_derivative_central</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="mean_second_derivative_central.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="n">series2</span> <span class="o">=</span> <span class="n">array</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">lagged2</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">lagged1</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">msdc</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">lagged2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">lagged1</span> <span class="o">+</span> <span class="n">series2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">msdc</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="median">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.median">[docs]</a>
+<span class="k">class</span> <span class="nc">median</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the median value of the time series.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">median</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="median.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.median.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="k">def</span> <span class="nf">_lstsq</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the least-squares solution to a linear matrix equation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">M</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">reg</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="n">M</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">slope_intercept</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">residuals</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># Fit a least squares solution to each sample</span>
+    <span class="k">return</span> <span class="n">slope_intercept</span><span class="p">,</span> <span class="n">residuals</span>
+
+
+<div class="viewcode-block" id="ols_slope_intercept">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.ols_slope_intercept">[docs]</a>
+<span class="k">class</span> <span class="nc">ols_slope_intercept</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the slope, intercept, and R2 of the time series using ordinary least squares.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (array): the time series data</span>
+<span class="sd">        returns (str, optional): What to return, &quot;slope&quot;, &quot;intercept&quot; or &quot;rsquared&quot;. Defaults to &quot;slope&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        array: Return desired time series property array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">returns</span><span class="o">=</span><span class="s2">&quot;slope&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ols_slope_intercept</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="n">allowed_values</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;slope&quot;</span><span class="p">,</span> <span class="s2">&quot;intercept&quot;</span><span class="p">,</span> <span class="s2">&quot;rsquared&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">returns</span> <span class="o">=</span> <span class="n">returns</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">returns</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_values</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid argument. Allowed values are </span><span class="si">{</span><span class="n">allowed_values</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ols_slope_intercept.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.ols_slope_intercept.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">returns</span> <span class="o">==</span> <span class="s2">&quot;slope&quot;</span><span class="p">:</span>
+            <span class="n">array</span><span class="p">,</span> <span class="n">residuals</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">_lstsq</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">array</span><span class="p">)</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+            <span class="k">return</span> <span class="n">slope</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">returns</span> <span class="o">==</span> <span class="s2">&quot;intercept&quot;</span><span class="p">:</span>
+            <span class="n">array</span><span class="p">,</span> <span class="n">residuals</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">_lstsq</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">array</span><span class="p">)</span>
+            <span class="n">intercept</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+            <span class="k">return</span> <span class="n">intercept</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">returns</span> <span class="o">==</span> <span class="s2">&quot;rsquared&quot;</span><span class="p">:</span>
+            <span class="n">array</span><span class="p">,</span> <span class="n">SSR</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">_lstsq</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">array</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">TSS</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">SSR</span> <span class="o">/</span> <span class="n">TSS</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="quantile">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.quantile">[docs]</a>
+<span class="k">class</span> <span class="nc">quantile</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the q-th quantile of the data along the time axis.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        q (int): Probability or sequence of probabilities for the quantiles to compute. Values must be between 0 and 1 inclusive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">quantile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">q</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+
+<div class="viewcode-block" id="quantile.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.quantile.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanquantile</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ratio_beyond_r_sigma">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma">[docs]</a>
+<span class="k">class</span> <span class="nc">ratio_beyond_r_sigma</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">        r (int, optional):   Defaults to 2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ratio_beyond_r_sigma</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">r</span>
+
+<div class="viewcode-block" id="ratio_beyond_r_sigma.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span>
+                <span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">array</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+                <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="skewness">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.skewness">[docs]</a>
+<span class="k">class</span> <span class="nc">skewness</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the sample skewness of X.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">        axis (int, optional): Axis along which to compute the kurtosis. Default is 0.</span>
+<span class="sd">        fisher (bool, optional): If True, Fisher&#39;s definition is used (normal=0).</span>
+<span class="sd">                                 If False, Pearson&#39;s definition is used (normal=3).</span>
+<span class="sd">                                 Default is False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">skewness</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="skewness.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.skewness.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="n">_mean</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_diff</span> <span class="o">=</span> <span class="n">array</span> <span class="o">-</span> <span class="n">_mean</span>
+        <span class="n">_mu3</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">_diff</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_mu2</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">_diff</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">_mu3</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">_mu2</span><span class="o">**</span><span class="mi">3</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="standard_deviation">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.standard_deviation">[docs]</a>
+<span class="k">class</span> <span class="nc">standard_deviation</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the standard deviation value of the time series.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">standard_deviation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="standard_deviation.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.standard_deviation.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="sum">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.sum">[docs]</a>
+<span class="k">class</span> <span class="nc">sum</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the sum of the time series values.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="nb">sum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="sum.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.sum.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="symmetry_looking">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.symmetry_looking">[docs]</a>
+<span class="k">class</span> <span class="nc">symmetry_looking</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Boolean variable denoting if the distribution of x *looks symmetric*.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        r: the percentage of the range to compare with (default: 0.1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">symmetry_looking</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">r</span>
+
+<div class="viewcode-block" id="symmetry_looking.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.symmetry_looking.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+            <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ts_complexity_cid_ce">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.ts_complexity_cid_ce">[docs]</a>
+<span class="k">class</span> <span class="nc">ts_complexity_cid_ce</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function calculator is an estimate for a time series complexity.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        normalize: should the time series be z-transformed? (default: True)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ts_complexity_cid_ce</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span> <span class="o">=</span> <span class="n">normalize</span>
+
+<div class="viewcode-block" id="ts_complexity_cid_ce.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">s</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">array</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="n">s</span><span class="p">,</span> <span class="n">array</span><span class="p">)</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">array</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dot_prod</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;tijk, tijk-&gt;jk&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">dot_prod</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ijk, ijk-&gt;jk&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dot_prod</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="unique_value_number_to_time_series_length">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length">[docs]</a>
+<span class="k">class</span> <span class="nc">unique_value_number_to_time_series_length</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SLOW</span>
+<span class="sd">    Returns a factor which is 1 if all values in the time series occur only once,</span>
+<span class="sd">    and below one if this is not the case.</span>
+<span class="sd">    In principle, it just returns</span>
+
+<span class="sd">        # of unique values / # of values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">unique_value_number_to_time_series_length</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;this is slow and needs more work&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="unique_value_number_to_time_series_length.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="c1"># Count the number of unique values along the time axis (axis=0)</span>
+        <span class="n">unique_counts</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">unique_counts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="variance">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.variance">[docs]</a>
+<span class="k">class</span> <span class="nc">variance</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the variance of the time series</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">variance</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="variance.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.variance.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanvar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="variance_larger_than_standard_deviation">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation">[docs]</a>
+<span class="k">class</span> <span class="nc">variance_larger_than_standard_deviation</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">TimeModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the variance of the time series is larger than the standard_deviation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gw (_type_): _description_</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">variance_larger_than_standard_deviation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="variance_larger_than_standard_deviation.calculate">
+<a class="viewcode-back" href="../../feature_calculators.html#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">nanvar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="n">function_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;abs_energy&quot;</span><span class="p">:</span> <span class="n">abs_energy</span><span class="p">,</span>
+    <span class="s2">&quot;absolute_sum_of_changes&quot;</span><span class="p">:</span> <span class="n">absolute_sum_of_changes</span><span class="p">,</span>
+    <span class="s2">&quot;autocorrelation&quot;</span><span class="p">:</span> <span class="n">autocorrelation</span><span class="p">,</span>
+    <span class="s2">&quot;count_above_mean&quot;</span><span class="p">:</span> <span class="n">count_above_mean</span><span class="p">,</span>
+    <span class="s2">&quot;count_below_mean&quot;</span><span class="p">:</span> <span class="n">count_below_mean</span><span class="p">,</span>
+    <span class="s2">&quot;doy_of_maximum&quot;</span><span class="p">:</span> <span class="n">doy_of_maximum</span><span class="p">,</span>
+    <span class="s2">&quot;doy_of_minimum&quot;</span><span class="p">:</span> <span class="n">doy_of_minimum</span><span class="p">,</span>
+    <span class="s2">&quot;kurtosis&quot;</span><span class="p">:</span> <span class="n">kurtosis</span><span class="p">,</span>
+    <span class="s2">&quot;kurtosis_excess&quot;</span><span class="p">:</span> <span class="n">kurtosis_excess</span><span class="p">,</span>
+    <span class="s2">&quot;large_standard_deviation&quot;</span><span class="p">:</span> <span class="n">large_standard_deviation</span><span class="p">,</span>
+    <span class="s2">&quot;longest_strike_above_mean&quot;</span><span class="p">:</span> <span class="n">longest_strike_above_mean</span><span class="p">,</span>
+    <span class="s2">&quot;longest_strike_below_mean&quot;</span><span class="p">:</span> <span class="n">longest_strike_below_mean</span><span class="p">,</span>
+    <span class="s2">&quot;maximum&quot;</span><span class="p">:</span> <span class="n">maximum</span><span class="p">,</span>
+    <span class="s2">&quot;minimum&quot;</span><span class="p">:</span> <span class="n">minimum</span><span class="p">,</span>
+    <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span>
+    <span class="s2">&quot;mean_abs_change&quot;</span><span class="p">:</span> <span class="n">mean_abs_change</span><span class="p">,</span>
+    <span class="s2">&quot;mean_change&quot;</span><span class="p">:</span> <span class="n">mean_change</span><span class="p">,</span>
+    <span class="s2">&quot;mean_second_derivative_central&quot;</span><span class="p">:</span> <span class="n">mean_second_derivative_central</span><span class="p">,</span>
+    <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="n">median</span><span class="p">,</span>
+    <span class="s2">&quot;ols_slope_intercept&quot;</span><span class="p">:</span> <span class="n">ols_slope_intercept</span><span class="p">,</span>
+    <span class="s2">&quot;quantile&quot;</span><span class="p">:</span> <span class="n">quantile</span><span class="p">,</span>
+    <span class="s2">&quot;ratio_beyond_r_sigma&quot;</span><span class="p">:</span> <span class="n">ratio_beyond_r_sigma</span><span class="p">,</span>
+    <span class="s2">&quot;skewness&quot;</span><span class="p">:</span> <span class="n">skewness</span><span class="p">,</span>
+    <span class="s2">&quot;standard_deviation&quot;</span><span class="p">:</span> <span class="n">standard_deviation</span><span class="p">,</span>
+    <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">,</span>
+    <span class="s2">&quot;symmetry_looking&quot;</span><span class="p">:</span> <span class="n">symmetry_looking</span><span class="p">,</span>
+    <span class="s2">&quot;ts_complexity_cid_ce&quot;</span><span class="p">:</span> <span class="n">ts_complexity_cid_ce</span><span class="p">,</span>
+    <span class="s2">&quot;unique_value_number_to_time_series_length&quot;</span><span class="p">:</span> <span class="n">unique_value_number_to_time_series_length</span><span class="p">,</span>
+    <span class="s2">&quot;variance&quot;</span><span class="p">:</span> <span class="n">variance</span><span class="p">,</span>
+    <span class="s2">&quot;variance_larger_than_standard_deviation&quot;</span><span class="p">:</span> <span class="n">variance_larger_than_standard_deviation</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Michael Mann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>
