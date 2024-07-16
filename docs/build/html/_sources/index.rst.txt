@@ -16,6 +16,7 @@ Indices and tables
 
 * :doc:`feature_calculators`
 * :doc:`extractors`
+* :doc:`interpolate_series`
 * :doc:`backends`
 * :doc:`utils`
 * :doc:`io`
@@ -28,6 +29,7 @@ Indices and tables
 
    feature_calculators
    extractors
+   interpolate_series
    backends
    utils
    io

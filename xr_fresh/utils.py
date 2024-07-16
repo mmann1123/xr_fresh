@@ -38,15 +38,10 @@ def unique(ls):
     return list(set(ls))
 
 
-def add_time_targets(
-    data,
-    target,
-    target_col_list=None,
-    target_name="target",
-    missing_value=-9999,
-    append_to_X=False,
-):
+def add_time_targets(data,target,target_col_list=None,target_name="target",missing_value=-9999,append_to_X=False,):
+    
     """
+    
     Adds multiple time periods of target data to existing xarray obj.
 
     Examples
@@ -155,10 +150,10 @@ def _assign_concat2band(data, label_grid):
     return data
 
 
-def add_categorical(
-    data, labels=None, col=None, variable_name=None, missing_value=-9999
-):
+def add_categorical(data, labels=None, col=None, variable_name=None, missing_value=-9999):
+    
     """
+
     Adds categorical data to xarray by column name.
 
     Examples

@@ -104,10 +104,10 @@ def WriteStackedArray(src: xr.DataArray, file_path="/tmp/test.parquet"):
         res.compute()
 
 
-def parquet_append(
-    file_list: list, out_path: str, filters: list,
-):
+def parquet_append(file_list: list, out_path: str, filters: list,):
+    
     """
+
     Read, filter and append large set of parquet files to a single file. Note: resulting file must be read with pd.read_parquet(engine='pyarrow')
 
     `See read_table docs <https://arrow.apache.org/docs/python/generated/pyarrow.parquet.read_table.html#pyarrow.parquet.read_table>`_
@@ -128,6 +128,7 @@ def parquet_append(
     ...
 
     """
+    
     pqwriter = None
     for i, df in enumerate(file_list):
         table = pq.read_table(df, filters=filters, use_pandas_metadata=True,)

@@ -61,7 +61,7 @@ html_theme = "sphinx_rtd_theme"  #'alabaster'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -84,7 +84,7 @@ html_theme_options = {
     'canonical_url': '',
     'analytics_id': 'UA-XXXXXXX-1',  #  Provided by Google in your dashboard
     'logo_only': False,
-    'logo': 'logo.png',
+    #'logo': 'logo.png',
     'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
@@ -96,6 +96,8 @@ html_theme_options = {
     'navigation_depth': 4,
     'includehidden': True,
     'titles_only': False,
-    'github_button': True
+    #'github_button': True
 }
 
+
+autosummary_generate = True
