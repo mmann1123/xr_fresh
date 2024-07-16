@@ -66,8 +66,14 @@ class abs_energy(gw.TimeModule):
     """
     Returns the absolute energy of the time series which is the sum over the squared values
 
-    Args:
-        gw (_type_): _description_
+    .. math::
+
+        E = \\sum_{i=1,\\ldots, n} x_i^2
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -81,8 +87,14 @@ class absolute_sum_of_changes(gw.TimeModule):
     """
     Returns the sum over the absolute value of consecutive changes in the series x
 
-    Args:
-        gw (_type_): _description_
+    .. math::
+
+        \\sum_{i=1, \\ldots, n-1} \\mid x_{i+1}- x_i \\mid
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -93,11 +105,26 @@ class absolute_sum_of_changes(gw.TimeModule):
 
 
 class autocorrelation(gw.TimeModule):
-    """Returns the autocorrelation of the time series data at a specified lag
+    """
+    Calculates the autocorrelation of the specified lag, according to the formula [1]
 
-    Args:
-        gw (_type_): _description_
-        lag (int): lag at which to calculate the autocorrelation (default: {1})
+    .. math::
+
+        \\frac{1}{(n-l)\\sigma^{2}} \\sum_{t=1}^{n-l}(X_{t}-\\mu )(X_{t+l}-\\mu)
+
+    where :math:`n` is the length of the time series :math:`X_i`, :math:`\\sigma^2` its variance and :math:`\\mu` its
+    mean. `l` denotes the lag.
+
+    .. rubric:: References
+
+    [1] https://en.wikipedia.org/wiki/Autocorrelation#Estimation
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :param lag: the lag
+    :type lag: int
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self, lag=1):
@@ -115,12 +142,15 @@ class autocorrelation(gw.TimeModule):
 
 
 class count_above_mean(gw.TimeModule):
-    """Returns the number of values in X that are higher than the mean of X
-
-    Args:
-        gw (_type_): _description_
-        mean (int): An integer to use as the "mean" value of the raster
     """
+    Returns the number of values in x that are higher than the mean of x
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
+    """
+
 
     def __init__(self, mean=None):
         super(count_above_mean, self).__init__()
@@ -134,12 +164,15 @@ class count_above_mean(gw.TimeModule):
 
 
 class count_below_mean(gw.TimeModule):
-    """Returns the number of values in X that are lower than the mean of X
-
-    Args:
-        gw (_type_): _description_
-        mean (int): An integer to use as the "mean" value of the raster
     """
+    Returns the number of values in x that are lower than the mean of x
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
+    """
+
 
     def __init__(self, mean=None):
         super(count_below_mean, self).__init__()
@@ -198,12 +231,13 @@ class doy_of_minimum(gw.TimeModule):
 
 class kurtosis(gw.TimeModule):
     """
-    Compute the sample kurtosis of a given array along the time axis.
+    Returns the kurtosis of x (calculated with the adjusted Fisher-Pearson standardized
+    moment coefficient G2).
 
-    Args:
-        array (GeoWombat series object): An object that contains geospatial and temporal metadata.
-        fisher (bool, optional): If True, Fisher’s definition is used (normal ==> 0.0).
-                                 If False, Pearson’s definition is used (normal ==> 3.0).
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self, fisher=True):
@@ -222,8 +256,15 @@ class kurtosis(gw.TimeModule):
 class kurtosis_excess(gw.TimeModule):
     """
     Returns the excess kurtosis of X (calculated with the adjusted Fisher-Pearson standardized moment coefficient G2).
+    Calculates the kurtosis as the fourth standardized moment.
+    Ref: https://en.wikipedia.org/wiki/Kurtosis#Pearson_moments
+
     Args:
         gw (_type_): _description_
+        :param y: the discrete distribution from which one wants to calculate the kurtosis
+        :type y: pandas.Series or np.array
+        :return: the kurtosis of distribution y
+        :return type: float
     """
 
     def __init__(self, Fisher=True):
@@ -241,10 +282,23 @@ class kurtosis_excess(gw.TimeModule):
 
 class large_standard_deviation(gw.TimeModule):
     """
-    Boolean variable denoting if the standard dev of x is higher than 'r' times the range.
+    Does time series have *large* standard deviation?
 
-    Args:
-        r (float, optional): The percentage of the range to compare with. Default is 2.0.
+    Boolean variable denoting if the standard dev of x is higher than 'r' times the range = difference between max and
+    min of x. Hence it checks if
+
+    .. math::
+
+        std(x) > r * (max(X)-min(X))
+
+    According to a rule of the thumb, the standard deviation should be a forth of the range of the values.
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :param r: the percentage of the range to compare with
+    :type r: float
+    :return: the value of this feature
+    :return type: bool
     """
 
     def __init__(self, r=2):
@@ -285,9 +339,13 @@ except ImportWarning:
 
 class longest_strike_above_mean(gw.TimeModule):
     """
-    Returns the length of the longest consecutive subsequence in X that is larger than the mean of X
-    """
+    Returns the length of the longest consecutive subsequence in x that is bigger than the mean of x
 
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
+    """
     def __init__(self, mean=None):
         super(longest_strike_above_mean, self).__init__()
         self.mean = mean
@@ -313,7 +371,12 @@ class longest_strike_above_mean(gw.TimeModule):
 
 class longest_strike_below_mean(gw.TimeModule):
     """
-    Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X
+    Returns the length of the longest consecutive subsequence in x that is smaller than the mean of x
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self, mean=None):
@@ -342,7 +405,12 @@ class longest_strike_below_mean(gw.TimeModule):
 
 class maximum(gw.TimeModule):
     """
-    Calculate the highest value of the time series.
+    Calculates the highest value of the time series x.
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -354,7 +422,12 @@ class maximum(gw.TimeModule):
 
 class minimum(gw.TimeModule):
     """
-    Calculate the lowest value of the time series.
+    Calculates the lowest value of the time series x.
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -366,7 +439,12 @@ class minimum(gw.TimeModule):
 
 class mean(gw.TimeModule):
     """
-    Calculate the mean value of the time series.
+    Returns the mean of x
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -378,7 +456,19 @@ class mean(gw.TimeModule):
 
 class mean_abs_change(gw.TimeModule):
     """
-    Calculate the mean over the absolute differences between subsequent time series values.
+    Average over first differences.
+
+    Returns the mean over the absolute differences between subsequent time series values which is
+
+    .. math::
+
+        \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1} | x_{i+1} - x_{i}|
+
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -391,7 +481,18 @@ class mean_abs_change(gw.TimeModule):
 
 class mean_change(gw.TimeModule):
     """
-    Calculate the mean over the differences between subsequent time series values.
+    Average over time series differences.
+
+    Returns the mean over the differences between subsequent time series values which is
+
+    .. math::
+
+        \\frac{1}{n-1} \\sum_{i=1,\\ldots, n-1}  x_{i+1} - x_{i} = \\frac{1}{n-1} (x_{n} - x_{1})
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -404,7 +505,16 @@ class mean_change(gw.TimeModule):
 
 class mean_second_derivative_central(gw.TimeModule):
     """
-    Returns the mean over the differences between subsequent time series values.
+    Returns the mean value of a central approximation of the second derivative
+
+    .. math::
+
+        \\frac{1}{2(n-2)} \\sum_{i=1,\\ldots, n-1}  \\frac{1}{2} (x_{i+2} - 2 \\cdot x_{i+1} + x_i)
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -423,7 +533,12 @@ class mean_second_derivative_central(gw.TimeModule):
 
 class median(gw.TimeModule):
     """
-    Calculate the median value of the time series.
+    Returns the median of x
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -486,10 +601,14 @@ class ols_slope_intercept(gw.TimeModule):
 
 class quantile(gw.TimeModule):
     """
-    Compute the q-th quantile of the data along the time axis.
+    Calculates the q quantile of x. This is the value of x greater than q% of the ordered values from x.
 
-    Args:
-        q (int): Probability or sequence of probabilities for the quantiles to compute. Values must be between 0 and 1 inclusive.
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :param q: the quantile to calculate
+    :type q: float
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self, q=None, method="linear"):
@@ -503,11 +622,14 @@ class quantile(gw.TimeModule):
 
 class ratio_beyond_r_sigma(gw.TimeModule):
     """
-    Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.
+    Ratio of values that are more than r * std(x) (so r times sigma) away from the mean of x.
 
-    Args:
-        gw (_type_): _description_
-        r (int, optional):   Defaults to 2.
+    :param x: the time series to calculate the feature of
+    :type x: iterable
+    :param r: the ratio to compare with
+    :type r: float
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self, r=2):
@@ -528,14 +650,13 @@ class ratio_beyond_r_sigma(gw.TimeModule):
 
 class skewness(gw.TimeModule):
     """
-    Returns the sample skewness of X.
+    Returns the sample skewness of x (calculated with the adjusted Fisher-Pearson standardized
+    moment coefficient G1).
 
-    Args:
-        gw (_type_): _description_
-        axis (int, optional): Axis along which to compute the kurtosis. Default is 0.
-        fisher (bool, optional): If True, Fisher's definition is used (normal=0).
-                                 If False, Pearson's definition is used (normal=3).
-                                 Default is False.
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -551,10 +672,15 @@ class skewness(gw.TimeModule):
 
 
 class standard_deviation(gw.TimeModule):
-    """Calculate the standard deviation value of the time series.
-    Args:
-        gw (_type_): _description_
     """
+    Returns the standard deviation of x
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
+    """
+
 
     def __init__(self):
         super(standard_deviation, self).__init__()
@@ -564,7 +690,15 @@ class standard_deviation(gw.TimeModule):
 
 
 class sum(gw.TimeModule):
-    """Calculate the sum of the time series values."""
+    """
+    Calculates the sum over the time series values
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
+    """
+
 
     def __init__(self):
         super(sum, self).__init__()
@@ -575,10 +709,18 @@ class sum(gw.TimeModule):
 
 class symmetry_looking(gw.TimeModule):
     """
-    Boolean variable denoting if the distribution of x *looks symmetric*.
+    Boolean variable denoting if the distribution of x *looks symmetric*. This is the case if
 
-    Args:
-        r: the percentage of the range to compare with (default: 0.1)
+    .. math::
+
+        | mean(X)-median(X)| < r * (max(X)-min(X))
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :param param: contains dictionaries {"r": x} with x (float) is the percentage of the range to compare with
+    :type param: list
+    :return: the value of this feature
+    :return type: List[Tuple[str, bool]]
     """
 
     def __init__(self, r=0.1):
@@ -595,10 +737,26 @@ class symmetry_looking(gw.TimeModule):
 
 class ts_complexity_cid_ce(gw.TimeModule):
     """
-    This function calculator is an estimate for a time series complexity.
+    This function calculator is an estimate for a time series complexity [1] (A more complex time series has more peaks,
+    valleys etc.). It calculates the value of
 
-    Args:
-        normalize: should the time series be z-transformed? (default: True)
+    .. math::
+
+        \\sqrt{ \\sum_{i=1}^{n-1} ( x_{i} - x_{i-1})^2 }
+
+    .. rubric:: References
+
+    |  [1] Batista, Gustavo EAPA, et al (2014).
+    |  CID: an efficient complexity-invariant distance for time series.
+    |  Data Mining and Knowledge Discovery 28.3 (2014): 634-669.
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :param normalize: should the time series be z-transformed?
+    :type normalize: bool
+
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self, normalize=True):
@@ -624,7 +782,12 @@ class unique_value_number_to_time_series_length(gw.TimeModule):
     and below one if this is not the case.
     In principle, it just returns
 
-        # of unique values / # of values
+        # unique values / # values
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -639,12 +802,13 @@ class unique_value_number_to_time_series_length(gw.TimeModule):
 
 
 class variance(gw.TimeModule):
-    """Calculate the variance of the time series
+    """
+    Returns the variance of x
 
-    Args:
-        gw (_type_): _description_
-    Returns:
-        bool:
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: float
     """
 
     def __init__(self):
@@ -655,12 +819,16 @@ class variance(gw.TimeModule):
 
 
 class variance_larger_than_standard_deviation(gw.TimeModule):
-    """Calculate the variance of the time series is larger than the standard_deviation.
+    """
+    Is variance higher than the standard deviation?
 
-    Args:
-        gw (_type_): _description_
-    Returns:
-        bool:
+    Boolean variable denoting if the variance of x is greater than its standard deviation. Is equal to variance of x
+    being larger than 1
+
+    :param x: the time series to calculate the feature of
+    :type x: numpy.ndarray
+    :return: the value of this feature
+    :return type: bool
     """
 
     def __init__(self):
