@@ -41,7 +41,6 @@ function_mapping = {
     "variance": variance,
     "variance_larger_than_standard_deviation": variance_larger_than_standard_deviation,
 }
-from xr_fresh.extractors_series import extract_features_series
 
 # class extractors_series(gw.TimeModule):
     

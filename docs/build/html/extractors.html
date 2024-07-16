@@ -1,94 +1,60 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Extractor Function &mdash; xr_fresh 0.0.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-
-  
-  
-  
-  
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7026087e"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Utilities to work with Dask" href="backends.html" />
     <link rel="prev" title="Feature Generators" href="feature_calculators.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: white" >
-          
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> xr_fresh
           
-
-          
+          <a href="index.html" class="icon icon-home">
+            xr_fresh
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Modules</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="feature_calculators.html">Feature Generators</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Extractor Function</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.extractors">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.extractors_series">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.extractors_series.extract_features_series"><code class="docutils literal notranslate"><span class="pre">extract_features_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.extractors_series.extract_grid"><code class="docutils literal notranslate"><span class="pre">extract_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.extractors_series.extract_key_value_names"><code class="docutils literal notranslate"><span class="pre">extract_key_value_names()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
@@ -96,186 +62,133 @@
 <li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">xr_fresh</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li>Extractor Function</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Extractor Function</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="_sources/extractors.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="extractor-function">
-<span id="extractors"></span><h1>Extractor Function<a class="headerlink" href="#extractor-function" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="extractor-function">
+<span id="extractors"></span><h1>Extractor Function<a class="headerlink" href="#extractor-function" title="Link to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<div class="section" id="module-xr_fresh.extractors">
-<span id="functions"></span><h2>Functions<a class="headerlink" href="#module-xr_fresh.extractors" title="Permalink to this headline">¶</a></h2>
+<section id="module-xr_fresh.extractors_series">
+<span id="functions"></span><h2>Functions<a class="headerlink" href="#module-xr_fresh.extractors_series" title="Link to this heading"></a></h2>
 <dl class="py function">
-<dt id="xr_fresh.extractors.extract_features">
-<code class="sig-prename descclassname">xr_fresh.extractors.</code><code class="sig-name descname">extract_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xr_data</span></em>, <em class="sig-param"><span class="n">feature_dict</span></em>, <em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">na_rm</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">filepath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">postfix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">'variable'</span></em>, <em class="sig-param"><span class="n">persist</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors.html#extract_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xr_fresh.extractors.extract_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract features from</p>
-<ul class="simple">
-<li><p>a <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> containing a time series of rasters</p></li>
-</ul>
-<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> with the calculated features will be returned a ‘variable’.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">f_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;maximum&#39;</span><span class="p">:[{}]</span> <span class="p">,</span>
-<span class="go">               &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;},{&#39;q&#39;:&#39;0.95&#39;}]}</span>
-<span class="gp">&gt;&gt;&gt; </span> <span class="n">f_dict2</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;maximum&#39;</span><span class="p">:[{}]</span> <span class="p">,</span>
-<span class="go">               &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;, &#39;start_month&#39;:1, &#39;end_month&#39;:6}]}</span>
-<span class="gp">&gt;&gt;&gt; </span> <span class="n">features</span> <span class="o">=</span> <span class="n">extract_features</span><span class="p">(</span><span class="n">xr_data</span><span class="o">=</span><span class="n">ds</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                    <span class="n">feature_dict</span><span class="o">=</span><span class="n">f_dict</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                    <span class="n">band</span><span class="o">=</span><span class="s1">&#39;aet&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                    <span class="n">na_rm</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
+<dt class="sig sig-object py" id="xr_fresh.extractors_series.extract_features_series">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.extractors_series.</span></span><span class="sig-name descname"><span class="pre">extract_features_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gw_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors_series.html#extract_features_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.extractors_series.extract_features_series" title="Link to this definition"></a></dt>
+<dd><p>Extracts features from a geospatial time series and saves them as TIFF files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xr_data</strong> (<em>xarray.DataArray</em>) – The xarray.DataArray with a time series of rasters to compute the features for.</p></li>
-<li><p><strong>feature_dict</strong> (<em>dict</em>) – mapping from feature calculator names to parameters. Only those names
-which are keys in this dict will be calculated. See examples above.</p></li>
-<li><p><strong>band</strong> (<em>str</em>) – The name of the variable to create feature for.</p></li>
-<li><p><strong>na_rm</strong> (<em>bool</em>) – If True (default), all missing values are masked using .attrs[‘nodatavals’]</p></li>
-<li><p><strong>filepath</strong> (<em>str</em>) – If not none, assuming xarrays being used, writes each feature to filepath</p></li>
-<li><p><strong>postfix</strong> (<em>str</em>) – If filepath not none, appends postfix to the end of the feature name</p></li>
-<li><p><strong>dim</strong> (<em>str</em>) – The name of the dimension used to collect outputed features</p></li>
-<li><p><strong>persist</strong> (<em>bool</em>) – (optional) If xr_data can easily fit in memory, set to True, if not keep False</p></li>
+<li><p><strong>gw_series</strong> (<em>geowombat.Dataset</em>) – Geospatial time series dataset.</p></li>
+<li><p><strong>feature_dict</strong> (<em>dict</em>) – Dictionary containing feature names and parameters.</p></li>
+<li><p><strong>band_name</strong> (<em>str</em>) – Name of the band.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Directory to save the output TIFF files.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The DataArray containing extracted features in <cite>dim</cite>.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>xarray.DataArray</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
-</div>
-</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.extractors_series.extract_grid">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.extractors_series.</span></span><span class="sig-name descname"><span class="pre">extract_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors_series.html#extract_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.extractors_series.extract_grid" title="Link to this definition"></a></dt>
+<dd><p>Extracts grid value from the band_name using regular expressions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>band_name</strong> (<em>str</em>) – Name of the band.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Extracted grid value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>grid (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.extractors_series.extract_key_value_names">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.extractors_series.</span></span><span class="sig-name descname"><span class="pre">extract_key_value_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors_series.html#extract_key_value_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.extractors_series.extract_key_value_names" title="Link to this definition"></a></dt>
+<dd><p>Extracts key_names and value_names from the band_name using regular expressions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>band_name</strong> (<em>str</em>) – Name of the band.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Extracted key names.
+value_names (str): Extracted value names.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>key_names (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="backends.html" class="btn btn-neutral float-right" title="Utilities to work with Dask" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="feature_calculators.html" class="btn btn-neutral float-left" title="Feature Generators" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="feature_calculators.html" class="btn btn-neutral float-left" title="Feature Generators" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="backends.html" class="btn btn-neutral float-right" title="Utilities to work with Dask" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        
-        &copy; Copyright 2020, Michael Mann
-
-    </p>
+    <p>&#169; Copyright 2020, Michael Mann.</p>
   </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
     <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
     <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    ga('create', 'UA-XXXXXXX-1', 'auto');
-    ga('send', 'pageview');
-    </script>
-
-    
-   
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
 
 </body>
 </html>
