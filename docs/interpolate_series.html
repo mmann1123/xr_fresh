@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interpolate Series Module &mdash; xr_fresh 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7026087e"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utilities to work with Dask" href="backends.html" />
+    <link rel="prev" title="Extractor Function" href="extractors.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xr_fresh
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="feature_calculators.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extractors.html">Extractor Function</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Interpolate Series Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.interpolate_series">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.interpolate_series.interpolate_nan"><code class="docutils literal notranslate"><span class="pre">interpolate_nan</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.interpolate_series.interpolate_nan.calculate"><code class="docutils literal notranslate"><span class="pre">interpolate_nan.calculate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">interpolate_nan.calculate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Other Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xr_fresh</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Interpolate Series Module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/interpolate_series.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="interpolate-series-module">
+<span id="interpolate-series"></span><h1>Interpolate Series Module<a class="headerlink" href="#interpolate-series-module" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="module-xr_fresh.interpolate_series">
+<span id="functions"></span><h2>Functions<a class="headerlink" href="#module-xr_fresh.interpolate_series" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.interpolate_series.interpolate_nan">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.interpolate_series.</span></span><span class="sig-name descname"><span class="pre">interpolate_nan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/interpolate_series.html#interpolate_nan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.interpolate_series.interpolate_nan" title="Link to this definition"></a></dt>
+<dd><p>Interpolate missing values in a geospatial time series. Without dates set this class assumes a
+regular time interval between observations. With dates set this class can handle irregular time,
+based on the DOY as an index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>missing_value</strong> (<em>int</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – The value to be replaced by NaNs. Default is None.</p></li>
+<li><p><strong>interp_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of interpolation algorithm to use. Options include “linear”,
+“nearest”, “zero”, “slinear”, “quadratic”, “cubic”, “previous”, “next”,
+“cubicspline”, “spline”, and “UnivariateSpline”. Default is “linear”.</p></li>
+<li><p><strong>dates</strong> (<em>list</em><em>[</em><em>datetime</em><em>]</em>) – List of datetime objects corresponding to each time slice.</p></li>
+<li><p><strong>count</strong> (<em>int</em><em>, </em><em>optional</em>) – Overrides the default output band count. Default is 1.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.interpolate_series.interpolate_nan.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/interpolate_series.html#interpolate_nan.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.interpolate_series.interpolate_nan.calculate" title="Link to this definition"></a></dt>
+<dd><p>Applies the interpolation on the input array.</p>
+</dd></dl>
+
+<p>Example Usage:</p>
+<blockquote>
+<div><p>pth = “/home/mmann1123/Dropbox/Africa_data/Temperature/”
+files = sorted(glob(f”{pth}*.tif”))[0:10]
+strp_glob = f”{pth}RadT_tavg_%Y%m.tif”
+dates = sorted(datetime.strptime(string, strp_glob) for string in files)
+date_strings = [date.strftime(“%Y-%m-%d”) for date in dates]</p>
+<p># window size controls RAM usage, transfer lab can be jax if using GPU
+with gw.series(files, window_size=[640,640],transfer_lib=”numpy”) as src:</p>
+<blockquote>
+<div><dl>
+<dt>src.apply(</dt><dd><dl class="simple">
+<dt>func=interpolate_nan(</dt><dd><p>missing_value=0,
+count=len(src.filenames),</p>
+</dd>
+</dl>
+<p>),
+outfile=”/home/mmann1123/Downloads/test.tif”,
+num_workers=min(12,src.nchunks),
+bands=1,</p>
+</dd>
+</dl>
+<p>)</p>
+</div></blockquote>
+</div></blockquote>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id0" title="xr_fresh.interpolate_series.interpolate_nan.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/interpolate_series.html#interpolate_nan.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="extractors.html" class="btn btn-neutral float-left" title="Extractor Function" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="backends.html" class="btn btn-neutral float-right" title="Utilities to work with Dask" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Michael Mann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

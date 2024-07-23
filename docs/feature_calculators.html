@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feature Generators &mdash; xr_fresh 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7026087e"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Extractor Function" href="extractors.html" />
+    <link rel="prev" title="The xr_fresh Docs!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xr_fresh
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Feature Generators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.feature_calculator_series">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.abs_energy"><code class="docutils literal notranslate"><span class="pre">abs_energy</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.abs_energy.calculate"><code class="docutils literal notranslate"><span class="pre">abs_energy.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.absolute_sum_of_changes"><code class="docutils literal notranslate"><span class="pre">absolute_sum_of_changes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate"><code class="docutils literal notranslate"><span class="pre">absolute_sum_of_changes.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.autocorrelation"><code class="docutils literal notranslate"><span class="pre">autocorrelation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.autocorrelation.calculate"><code class="docutils literal notranslate"><span class="pre">autocorrelation.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_above_mean"><code class="docutils literal notranslate"><span class="pre">count_above_mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_above_mean.calculate"><code class="docutils literal notranslate"><span class="pre">count_above_mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_below_mean"><code class="docutils literal notranslate"><span class="pre">count_below_mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_below_mean.calculate"><code class="docutils literal notranslate"><span class="pre">count_below_mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_maximum"><code class="docutils literal notranslate"><span class="pre">doy_of_maximum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_maximum.calculate"><code class="docutils literal notranslate"><span class="pre">doy_of_maximum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_minimum"><code class="docutils literal notranslate"><span class="pre">doy_of_minimum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_minimum.calculate"><code class="docutils literal notranslate"><span class="pre">doy_of_minimum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis"><code class="docutils literal notranslate"><span class="pre">kurtosis</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis.calculate"><code class="docutils literal notranslate"><span class="pre">kurtosis.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis_excess"><code class="docutils literal notranslate"><span class="pre">kurtosis_excess</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis_excess.calculate"><code class="docutils literal notranslate"><span class="pre">kurtosis_excess.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.large_standard_deviation"><code class="docutils literal notranslate"><span class="pre">large_standard_deviation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.large_standard_deviation.calculate"><code class="docutils literal notranslate"><span class="pre">large_standard_deviation.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_above_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_above_mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate"><code class="docutils literal notranslate"><span class="pre">longest_strike_above_mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_below_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_below_mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate"><code class="docutils literal notranslate"><span class="pre">longest_strike_below_mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.maximum"><code class="docutils literal notranslate"><span class="pre">maximum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.maximum.calculate"><code class="docutils literal notranslate"><span class="pre">maximum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean"><code class="docutils literal notranslate"><span class="pre">mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean.calculate"><code class="docutils literal notranslate"><span class="pre">mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_abs_change"><code class="docutils literal notranslate"><span class="pre">mean_abs_change</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_abs_change.calculate"><code class="docutils literal notranslate"><span class="pre">mean_abs_change.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_change"><code class="docutils literal notranslate"><span class="pre">mean_change</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_change.calculate"><code class="docutils literal notranslate"><span class="pre">mean_change.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_second_derivative_central"><code class="docutils literal notranslate"><span class="pre">mean_second_derivative_central</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate"><code class="docutils literal notranslate"><span class="pre">mean_second_derivative_central.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.median"><code class="docutils literal notranslate"><span class="pre">median</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.median.calculate"><code class="docutils literal notranslate"><span class="pre">median.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.minimum"><code class="docutils literal notranslate"><span class="pre">minimum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.minimum.calculate"><code class="docutils literal notranslate"><span class="pre">minimum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ols_slope_intercept"><code class="docutils literal notranslate"><span class="pre">ols_slope_intercept</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ols_slope_intercept.calculate"><code class="docutils literal notranslate"><span class="pre">ols_slope_intercept.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.quantile"><code class="docutils literal notranslate"><span class="pre">quantile</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.quantile.calculate"><code class="docutils literal notranslate"><span class="pre">quantile.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma"><code class="docutils literal notranslate"><span class="pre">ratio_beyond_r_sigma</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate"><code class="docutils literal notranslate"><span class="pre">ratio_beyond_r_sigma.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.skewness"><code class="docutils literal notranslate"><span class="pre">skewness</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.skewness.calculate"><code class="docutils literal notranslate"><span class="pre">skewness.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.standard_deviation"><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.standard_deviation.calculate"><code class="docutils literal notranslate"><span class="pre">standard_deviation.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.sum"><code class="docutils literal notranslate"><span class="pre">sum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.sum.calculate"><code class="docutils literal notranslate"><span class="pre">sum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.symmetry_looking"><code class="docutils literal notranslate"><span class="pre">symmetry_looking</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.symmetry_looking.calculate"><code class="docutils literal notranslate"><span class="pre">symmetry_looking.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ts_complexity_cid_ce"><code class="docutils literal notranslate"><span class="pre">ts_complexity_cid_ce</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate"><code class="docutils literal notranslate"><span class="pre">ts_complexity_cid_ce.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length"><code class="docutils literal notranslate"><span class="pre">unique_value_number_to_time_series_length</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate"><code class="docutils literal notranslate"><span class="pre">unique_value_number_to_time_series_length.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance"><code class="docutils literal notranslate"><span class="pre">variance</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance.calculate"><code class="docutils literal notranslate"><span class="pre">variance.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation"><code class="docutils literal notranslate"><span class="pre">variance_larger_than_standard_deviation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate"><code class="docutils literal notranslate"><span class="pre">variance_larger_than_standard_deviation.calculate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extractors.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpolate_series.html">Interpolate Series Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Other Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xr_fresh</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Feature Generators</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/feature_calculators.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="feature-generators">
+<span id="feature-calculators"></span><h1>Feature Generators<a class="headerlink" href="#feature-generators" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="module-xr_fresh.feature_calculator_series">
+<span id="functions"></span><h2>Functions<a class="headerlink" href="#module-xr_fresh.feature_calculator_series" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.abs_energy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">abs_energy</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#abs_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.abs_energy" title="Link to this definition"></a></dt>
+<dd><p>Returns the absolute energy of the time series which is the sum over the squared values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gw</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.abs_energy.calculate" title="xr_fresh.feature_calculator_series.abs_energy.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.abs_energy.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#abs_energy.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.abs_energy.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.absolute_sum_of_changes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">absolute_sum_of_changes</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#absolute_sum_of_changes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.absolute_sum_of_changes" title="Link to this definition"></a></dt>
+<dd><p>Returns the sum over the absolute value of consecutive changes in the series x</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gw</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate" title="xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#absolute_sum_of_changes.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.autocorrelation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">autocorrelation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#autocorrelation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.autocorrelation" title="Link to this definition"></a></dt>
+<dd><p>Returns the autocorrelation of the time series data at a specified lag</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gw</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>lag</strong> (<em>int</em>) – lag at which to calculate the autocorrelation (default: {1})</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.autocorrelation.calculate" title="xr_fresh.feature_calculator_series.autocorrelation.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.autocorrelation.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#autocorrelation.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.autocorrelation.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.count_above_mean">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">count_above_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#count_above_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.count_above_mean" title="Link to this definition"></a></dt>
+<dd><p>Returns the number of values in X that are higher than the mean of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gw</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>mean</strong> (<em>int</em>) – An integer to use as the “mean” value of the raster</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_above_mean.calculate" title="xr_fresh.feature_calculator_series.count_above_mean.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.count_above_mean.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#count_above_mean.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.count_above_mean.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.count_below_mean">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">count_below_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#count_below_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.count_below_mean" title="Link to this definition"></a></dt>
+<dd><p>Returns the number of values in X that are lower than the mean of X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gw</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>mean</strong> (<em>int</em>) – An integer to use as the “mean” value of the raster</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_below_mean.calculate" title="xr_fresh.feature_calculator_series.count_below_mean.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.count_below_mean.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#count_below_mean.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.count_below_mean.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.doy_of_maximum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">doy_of_maximum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#doy_of_maximum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.doy_of_maximum" title="Link to this definition"></a></dt>
+<dd><p>Returns the day of the year (doy) location of the maximum value of the series - treats all years as the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gw</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>dates</strong> (<em>np.array</em>) – An array holding the dates of the time series as integers or as datetime objects.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_maximum.calculate" title="xr_fresh.feature_calculator_series.doy_of_maximum.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.doy_of_maximum.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#doy_of_maximum.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.doy_of_maximum.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.doy_of_minimum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">doy_of_minimum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#doy_of_minimum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.doy_of_minimum" title="Link to this definition"></a></dt>
+<dd><p>Returns the day of the year (doy) location of the minimum value of the series - treats all years as the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gw</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>dates</strong> (<em>np.array</em>) – An array holding the dates of the time series as integers or as datetime objects.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_minimum.calculate" title="xr_fresh.feature_calculator_series.doy_of_minimum.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.doy_of_minimum.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#doy_of_minimum.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.doy_of_minimum.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.kurtosis">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">kurtosis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fisher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#kurtosis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.kurtosis" title="Link to this definition"></a></dt>
+<dd><p>Compute the sample kurtosis of a given array along the time axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<em>GeoWombat series object</em>) – An object that contains geospatial and temporal metadata.</p></li>
+<li><p><strong>fisher</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, Fisher’s definition is used (normal ==&gt; 0.0).
+If False, Pearson’s definition is used (normal ==&gt; 3.0).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis.calculate" title="xr_fresh.feature_calculator_series.kurtosis.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.kurtosis.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#kurtosis.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.kurtosis.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.kurtosis_excess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">kurtosis_excess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Fisher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#kurtosis_excess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.kurtosis_excess" title="Link to this definition"></a></dt>
+<dd><p>Returns the excess kurtosis of X (calculated with the adjusted Fisher-Pearson standardized moment coefficient G2).
+:param gw: _description_
+:type gw: _type_</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis_excess.calculate" title="xr_fresh.feature_calculator_series.kurtosis_excess.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.kurtosis_excess.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#kurtosis_excess.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.kurtosis_excess.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.large_standard_deviation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">large_standard_deviation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#large_standard_deviation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.large_standard_deviation" title="Link to this definition"></a></dt>
+<dd><p>Boolean variable denoting if the standard dev of x is higher than ‘r’ times the range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>r</strong> (<em>float</em><em>, </em><em>optional</em>) – The percentage of the range to compare with. Default is 2.0.</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.large_standard_deviation.calculate" title="xr_fresh.feature_calculator_series.large_standard_deviation.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.large_standard_deviation.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#large_standard_deviation.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.large_standard_deviation.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.longest_strike_above_mean">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">longest_strike_above_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#longest_strike_above_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.longest_strike_above_mean" title="Link to this definition"></a></dt>
+<dd><p>Returns the length of the longest consecutive subsequence in X that is larger than the mean of X</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate" title="xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#longest_strike_above_mean.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.longest_strike_below_mean">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">longest_strike_below_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#longest_strike_below_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.longest_strike_below_mean" title="Link to this definition"></a></dt>
+<dd><p>Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate" title="xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#longest_strike_below_mean.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.maximum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">maximum</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#maximum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.maximum" title="Link to this definition"></a></dt>
+<dd><p>Calculate the highest value of the time series.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.maximum.calculate" title="xr_fresh.feature_calculator_series.maximum.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(x)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.maximum.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#maximum.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.maximum.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.mean">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">mean</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.mean" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mean value of the time series.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean.calculate" title="xr_fresh.feature_calculator_series.mean.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(x)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.mean.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#mean.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.mean.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.mean_abs_change">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">mean_abs_change</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#mean_abs_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.mean_abs_change" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mean over the absolute differences between subsequent time series values.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_abs_change.calculate" title="xr_fresh.feature_calculator_series.mean_abs_change.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(x)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.mean_abs_change.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#mean_abs_change.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.mean_abs_change.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.mean_change">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">mean_change</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#mean_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.mean_change" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mean over the differences between subsequent time series values.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_change.calculate" title="xr_fresh.feature_calculator_series.mean_change.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.mean_change.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#mean_change.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.mean_change.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.mean_second_derivative_central">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">mean_second_derivative_central</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#mean_second_derivative_central"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.mean_second_derivative_central" title="Link to this definition"></a></dt>
+<dd><p>Returns the mean over the differences between subsequent time series values.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate" title="xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#mean_second_derivative_central.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.median">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">median</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#median"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.median" title="Link to this definition"></a></dt>
+<dd><p>Calculate the median value of the time series.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.median.calculate" title="xr_fresh.feature_calculator_series.median.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(x)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.median.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#median.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.median.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.minimum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">minimum</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#minimum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.minimum" title="Link to this definition"></a></dt>
+<dd><p>Calculate the lowest value of the time series.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.minimum.calculate" title="xr_fresh.feature_calculator_series.minimum.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(x)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.minimum.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#minimum.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.minimum.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.ols_slope_intercept">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">ols_slope_intercept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">returns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'slope'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#ols_slope_intercept"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.ols_slope_intercept" title="Link to this definition"></a></dt>
+<dd><p>Calculate the slope, intercept, and R2 of the time series using ordinary least squares.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gw</strong> (<em>array</em>) – the time series data</p></li>
+<li><p><strong>returns</strong> (<em>str</em><em>, </em><em>optional</em>) – What to return, “slope”, “intercept” or “rsquared”. Defaults to “slope”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return desired time series property array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.ols_slope_intercept.calculate" title="xr_fresh.feature_calculator_series.ols_slope_intercept.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.ols_slope_intercept.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#ols_slope_intercept.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.ols_slope_intercept.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.quantile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">quantile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#quantile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.quantile" title="Link to this definition"></a></dt>
+<dd><p>Compute the q-th quantile of the data along the time axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>q</strong> (<em>int</em>) – Probability or sequence of probabilities for the quantiles to compute. Values must be between 0 and 1 inclusive.</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.quantile.calculate" title="xr_fresh.feature_calculator_series.quantile.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.quantile.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#quantile.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.quantile.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.ratio_beyond_r_sigma">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">ratio_beyond_r_sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#ratio_beyond_r_sigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma" title="Link to this definition"></a></dt>
+<dd><p>Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gw</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>r</strong> (<em>int</em><em>, </em><em>optional</em>) – Defaults to 2.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate" title="xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#ratio_beyond_r_sigma.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.skewness">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">skewness</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#skewness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.skewness" title="Link to this definition"></a></dt>
+<dd><p>Returns the sample skewness of X.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gw</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em>) – Axis along which to compute the kurtosis. Default is 0.</p></li>
+<li><p><strong>fisher</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, Fisher’s definition is used (normal=0).
+If False, Pearson’s definition is used (normal=3).
+Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.skewness.calculate" title="xr_fresh.feature_calculator_series.skewness.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.skewness.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#skewness.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.skewness.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.standard_deviation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">standard_deviation</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#standard_deviation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.standard_deviation" title="Link to this definition"></a></dt>
+<dd><p>Calculate the standard deviation value of the time series.
+:param gw: _description_
+:type gw: _type_</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.standard_deviation.calculate" title="xr_fresh.feature_calculator_series.standard_deviation.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(x)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.standard_deviation.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#standard_deviation.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.standard_deviation.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.sum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">sum</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.sum" title="Link to this definition"></a></dt>
+<dd><p>Calculate the sum of the time series values.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.sum.calculate" title="xr_fresh.feature_calculator_series.sum.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(x)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.sum.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#sum.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.sum.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.symmetry_looking">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">symmetry_looking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#symmetry_looking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.symmetry_looking" title="Link to this definition"></a></dt>
+<dd><p>Boolean variable denoting if the distribution of x <em>looks symmetric</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>r</strong> – the percentage of the range to compare with (default: 0.1)</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.symmetry_looking.calculate" title="xr_fresh.feature_calculator_series.symmetry_looking.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.symmetry_looking.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#symmetry_looking.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.symmetry_looking.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.ts_complexity_cid_ce">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">ts_complexity_cid_ce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#ts_complexity_cid_ce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.ts_complexity_cid_ce" title="Link to this definition"></a></dt>
+<dd><p>This function calculator is an estimate for a time series complexity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>normalize</strong> – should the time series be z-transformed? (default: True)</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate" title="xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#ts_complexity_cid_ce.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">unique_value_number_to_time_series_length</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#unique_value_number_to_time_series_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length" title="Link to this definition"></a></dt>
+<dd><p>SLOW
+Returns a factor which is 1 if all values in the time series occur only once,
+and below one if this is not the case.
+In principle, it just returns</p>
+<blockquote>
+<div><p># of unique values / # of values</p>
+</div></blockquote>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate" title="xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(array)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#unique_value_number_to_time_series_length.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.variance">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">variance</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#variance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.variance" title="Link to this definition"></a></dt>
+<dd><p>Calculate the variance of the time series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gw</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance.calculate" title="xr_fresh.feature_calculator_series.variance.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(x)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.variance.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#variance.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.variance.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xr_fresh.feature_calculator_series.</span></span><span class="sig-name descname"><span class="pre">variance_larger_than_standard_deviation</span></span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#variance_larger_than_standard_deviation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation" title="Link to this definition"></a></dt>
+<dd><p>Calculate the variance of the time series is larger than the standard_deviation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gw</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(w, array, band_dict)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate" title="xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate</span></code></a>(x)</p></td>
+<td><p>Calculates the user function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/feature_calculator_series.html#variance_larger_than_standard_deviation.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculates the user function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>|</strong> (<em>data</em><em> (</em><em>numpy.ndarray</em>) – <code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>): The input array, shaped [time x bands x rows x columns].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">jax.numpy.DeviceArray</span></code> |
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> |
+<code class="docutils literal notranslate"><span class="pre">tensorflow.Tensor</span></code>:</p>
+<blockquote>
+<div><p>Shaped (time|bands x rows x columns)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="The xr_fresh Docs!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="extractors.html" class="btn btn-neutral float-right" title="Extractor Function" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Michael Mann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

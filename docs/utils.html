@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Other Utilities &mdash; xr_fresh 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7026087e"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utilities for reading and writing" href="io.html" />
+    <link rel="prev" title="Utilities to work with Dask" href="backends.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xr_fresh
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="feature_calculators.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extractors.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpolate_series.html">Interpolate Series Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Other Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.utils">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.utils.add_categorical"><code class="docutils literal notranslate"><span class="pre">add_categorical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.utils.add_time_targets"><code class="docutils literal notranslate"><span class="pre">add_time_targets()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.utils.check_variable_lengths"><code class="docutils literal notranslate"><span class="pre">check_variable_lengths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.utils.convert_to_min_dtype"><code class="docutils literal notranslate"><span class="pre">convert_to_min_dtype()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.utils.downcast_pandas"><code class="docutils literal notranslate"><span class="pre">downcast_pandas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.utils.find_variable_names"><code class="docutils literal notranslate"><span class="pre">find_variable_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.utils.find_variable_year"><code class="docutils literal notranslate"><span class="pre">find_variable_year()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.utils.to_vrt"><code class="docutils literal notranslate"><span class="pre">to_vrt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.utils.xarray_to_rasterio"><code class="docutils literal notranslate"><span class="pre">xarray_to_rasterio()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xr_fresh</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Other Utilities</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="other-utilities">
+<span id="utils"></span><h1>Other Utilities<a class="headerlink" href="#other-utilities" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="module-xr_fresh.utils">
+<span id="functions"></span><h2>Functions<a class="headerlink" href="#module-xr_fresh.utils" title="Link to this heading"></a></h2>
+<p>Created on Tue Jun 30 15:34:47 2020</p>
+<p>&#64;author: <a class="reference external" href="https://github.com/robintw/XArrayAndRasterio/blob/master/rasterio_to_xarray.py">https://github.com/robintw/XArrayAndRasterio/blob/master/rasterio_to_xarray.py</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.utils.add_categorical">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.utils.</span></span><span class="sig-name descname"><span class="pre">add_categorical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-9999</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#add_categorical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.utils.add_categorical" title="Link to this definition"></a></dt>
+<dd><p>Adds categorical data to xarray by column name.</p>
+<p class="rubric">Examples</p>
+<p>climatecluster = ‘ ./ClusterEco15_Y5.shp’</p>
+<dl>
+<dt>with gw.open(vrts,</dt><dd><blockquote>
+<div><p>time_names = [str(x) for x in range(len(vrts))],
+) as ds:</p>
+</div></blockquote>
+<p>ds.attrs[‘filename’] = vrts
+ds = add_categorical(ds, climatecluster,col=’ClusterN_2’,variable_name=’clim_clust’)
+print(ds)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>xarray.DataArray</em>) – xarray to add categorical data to</p></li>
+<li><p><strong>labels</strong> (<em>path</em><em> or </em><em>gpd.geodataframe</em><em> or </em><em>path to tif</em>) – path or df to shapefile or raster with categorical data</p></li>
+<li><p><strong>col</strong> (<em>str</em>) – Column to create get values from</p></li>
+<li><p><strong>variable_name</strong> (<em>str</em>) – name assigned to categorical data</p></li>
+<li><p><strong>missing_value</strong> (<em>int</em>) – missing value for pixels not overlapping polygon or points</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.utils.add_time_targets">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.utils.</span></span><span class="sig-name descname"><span class="pre">add_time_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_col_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append_to_X</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#add_time_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.utils.add_time_targets" title="Link to this definition"></a></dt>
+<dd><p>Adds multiple time periods of target data to existing xarray obj.</p>
+<p class="rubric">Examples</p>
+<dl>
+<dt>with gw.open(vrts, time_names = time_names, chunks=400) as ds:</dt><dd><dl>
+<dt>ds = add_time_targets(  data = ds,</dt><dd><p>target= loss_poly,
+target_col_list = [‘w_dam_2010’,’w_dam_2011’,’w_dam_2012’,</p>
+<blockquote>
+<div><p>‘w_dam_2013’,’w_dam_2014’,’w_dam_2015’,’w_dam_2016’],</p>
+</div></blockquote>
+<p>target_name=’weather_damage’,
+missing_value=np.nan,
+append_to_X=True )</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>xarray.DataArray</em>) – xarray to add target data to</p></li>
+<li><p><strong>target</strong> (<em>path</em><em> or </em><em>gpd.geodataframe</em>) – path or df to shapefile with target data data</p></li>
+<li><p><strong>target_col_list</strong> (<em>list</em>) – list of columns holding target data
+All column names must be in acceding order e.g. [‘t_2010’,’t_2011’]</p></li>
+<li><p><strong>target_name</strong> (<em>str</em>) – single name assigned to target data dimension. Default is ‘target’</p></li>
+<li><p><strong>missing_value</strong> (<em>int</em>) – missing value for pixels not overlapping polygon or points</p></li>
+<li><p><strong>append_to_X</strong> (<em>bool</em>) – should the target data be appended to the far right of other X variables. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.utils.check_variable_lengths">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.utils.</span></span><span class="sig-name descname"><span class="pre">check_variable_lengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#check_variable_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.utils.check_variable_lengths" title="Link to this definition"></a></dt>
+<dd><p>Check if a list of variable files are of equal length</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>variable_list</strong> (<em>list</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DESCRIPTION.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TYPE bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.utils.convert_to_min_dtype">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.utils.</span></span><span class="sig-name descname"><span class="pre">convert_to_min_dtype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#convert_to_min_dtype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.utils.convert_to_min_dtype" title="Link to this definition"></a></dt>
+<dd><p>Convert a numpy array to the smallest data type possible
+:param arr: numpy array
+:type arr: np.array
+:return: numpy array with smallest data type
+:rtype: np.array</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">convert_to_min_dtype</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+<span class="go">array([1, 2, 3, 4, 5], dtype=int8)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.utils.downcast_pandas">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.utils.</span></span><span class="sig-name descname"><span class="pre">downcast_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#downcast_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.utils.downcast_pandas" title="Link to this definition"></a></dt>
+<dd><p>Dtype cast to smallest numerical dtype possible for pandas dataframes.
+Saves considerable space.
+Objects are cast to categorical, int and float are cast to the smallest dtype</p>
+<p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric">https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric</a></p>
+<p>Note: could be problematic with chunks if different dtypes are assigned to same column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>DataFrame</em>) – input dataframe</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>downcast dataframe</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.utils.find_variable_names">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.utils.</span></span><span class="sig-name descname"><span class="pre">find_variable_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_glob</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#find_variable_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.utils.find_variable_names" title="Link to this definition"></a></dt>
+<dd><p>Return all unique variables names from path glob, removing trailing date and __</p>
+<p>Example:
+path_glob = f”{file_path}NDVI_MODIS/Meher_features/ndvi*.tif”
+find_variable_names(path_glob)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path_glob</strong> (<em>path</em>) – path with * for file glob</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.utils.find_variable_year">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.utils.</span></span><span class="sig-name descname"><span class="pre">find_variable_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_glob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strp_glob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y.tif'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#find_variable_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.utils.find_variable_year" title="Link to this definition"></a></dt>
+<dd><p>Return all unique variables 4 digit years years from path glob</p>
+<p>Example:
+path_glob = f”{file_path}NDVI_MODIS/Meher_features/ndvi*.tif”
+find_variable_names(path_glob)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_glob</strong> (<em>path</em>) – path with * for file glob</p></li>
+<li><p><strong>digits</strong> (<em>int</em>) – number of digits used to store year</p></li>
+<li><p><strong>strp_glob</strong> (<em>string</em>) – strptime pattern with year format and file type</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.utils.to_vrt">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.utils.</span></span><span class="sig-name descname"><span class="pre">to_vrt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resampling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_dest_nodata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_mem_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#to_vrt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.utils.to_vrt" title="Link to this definition"></a></dt>
+<dd><p>Writes a file to a VRT file
+:param data: The <code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> to write.
+:type data: DataArray
+:param filename: The output file name to write to.
+:type filename: str
+:param resampling: The resampling algorithm for <code class="docutils literal notranslate"><span class="pre">rasterio.vrt.WarpedVRT</span></code>. Default is ‘nearest’.
+:type resampling: Optional[object]
+:param nodata: The ‘no data’ value for <code class="docutils literal notranslate"><span class="pre">rasterio.vrt.WarpedVRT</span></code>.
+:type nodata: Optional[float or int]
+:param init_dest_nodata: Whether or not to initialize output to <code class="docutils literal notranslate"><span class="pre">nodata</span></code> for <code class="docutils literal notranslate"><span class="pre">rasterio.vrt.WarpedVRT</span></code>.
+:type init_dest_nodata: Optional[bool]
+:param warp_mem_limit: The GDAL memory limit for <code class="docutils literal notranslate"><span class="pre">rasterio.vrt.WarpedVRT</span></code>.
+:type warp_mem_limit: Optional[int]</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">geowombat</span> <span class="k">as</span> <span class="nn">gw</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rasterio.enums</span> <span class="kn">import</span> <span class="n">Resampling</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Transform a CRS and save to VRT</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref_crs</span><span class="o">=</span><span class="mi">102033</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;image.tif&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">gw</span><span class="o">.</span><span class="n">to_vrt</span><span class="p">(</span><span class="n">src</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                  <span class="s1">&#39;output.vrt&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                  <span class="n">resampling</span><span class="o">=</span><span class="n">Resampling</span><span class="o">.</span><span class="n">cubic</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                  <span class="n">warp_mem_limit</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load multiple files set to a common geographic extent</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ref_bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">([</span><span class="s1">&#39;image1.tif&#39;</span><span class="p">,</span> <span class="s1">&#39;image2.tif&#39;</span><span class="p">],</span> <span class="n">mosaic</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">gw</span><span class="o">.</span><span class="n">to_vrt</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">&#39;output.vrt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.utils.xarray_to_rasterio">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.utils.</span></span><span class="sig-name descname"><span class="pre">xarray_to_rasterio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xr_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postfix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/utils.html#xarray_to_rasterio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.utils.xarray_to_rasterio" title="Link to this definition"></a></dt>
+<dd><p>Writes xarray bands to disk by band</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">f_dict</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;maximum&#39;</span><span class="p">:[{}]</span> <span class="p">,</span>
+<span class="go">               &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;},{&#39;q&#39;:&#39;0.95&#39;}]}</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="n">features</span> <span class="o">=</span> <span class="n">extract_features</span><span class="p">(</span><span class="n">xr_data</span><span class="o">=</span><span class="n">ds</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                    <span class="n">feature_dict</span><span class="o">=</span><span class="n">f_dict</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                    <span class="n">band</span><span class="o">=</span><span class="s1">&#39;aet&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                    <span class="n">na_rm</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span> <span class="n">xarray_to_rasterio</span><span class="p">(</span><span class="n">features</span><span class="p">,</span><span class="s1">&#39;/home/mmann1123/Desktop/&#39;</span><span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xr_data</strong> (<em>xarray.DataArray</em>) – xarray to write</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – file destination path</p></li>
+<li><p><strong>output_postfix</strong> (<em>list</em>) – text to append to back of written image</p></li>
+<li><p><strong>output_postfix</strong> – list of character strings or locations of band names, if None all bands are written</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="backends.html" class="btn btn-neutral float-left" title="Utilities to work with Dask" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="io.html" class="btn btn-neutral float-right" title="Utilities for reading and writing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Michael Mann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>
