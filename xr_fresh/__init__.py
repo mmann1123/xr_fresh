@@ -2,11 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-from .backends import Cluster
-
-
-__all__ = ["Cluster"]
-
 __version__ = "0.2.0"
 __author__ = "Michael Mann"
 __license__ = "MIT"
