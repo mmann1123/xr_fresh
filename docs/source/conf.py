@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
+#sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -22,7 +22,7 @@ copyright = '2020, Michael Mann'
 author = 'Michael Mann'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.0'
+release = '0.2.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -62,6 +62,7 @@ html_theme = "sphinx_rtd_theme"  #'alabaster'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+html_baseurl = 'https://mmann1123.github.io/xr_fresh/build/html/'
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -81,6 +82,7 @@ html_static_path = ['_static']
 
 
 html_theme_options = {
+    'canonical_url': 'https://mmann1123.github.io/xr_fresh/build/html/',
     'canonical_url': '',
     'analytics_id': 'UA-XXXXXXX-1',  #  Provided by Google in your dashboard
     'logo_only': False,

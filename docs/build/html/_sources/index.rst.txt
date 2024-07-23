@@ -14,8 +14,8 @@ Indices and tables
 
 **Modules**
 
-* :doc:`feature_calculators`
-* :doc:`extractors`
+* :doc:`feature_calculator_series`
+* :doc:`extractors_series`
 * :doc:`backends`
 * :doc:`utils`
 * :doc:`io`
