@@ -27,21 +27,21 @@ release = "0.2.0"
 
 
 # -- General configuration ---------------------------------------------------
-html_context = {
-    "css_files": [
-        "https://mmann1123.github.io/xr_fresh/build/html/_static/pygments.css",
-        "https://mmann1123.github.io/xr_fresh/build/html/_static/css/theme.css",
-        "https://mmann1123.github.io/xr_fresh/build/html/_static/graphviz.css",
-    ],
-    "script_files": [
-        "https://mmann1123.github.io/xr_fresh/build/html/_static/jquery.js",
-        "https://mmann1123.github.io/xr_fresh/build/html/_static/_sphinx_javascript_frameworks_compat.js",
-        "https://mmann1123.github.io/xr_fresh/build/html/_static/documentation_options.js",
-        "https://mmann1123.github.io/xr_fresh/build/html/_static/doctools.js",
-        "https://mmann1123.github.io/xr_fresh/build/html/_static/sphinx_highlight.js",
-        "https://mmann1123.github.io/xr_fresh/build/html/_static/js/theme.js",
-    ],
-}
+# html_context = {
+#     "css_files": [
+#         "https://mmann1123.github.io/xr_fresh/build/html/_static/pygments.css",
+#         "https://mmann1123.github.io/xr_fresh/build/html/_static/css/theme.css",
+#         "https://mmann1123.github.io/xr_fresh/build/html/_static/graphviz.css",
+#     ],
+#     "script_files": [
+#         "https://mmann1123.github.io/xr_fresh/build/html/_static/jquery.js",
+#         "https://mmann1123.github.io/xr_fresh/build/html/_static/_sphinx_javascript_frameworks_compat.js",
+#         "https://mmann1123.github.io/xr_fresh/build/html/_static/documentation_options.js",
+#         "https://mmann1123.github.io/xr_fresh/build/html/_static/doctools.js",
+#         "https://mmann1123.github.io/xr_fresh/build/html/_static/sphinx_highlight.js",
+#         "https://mmann1123.github.io/xr_fresh/build/html/_static/js/theme.js",
+#     ],
+# }
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
