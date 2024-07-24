@@ -31,6 +31,10 @@ jobs:
         make -C docs clean
         make -C docs html
               
+    - name: Configure safe directory for Git
+      run: |
+        git config --global --add safe.directory /github/workspace/docs/build/html
+
     - name: Init new repo in dist folder and commit
       run: |
         cd docs/build/html/
