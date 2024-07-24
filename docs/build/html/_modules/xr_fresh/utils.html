@@ -1,157 +1,82 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>xr_fresh.utils &mdash; xr_fresh 0.0.0 documentation</title>
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xr_fresh.utils &mdash; xr_fresh 0.2.0 documentation</title>
+      <link rel="stylesheet" href="https://mmann1123.github.io/xr_fresh/build/html/_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="https://mmann1123.github.io/xr_fresh/build/html/_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="https://mmann1123.github.io/xr_fresh/build/html/_static/graphviz.css" type="text/css" />
 
   
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
-
-  
-  
-  
-  
-
-  
+    <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/docs/_modules/xr_fresh/utils.html" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+        <script src="https://mmann1123.github.io/xr_fresh/build/html/_static/jquery.js"></script>
+        <script src="https://mmann1123.github.io/xr_fresh/build/html/_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="https://mmann1123.github.io/xr_fresh/build/html/_static/documentation_options.js"></script>
+        <script src="https://mmann1123.github.io/xr_fresh/build/html/_static/doctools.js"></script>
+        <script src="https://mmann1123.github.io/xr_fresh/build/html/_static/sphinx_highlight.js"></script>
+        <script src="https://mmann1123.github.io/xr_fresh/build/html/_static/js/theme.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: white" >
-          
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> xr_fresh
           
-
-          
+          <a href="../../index.html" class="icon icon-home">
+            xr_fresh
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Modules</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../feature_calculators.html">Feature Generators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../extractors.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_calculator_series.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../extractors_series.html">Extractor Function</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../backends.html">Utilities to work with Dask</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils.html">Other Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../io.html">Utilities for reading and writing</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">xr_fresh</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-        
-      <li>xr_fresh.utils</li>
-    
-    
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">xr_fresh.utils</li>
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for xr_fresh.utils</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
@@ -193,7 +118,9 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ls</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="add_time_targets"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.add_time_targets">[docs]</a><span class="k">def</span> <span class="nf">add_time_targets</span><span class="p">(</span>
+<div class="viewcode-block" id="add_time_targets">
+<a class="viewcode-back" href="../../utils.html#xr_fresh.utils.add_time_targets">[docs]</a>
+<span class="k">def</span> <span class="nf">add_time_targets</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span>
     <span class="n">target</span><span class="p">,</span>
     <span class="n">target_col_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -201,35 +128,35 @@
     <span class="n">missing_value</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span>
     <span class="n">append_to_X</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Adds multiple time periods of target data to existing xarray obj. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds multiple time periods of target data to existing xarray obj.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    ========</span>
 
 <span class="sd">    with gw.open(vrts, time_names = time_names, chunks=400) as ds:</span>
-<span class="sd">        ds = add_time_targets(  data = ds, </span>
-<span class="sd">                            target= loss_poly, </span>
+<span class="sd">        ds = add_time_targets(  data = ds,</span>
+<span class="sd">                            target= loss_poly,</span>
 <span class="sd">                            target_col_list = [&#39;w_dam_2010&#39;,&#39;w_dam_2011&#39;,&#39;w_dam_2012&#39;,</span>
-<span class="sd">                                                &#39;w_dam_2013&#39;,&#39;w_dam_2014&#39;,&#39;w_dam_2015&#39;,&#39;w_dam_2016&#39;], </span>
-<span class="sd">                            target_name=&#39;weather_damage&#39;, </span>
+<span class="sd">                                                &#39;w_dam_2013&#39;,&#39;w_dam_2014&#39;,&#39;w_dam_2015&#39;,&#39;w_dam_2016&#39;],</span>
+<span class="sd">                            target_name=&#39;weather_damage&#39;,</span>
 <span class="sd">                            missing_value=np.nan,</span>
 <span class="sd">                            append_to_X=True )</span>
 
 
-<span class="sd">    :param data: xarray to add target data to </span>
+<span class="sd">    :param data: xarray to add target data to</span>
 <span class="sd">    :type data:  xarray.DataArray</span>
 <span class="sd">    :param target: path or df to shapefile with target data data</span>
 <span class="sd">    :type target:  path or gpd.geodataframe</span>
 <span class="sd">    :param target_col_list: list of columns holding target data</span>
 <span class="sd">         All column names must be in acceding order e.g. [&#39;t_2010&#39;,&#39;t_2011&#39;]</span>
-<span class="sd">    :type target_col_list:  list </span>
+<span class="sd">    :type target_col_list:  list</span>
 <span class="sd">    :param target_name: single name assigned to target data dimension. Default is &#39;target&#39;</span>
-<span class="sd">    :type target_name:  str   </span>
-<span class="sd">    :param missing_value: missing value for pixels not overlapping polygon or points </span>
+<span class="sd">    :type target_name:  str</span>
+<span class="sd">    :param missing_value: missing value for pixels not overlapping polygon or points</span>
 <span class="sd">    :type missing_value:  int</span>
 <span class="sd">    :param append_to_X: should the target data be appended to the far right of other X variables. Default is False.</span>
-<span class="sd">    :type append_to_X:  bool              </span>
+<span class="sd">    :type append_to_X:  bool</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_col_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
@@ -287,12 +214,13 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">_assign_concat2band</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label_grid</span><span class="p">):</span>
 
-    <span class="c1"># TODO: is this sufficient for single dates?</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">has_time_coord</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
+    <span class="c1"># not working for single time periods - ValueError: dimension &#39;time&#39; already exists as a scalar variable</span>
     <span class="n">category</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">label_grid</span><span class="p">]</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">ntime</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span>
         <span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()}</span>
     <span class="p">)</span>
@@ -310,10 +238,12 @@
     <span class="k">return</span> <span class="n">data</span>
 
 
-<div class="viewcode-block" id="add_categorical"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.add_categorical">[docs]</a><span class="k">def</span> <span class="nf">add_categorical</span><span class="p">(</span>
+<div class="viewcode-block" id="add_categorical">
+<a class="viewcode-back" href="../../utils.html#xr_fresh.utils.add_categorical">[docs]</a>
+<span class="k">def</span> <span class="nf">add_categorical</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variable_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">missing_value</span><span class="o">=-</span><span class="mi">9999</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Adds categorical data to xarray by column name.</span>
 
 <span class="sd">    Examples</span>
@@ -321,22 +251,22 @@
 
 <span class="sd">    climatecluster = &#39; ./ClusterEco15_Y5.shp&#39;</span>
 
-<span class="sd">    with gw.open(vrts, </span>
+<span class="sd">    with gw.open(vrts,</span>
 <span class="sd">             time_names = [str(x) for x in range(len(vrts))],</span>
 <span class="sd">             ) as ds:</span>
-<span class="sd">        ds.attrs[&#39;filename&#39;] = vrts </span>
+<span class="sd">        ds.attrs[&#39;filename&#39;] = vrts</span>
 <span class="sd">        ds = add_categorical(ds, climatecluster,col=&#39;ClusterN_2&#39;,variable_name=&#39;clim_clust&#39;)</span>
-<span class="sd">        print(ds) </span>
+<span class="sd">        print(ds)</span>
 
-<span class="sd">    :param data: xarray to add categorical data to </span>
+<span class="sd">    :param data: xarray to add categorical data to</span>
 <span class="sd">    :type data:  xarray.DataArray</span>
 <span class="sd">    :param labels: path or df to shapefile or raster with categorical data</span>
 <span class="sd">    :type labels:  path or gpd.geodataframe or path to tif</span>
 <span class="sd">    :param col: Column to create get values from</span>
-<span class="sd">    :type col:  str </span>
-<span class="sd">    :param variable_name: name assigned to categorical data </span>
-<span class="sd">    :type variable_name:  str   </span>
-<span class="sd">    :param missing_value: missing value for pixels not overlapping polygon or points </span>
+<span class="sd">    :type col:  str</span>
+<span class="sd">    :param variable_name: name assigned to categorical data</span>
+<span class="sd">    :type variable_name:  str</span>
+<span class="sd">    :param missing_value: missing value for pixels not overlapping polygon or points</span>
 <span class="sd">    :type missing_value:  int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -411,14 +341,17 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="check_variable_lengths"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.check_variable_lengths">[docs]</a><span class="k">def</span> <span class="nf">check_variable_lengths</span><span class="p">(</span><span class="n">variable_list</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check if a list of variable files are of equal length </span>
+
+<div class="viewcode-block" id="check_variable_lengths">
+<a class="viewcode-back" href="../../utils.html#xr_fresh.utils.check_variable_lengths">[docs]</a>
+<span class="k">def</span> <span class="nf">check_variable_lengths</span><span class="p">(</span><span class="n">variable_list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a list of variable files are of equal length</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    variable_list : list</span>
-<span class="sd">         </span>
+
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -431,8 +364,11 @@
     <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">variable_list</span><span class="p">))</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="find_variable_names"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.find_variable_names">[docs]</a><span class="k">def</span> <span class="nf">find_variable_names</span><span class="p">(</span><span class="n">path_glob</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return all unique variables names from path glob, removing trailing date and __</span>
+
+<div class="viewcode-block" id="find_variable_names">
+<a class="viewcode-back" href="../../utils.html#xr_fresh.utils.find_variable_names">[docs]</a>
+<span class="k">def</span> <span class="nf">find_variable_names</span><span class="p">(</span><span class="n">path_glob</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return all unique variables names from path glob, removing trailing date and __</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">    path_glob = f&quot;{file_path}NDVI_MODIS/Meher_features/ndvi*.tif&quot;</span>
@@ -451,15 +387,18 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="find_variable_year"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.find_variable_year">[docs]</a><span class="k">def</span> <span class="nf">find_variable_year</span><span class="p">(</span><span class="n">path_glob</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">strp_glob</span><span class="o">=</span><span class="s2">&quot;%Y.tif&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return all unique variables 4 digit years years from path glob</span>
+
+<div class="viewcode-block" id="find_variable_year">
+<a class="viewcode-back" href="../../utils.html#xr_fresh.utils.find_variable_year">[docs]</a>
+<span class="k">def</span> <span class="nf">find_variable_year</span><span class="p">(</span><span class="n">path_glob</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">strp_glob</span><span class="o">=</span><span class="s2">&quot;%Y.tif&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return all unique variables 4 digit years years from path glob</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">    path_glob = f&quot;{file_path}NDVI_MODIS/Meher_features/ndvi*.tif&quot;</span>
 <span class="sd">    find_variable_names(path_glob)</span>
 
 <span class="sd">    :param path_glob: path with * for file glob</span>
-<span class="sd">    :type path_glob: path       </span>
+<span class="sd">    :type path_glob: path</span>
 <span class="sd">    :param digits: number of digits used to store year</span>
 <span class="sd">    :type digits: int</span>
 <span class="sd">    :param strp_glob: strptime pattern with year format and file type</span>
@@ -479,18 +418,21 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="downcast_pandas"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.downcast_pandas">[docs]</a><span class="k">def</span> <span class="nf">downcast_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="downcast_pandas">
+<a class="viewcode-back" href="../../utils.html#xr_fresh.utils.downcast_pandas">[docs]</a>
+<span class="k">def</span> <span class="nf">downcast_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dtype cast to smallest numerical dtype possible for pandas dataframes.</span>
-<span class="sd">    Saves considerable space. </span>
+<span class="sd">    Saves considerable space.</span>
 <span class="sd">    Objects are cast to categorical, int and float are cast to the smallest dtype</span>
-<span class="sd">    </span>
-<span class="sd">    https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric  </span>
+
+<span class="sd">    https://pandas.pydata.org/pandas-docs/version/1.0.0/reference/api/pandas.to_numeric.html#pandas.to_numeric</span>
 
 <span class="sd">    Note: could be problematic with chunks if different dtypes are assigned to same column</span>
 
 
-<span class="sd">    :param data: input dataframe </span>
+<span class="sd">    :param data: input dataframe</span>
 <span class="sd">    :type data: DataFrame</span>
 
 <span class="sd">    :return: downcast dataframe</span>
@@ -507,6 +449,33 @@
     <span class="n">data</span><span class="p">[</span><span class="n">int_features</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">int_features</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="convert_to_min_dtype">
+<a class="viewcode-back" href="../../utils.html#xr_fresh.utils.convert_to_min_dtype">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_to_min_dtype</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a numpy array to the smallest data type possible</span>
+<span class="sd">    :param arr: numpy array</span>
+<span class="sd">    :type arr: np.array</span>
+<span class="sd">    :return: numpy array with smallest data type</span>
+<span class="sd">    :rtype: np.array</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    ========</span>
+<span class="sd">    &gt;&gt;&gt; arr = np.array([1, 2, 3, 4, 5])</span>
+<span class="sd">    &gt;&gt;&gt; convert_to_min_dtype(arr)</span>
+<span class="sd">    array([1, 2, 3, 4, 5], dtype=int8)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Find the smallest data type that can represent all the values</span>
+    <span class="n">min_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min_scalar_type</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
+    <span class="c1"># Convert the array to the smallest data type</span>
+    <span class="n">arr_min_dtype</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">min_dtype</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr_min_dtype</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">compressed_pickle</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="s2">&quot;gz&quot;</span><span class="p">):</span>
@@ -553,34 +522,36 @@
 <span class="c1"># return pickle.load( open( &quot;save.p&quot;, &quot;rb&quot; ) )</span>
 
 
-<div class="viewcode-block" id="xarray_to_rasterio"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.xarray_to_rasterio">[docs]</a><span class="k">def</span> <span class="nf">xarray_to_rasterio</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    </span>
+<div class="viewcode-block" id="xarray_to_rasterio">
+<a class="viewcode-back" href="../../utils.html#xr_fresh.utils.xarray_to_rasterio">[docs]</a>
+<span class="k">def</span> <span class="nf">xarray_to_rasterio</span><span class="p">(</span><span class="n">xr_data</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
 <span class="sd">    Writes xarray bands to disk by band</span>
 
 
 <span class="sd">    Examples</span>
 <span class="sd">    ========</span>
 
-<span class="sd">    &gt;&gt;&gt;  f_dict = { &#39;maximum&#39;:[{}] ,  </span>
+<span class="sd">    &gt;&gt;&gt;  f_dict = { &#39;maximum&#39;:[{}] ,</span>
 <span class="sd">                   &#39;quantile&#39;: [{&#39;q&#39;:&quot;0.5&quot;},{&#39;q&#39;:&#39;0.95&#39;}]}</span>
 <span class="sd">    &gt;&gt;&gt;  features = extract_features(xr_data=ds,</span>
 <span class="sd">    &gt;&gt;&gt;                     feature_dict=f_dict,</span>
-<span class="sd">    &gt;&gt;&gt;                     band=&#39;aet&#39;, </span>
+<span class="sd">    &gt;&gt;&gt;                     band=&#39;aet&#39;,</span>
 <span class="sd">    &gt;&gt;&gt;                     na_rm = True)</span>
 <span class="sd">    &gt;&gt;&gt;  xarray_to_rasterio(features,&#39;/home/mmann1123/Desktop/&#39;, postfix=&#39;test&#39;)</span>
 
-<span class="sd">    </span>
-<span class="sd">    </span>
-<span class="sd">    :param xr_data: xarray to write </span>
+
+
+<span class="sd">    :param xr_data: xarray to write</span>
 <span class="sd">    :type xr_data:  xarray.DataArray</span>
 <span class="sd">    :param path: file destination path</span>
 <span class="sd">    :type path:  str</span>
 <span class="sd">    :param output_postfix: text to append to back of written image</span>
-<span class="sd">    :type output_postfix:  str </span>
+<span class="sd">    :type output_postfix:  str</span>
 <span class="sd">    :param output_postfix: list of character strings or locations of band names, if None all bands are written</span>
-<span class="sd">    :type output_postfix:  list   </span>
-<span class="sd">    </span>
+<span class="sd">    :type output_postfix:  list</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -605,7 +576,10 @@
             <span class="n">save_pickle</span><span class="p">(</span><span class="n">xr_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="to_vrt"><a class="viewcode-back" href="../../utils.html#xr_fresh.utils.to_vrt">[docs]</a><span class="k">def</span> <span class="nf">to_vrt</span><span class="p">(</span>
+
+<div class="viewcode-block" id="to_vrt">
+<a class="viewcode-back" href="../../utils.html#xr_fresh.utils.to_vrt">[docs]</a>
+<span class="k">def</span> <span class="nf">to_vrt</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span>
     <span class="n">filename</span><span class="p">,</span>
     <span class="n">resampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -613,8 +587,7 @@
     <span class="n">init_dest_nodata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">warp_mem_limit</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
 <span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes a file to a VRT file</span>
 <span class="sd">    Args:</span>
 <span class="sd">        data (DataArray): The ``xarray.DataArray`` to write.</span>
@@ -692,6 +665,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data.filename must contain paths for to_vrt to work&quot;</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># def encode_multiindex(ds, idxname):</span>
 <span class="c1">#     &quot;&quot;&quot;</span>
 <span class="c1">#     converte xarray stacked data (multi-index) into regular index, storing</span>
@@ -739,61 +713,41 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        
-        &copy; Copyright 2020, Michael Mann
-
-    </p>
+    <p>&#169; Copyright 2024, Michael Mann.</p>
   </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
     <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
     <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    ga('create', 'UA-XXXXXXX-1', 'auto');
-    ga('send', 'pageview');
-    </script>
-
-    
-   
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
 
 </body>
 </html>
