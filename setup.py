@@ -1,48 +1,67 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Note: To use the 'upload' functionality of this file, you must:
-#   $ pip install twine
-
-# Note: gdal must be installed via
-# conda install -c conda-forge gdal
-
 import io
 import os
 import sys
 from shutil import rmtree
-
 from setuptools import find_packages, setup, Command, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
+import numpy as np
 
 # Define the C++ extension module
 ext_modules = [
     Extension(
         "xr_fresh.rle",  # Adjust package name as needed
         ["xr_fresh/rle.cpp"],  # Path to your C++ source file
-        include_dirs=[],  # Add any include directories if needed
+        include_dirs=[np.get_include()],  # Include numpy headers
         language="c++",
+        extra_compile_args=["-std=c++11"],
     )
 ]
 
 
 class build_ext(_build_ext):
+    def finalize_options(self):
+        _build_ext.finalize_options(self)
+        self.include_dirs.append(np.get_include())
+
+
+class UploadCommand(Command):
+    """Support setup.py upload."""
+
+    description = "Build and publish the package."
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        """Prints things in bold."""
+        print("\033[1m{0}\033[0m".format(s))
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
     def run(self):
-        # Build the C++ extension only if not already built
-        if sys.platform == "win32" and self.compiler.compiler_type == "msvc":
-            # Use MSVC on Windows
-            self.compiler.initialize()
-            self.compiler.customize(self.distribution)
-            self.compiler.finalize()
-            _build_ext.run(self)
-        elif sys.platform == "darwin":
-            # Use clang on macOS
-            self.compiler.compiler_so = ["clang++"]
-            self.compiler.linker_exe = ["clang++"]
-            _build_ext.run(self)
-        else:
-            # Use default compiler on Linux
-            _build_ext.run(self)
+        try:
+            self.status("Removing previous builds…")
+            rmtree(os.path.join(here, "dist"))
+        except OSError:
+            pass
+
+        self.status("Building Source and Wheel (universal) distribution…")
+        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+
+        self.status("Uploading the package to PyPI via Twine…")
+        os.system("twine upload dist/*")
+
+        self.status("Pushing git tags…")
+        os.system("git tag v{0}".format(about["__version__"]))
+        os.system("git push --tags")
+
+        sys.exit()
 
 
 # Package meta-data.
@@ -54,9 +73,7 @@ AUTHOR = "Michael Mann"
 REQUIRES_PYTHON = ">=3.6.7"
 VERSION = "0.1.5"
 
-
 import platform
-from setuptools import setup, find_packages
 
 # Determine the correct dependency
 if platform.system() == "Windows":
@@ -101,44 +118,6 @@ if not VERSION:
 else:
     about["__version__"] = VERSION
 
-
-class UploadCommand(Command):
-    """Support setup.py upload."""
-
-    description = "Build and publish the package."
-    user_options = []
-
-    @staticmethod
-    def status(s):
-        """Prints things in bold."""
-        print("\033[1m{0}\033[0m".format(s))
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        try:
-            self.status("Removing previous builds…")
-            rmtree(os.path.join(here, "dist"))
-        except OSError:
-            pass
-
-        self.status("Building Source and Wheel (universal) distribution…")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
-
-        self.status("Uploading the package to PyPI via Twine…")
-        os.system("twine upload dist/*")
-
-        self.status("Pushing git tags…")
-        os.system("git tag v{0}".format(about["__version__"]))
-        os.system("git push --tags")
-
-        sys.exit()
-
-
 # Where the magic happens:
 setup(
     name=NAME,
@@ -155,18 +134,13 @@ setup(
     include_package_data=True,
     ext_modules=ext_modules,  # Include the C++ extension module
     cmdclass={"build_ext": build_ext},  # Override build_ext command
-    # license='MIT',
     classifiers=[
-        # Trove classifiers
-        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-        #'License :: OSI Approved :: MIT License',
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.8 :: 3.9 :: 3.10 :: 3.11",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    # $ setup.py publish support.
-    # cmdclass={
-    #     "upload": UploadCommand,
-    # },
 )
