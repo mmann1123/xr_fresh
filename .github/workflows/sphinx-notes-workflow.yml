@@ -15,5 +15,12 @@ jobs:
       pages: write
       id-token: write
     steps:
+    - name: Install dependencies
+      run: |
+        python -m pip install -U sphinx
+        python -m pip install sphinx-rtd-theme mathjax sphinxcontrib-napoleon numpydoc ipython
+
     - id: deployment
       uses: sphinx-notes/pages@v3 
+
+ 
