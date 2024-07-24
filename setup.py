@@ -16,14 +16,16 @@ ext_modules = [
         ["xr_fresh/rle.cpp"],  # Path to your C++ source file
         include_dirs=[np.get_include()],  # Include numpy headers
         language="c++",
-        extra_compile_args=['-std=c++11'],
+        extra_compile_args=["-std=c++11"],
     )
 ]
+
 
 class build_ext(_build_ext):
     def finalize_options(self):
         _build_ext.finalize_options(self)
         self.include_dirs.append(np.get_include())
+
 
 class UploadCommand(Command):
     """Support setup.py upload."""
@@ -60,6 +62,7 @@ class UploadCommand(Command):
         os.system("git push --tags")
 
         sys.exit()
+
 
 # Package meta-data.
 NAME = "xr_fresh"
@@ -102,3 +105,42 @@ here = os.path.abspath(os.path.dirname(__file__))
 # Import the README and use it as the long-description.
 # Note: this will only work if 'README.md' is present in your MANIFEST.in file!
 try:
+    with io.open(os.path.join(here, "README.md"), encoding="utf-8") as f:
+        long_description = "\n" + f.read()
+except FileNotFoundError:
+    long_description = DESCRIPTION
+
+# Load the package's __version__.py module as a dictionary.
+about = {}
+if not VERSION:
+    with open(os.path.join(here, NAME, "__version__.py")) as f:
+        exec(f.read(), about)
+else:
+    about["__version__"] = VERSION
+
+# Where the magic happens:
+setup(
+    name=NAME,
+    version=about["__version__"],
+    description=DESCRIPTION,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author=AUTHOR,
+    author_email=EMAIL,
+    python_requires=REQUIRES_PYTHON,
+    url=URL,
+    packages=find_packages(exclude=("tests",)),
+    install_requires=REQUIRED,
+    include_package_data=True,
+    ext_modules=ext_modules,  # Include the C++ extension module
+    cmdclass={"build_ext": build_ext},  # Override build_ext command
+    classifiers=[
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Programming Language :: Python :: Implementation :: PyPy",
+    ],
+)
