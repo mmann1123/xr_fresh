@@ -34,7 +34,7 @@ templates_path = ["_templates"]
 exclude_patterns = []
 
 # pretend to install the following packages
-autodoc_mock_imports = ["xr_fresh", "numpy", "geowombat", "gdal"]
+# autodoc_mock_imports = ["xr_fresh", "numpy", "geowombat", "gdal"]
 
 # -- Options for HTML output -------------------------------------------------
 
