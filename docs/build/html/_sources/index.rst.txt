@@ -26,8 +26,8 @@ Indices and tables
    :hidden:
    :caption: Modules
 
-   feature_calculators
-   extractors
+   feature_calculator_series
+   extractors_series
    backends
    utils
    io
