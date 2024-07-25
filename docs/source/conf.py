@@ -28,7 +28,7 @@ extensions = [
 # templates_path = ["_templates"]
 
 # skip install of the following packages
-autodoc_mock_imports = ["xr_fresh", "numpy", "geowombat", "gdal"]
+autodoc_mock_imports = ["numpy", "geowombat", "gdal"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
