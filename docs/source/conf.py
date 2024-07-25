@@ -2,8 +2,7 @@ import os
 import sys
 
 # Adjust path to include the xr_fresh directory
-sys.path.insert(0, os.path.abspath("../../xr_fresh"))
-
+sys.path.insert(0, os.path.abspath("../../"))
 # -- Project information -----------------------------------------------------
 
 project = "xr_fresh"
@@ -24,9 +23,10 @@ extensions = [
     "numpydoc",
     "sphinx_rtd_theme",
 ]
+extensions.append("xr_fresh")
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ["_templates"]
+# templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
