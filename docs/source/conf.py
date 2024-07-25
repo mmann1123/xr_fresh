@@ -23,10 +23,12 @@ extensions = [
     "numpydoc",
     "sphinx_rtd_theme",
 ]
-extensions.append("xr_fresh")
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ["_templates"]
+
+# skip install of the following packages
+autodoc_mock_imports = ["xr_fresh", "numpy", "geowombat", "gdal"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
