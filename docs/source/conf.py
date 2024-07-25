@@ -13,21 +13,21 @@ project = "xr_fresh"
 author = "Michael Mann"
 release = "0.2.0"
 
-html_context = {
-    "css_files": [
-        "https://mmann1123.github.io/xr_fresh/_static/pygments.css",
-        "https://mmann1123.github.io/xr_fresh/_static/css/theme.css",
-        "https://mmann1123.github.io/xr_fresh/_static/graphviz.css",
-    ],
-    "script_files": [
-        "https://mmann1123.github.io/xr_fresh/_static/jquery.js",
-        "https://mmann1123.github.io/xr_fresh/_static/_sphinx_javascript_frameworks_compat.js",
-        "https://mmann1123.github.io/xr_fresh/_static/documentation_options.js",
-        "https://mmann1123.github.io/xr_fresh/_static/doctools.js",
-        "https://mmann1123.github.io/xr_fresh/_static/sphinx_highlight.js",
-        "https://mmann1123.github.io/xr_fresh/_static/js/theme.js",
-    ],
-}
+# html_context = {
+#     "css_files": [
+#         "https://mmann1123.github.io/xr_fresh/_static/pygments.css",
+#         "https://mmann1123.github.io/xr_fresh/_static/css/theme.css",
+#         "https://mmann1123.github.io/xr_fresh/_static/graphviz.css",
+#     ],
+#     "script_files": [
+#         "https://mmann1123.github.io/xr_fresh/_static/jquery.js",
+#         "https://mmann1123.github.io/xr_fresh/_static/_sphinx_javascript_frameworks_compat.js",
+#         "https://mmann1123.github.io/xr_fresh/_static/documentation_options.js",
+#         "https://mmann1123.github.io/xr_fresh/_static/doctools.js",
+#         "https://mmann1123.github.io/xr_fresh/_static/sphinx_highlight.js",
+#         "https://mmann1123.github.io/xr_fresh/_static/js/theme.js",
+#     ],
+# }
 
 
 # Add any Sphinx extension module names here, as strings. They can be
