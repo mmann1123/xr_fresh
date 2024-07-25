@@ -1,3 +1,7 @@
+# build with sphinx-build -b html source .
+# maybe
+
+
 import os
 import sys
 
