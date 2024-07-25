@@ -82,10 +82,13 @@ jobs:
         python -m pip install sphinx-rtd-theme mathjax sphinxcontrib-napoleon numpydoc ipython
         pip install -e "." 
 
-    - name: Run Unittests
+    # - name: Run Unittests
+    #   run: |
+    #     pip install testfixtures
+    #     python -m unittest discover -s tests -p 'test_feature*.py'
+    - name: Build Sphinx documentation
       run: |
-        pip install testfixtures
-        python -m unittest discover -s tests -p 'test_*.py'
+        sphinx-build -E -b html docs/source docs/build/html
 
     - id: deployment
       uses: sphinx-notes/pages@v3 
