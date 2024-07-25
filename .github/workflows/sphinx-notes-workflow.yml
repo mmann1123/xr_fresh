@@ -80,7 +80,14 @@ jobs:
       run: |
         python -m pip install -U sphinx
         python -m pip install sphinx-rtd-theme mathjax sphinxcontrib-napoleon numpydoc ipython
+        git clone https://github.com/mmann1123/xr_fresh
+        cd xr_fresh
         python -m pip install -e .
+
+    - name: Test import xr_fresh
+      run: |
+        python -c "import xr_fresh; print('xr_fresh imported successfully')"
+    
 
     - id: deployment
       uses: sphinx-notes/pages@v3 
