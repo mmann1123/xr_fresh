@@ -37,6 +37,7 @@ exclude_patterns = []
 
 # pretend to install the following packages
 # autodoc_mock_imports = ["xr_fresh", "numpy", "geowombat", "gdal"]
+autodoc_mock_imports = ["rle"]
 
 # -- Options for HTML output -------------------------------------------------
 
