@@ -2,7 +2,7 @@ import os
 import sys
 
 # Adjust path to include the xr_fresh directory
-sys.path.insert(0, os.path.abspath("../../"))
+sys.path.insert(0, os.path.abspath("../../xr_fresh"))
 # -- Project information -----------------------------------------------------
 
 project = "xr_fresh"
