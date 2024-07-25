@@ -39,6 +39,19 @@ exclude_patterns = []
 # autodoc_mock_imports = ["xr_fresh", "numpy", "geowombat", "gdal"]
 autodoc_mock_imports = ["rle"]
 
+
+# Skip specific members
+def skip_member(app, what, name, obj, skip, options):
+    # Skip the 'rle' module or any member containing 'rle'
+    if name == "rle" or "rle" in name:
+        return True
+    return skip
+
+
+def setup(app):
+    app.connect("autodoc-skip-member", skip_member)
+
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
