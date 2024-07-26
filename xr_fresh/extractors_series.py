@@ -1,6 +1,6 @@
 import geowombat as gw
 from xr_fresh.feature_calculator_series import *
-import numpy as np 
+import numpy as np
 import logging
 import re
 import os
@@ -41,10 +41,9 @@ function_mapping = {
     "variance": variance,
     "variance_larger_than_standard_deviation": variance_larger_than_standard_deviation,
 }
-from xr_fresh.extractors_series import extract_features_series
 
 # class extractors_series(gw.TimeModule):
-    
+
 
 def extract_features_series(gw_series, feature_dict, band_name, output_dir):
     """
@@ -82,7 +81,10 @@ def extract_features_series(gw_series, feature_dict, band_name, output_dir):
                     # Output file name
                     key_names, value_names = extract_key_value_names(band_name)
                     grid = extract_grid(band_name)
-                    output_file = Path(output_dir) / f"{band_name}_{feature_name}_{key_names}_{value_names}_{grid}.tif"
+                    output_file = (
+                        Path(output_dir)
+                        / f"{band_name}_{feature_name}_{key_names}_{value_names}_{grid}.tif"
+                    )
 
                     try:
                         src.apply(
@@ -125,7 +127,6 @@ def extract_key_value_names(band_name):
         return "default_key", "default_value"
 
 
-
 def extract_grid(band_name):
     """
     Extracts grid value from the band_name using regular expressions.
@@ -147,6 +148,7 @@ def extract_grid(band_name):
     else:
         # Return default value if match is not found
         return "default_grid"
+
 
 #################################################################################################################################
 #################################################################################################################################
@@ -200,6 +202,3 @@ if __name__ == "__main__":
 
     # Extract features from the geospatial time series
     extract_features_series(gw_series, feature_dict, band_name, output_directory)
-
-
-

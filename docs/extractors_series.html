@@ -50,7 +50,12 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="feature_calculator_series.html">Feature Generators</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Extractor Function</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.extractors_series">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.extractors_series.extract_features_series"><code class="docutils literal notranslate"><span class="pre">extract_features_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.extractors_series.extract_grid"><code class="docutils literal notranslate"><span class="pre">extract_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.extractors_series.extract_key_value_names"><code class="docutils literal notranslate"><span class="pre">extract_key_value_names()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
@@ -85,8 +90,62 @@
 <span id="extractors"></span><h1>Extractor Function<a class="headerlink" href="#extractor-function" title="Link to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<section id="module-xr_fresh.extractors_series">
+<span id="functions"></span><h2>Functions<a class="headerlink" href="#module-xr_fresh.extractors_series" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.extractors_series.extract_features_series">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.extractors_series.</span></span><span class="sig-name descname"><span class="pre">extract_features_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gw_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors_series.html#extract_features_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.extractors_series.extract_features_series" title="Link to this definition"></a></dt>
+<dd><p>Extracts features from a geospatial time series and saves them as TIFF files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gw_series</strong> (<em>geowombat.Dataset</em>) – Geospatial time series dataset.</p></li>
+<li><p><strong>feature_dict</strong> (<em>dict</em>) – Dictionary containing feature names and parameters.</p></li>
+<li><p><strong>band_name</strong> (<em>str</em>) – Name of the band.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Directory to save the output TIFF files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.extractors_series.extract_grid">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.extractors_series.</span></span><span class="sig-name descname"><span class="pre">extract_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors_series.html#extract_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.extractors_series.extract_grid" title="Link to this definition"></a></dt>
+<dd><p>Extracts grid value from the band_name using regular expressions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>band_name</strong> (<em>str</em>) – Name of the band.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Extracted grid value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>grid (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xr_fresh.extractors_series.extract_key_value_names">
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.extractors_series.</span></span><span class="sig-name descname"><span class="pre">extract_key_value_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors_series.html#extract_key_value_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.extractors_series.extract_key_value_names" title="Link to this definition"></a></dt>
+<dd><p>Extracts key_names and value_names from the band_name using regular expressions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>band_name</strong> (<em>str</em>) – Name of the band.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Extracted key names.
+value_names (str): Extracted value names.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>key_names (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 

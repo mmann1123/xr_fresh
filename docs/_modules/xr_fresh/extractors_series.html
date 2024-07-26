@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xr_fresh.extractors_series &mdash; xr_fresh 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+
+  
+    <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/_modules/xr_fresh/extractors_series.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            xr_fresh
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_calculator_series.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../extractors_series.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../io.html">Utilities for reading and writing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">xr_fresh</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">xr_fresh.extractors_series</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for xr_fresh.extractors_series</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">geowombat</span> <span class="k">as</span> <span class="nn">gw</span>
+<span class="kn">from</span> <span class="nn">xr_fresh.feature_calculator_series</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Mapping of feature names to corresponding functions</span>
+<span class="n">function_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;abs_energy&quot;</span><span class="p">:</span> <span class="n">abs_energy</span><span class="p">,</span>
+    <span class="s2">&quot;absolute_sum_of_changes&quot;</span><span class="p">:</span> <span class="n">absolute_sum_of_changes</span><span class="p">,</span>
+    <span class="s2">&quot;autocorrelation&quot;</span><span class="p">:</span> <span class="n">autocorrelation</span><span class="p">,</span>
+    <span class="s2">&quot;count_above_mean&quot;</span><span class="p">:</span> <span class="n">count_above_mean</span><span class="p">,</span>
+    <span class="s2">&quot;count_below_mean&quot;</span><span class="p">:</span> <span class="n">count_below_mean</span><span class="p">,</span>
+    <span class="s2">&quot;doy_of_maximum&quot;</span><span class="p">:</span> <span class="n">doy_of_maximum</span><span class="p">,</span>
+    <span class="s2">&quot;doy_of_minimum&quot;</span><span class="p">:</span> <span class="n">doy_of_minimum</span><span class="p">,</span>
+    <span class="s2">&quot;kurtosis&quot;</span><span class="p">:</span> <span class="n">kurtosis</span><span class="p">,</span>
+    <span class="s2">&quot;kurtosis_excess&quot;</span><span class="p">:</span> <span class="n">kurtosis_excess</span><span class="p">,</span>
+    <span class="s2">&quot;large_standard_deviation&quot;</span><span class="p">:</span> <span class="n">large_standard_deviation</span><span class="p">,</span>
+    <span class="s2">&quot;longest_strike_above_mean&quot;</span><span class="p">:</span> <span class="n">longest_strike_above_mean</span><span class="p">,</span>
+    <span class="s2">&quot;longest_strike_below_mean&quot;</span><span class="p">:</span> <span class="n">longest_strike_below_mean</span><span class="p">,</span>
+    <span class="s2">&quot;maximum&quot;</span><span class="p">:</span> <span class="n">maximum</span><span class="p">,</span>
+    <span class="s2">&quot;minimum&quot;</span><span class="p">:</span> <span class="n">minimum</span><span class="p">,</span>
+    <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span>
+    <span class="s2">&quot;mean_abs_change&quot;</span><span class="p">:</span> <span class="n">mean_abs_change</span><span class="p">,</span>
+    <span class="s2">&quot;mean_change&quot;</span><span class="p">:</span> <span class="n">mean_change</span><span class="p">,</span>
+    <span class="s2">&quot;mean_second_derivative_central&quot;</span><span class="p">:</span> <span class="n">mean_second_derivative_central</span><span class="p">,</span>
+    <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="n">median</span><span class="p">,</span>
+    <span class="s2">&quot;ols_slope_intercept&quot;</span><span class="p">:</span> <span class="n">ols_slope_intercept</span><span class="p">,</span>
+    <span class="s2">&quot;quantile&quot;</span><span class="p">:</span> <span class="n">quantile</span><span class="p">,</span>
+    <span class="s2">&quot;ratio_beyond_r_sigma&quot;</span><span class="p">:</span> <span class="n">ratio_beyond_r_sigma</span><span class="p">,</span>
+    <span class="s2">&quot;skewness&quot;</span><span class="p">:</span> <span class="n">skewness</span><span class="p">,</span>
+    <span class="s2">&quot;standard_deviation&quot;</span><span class="p">:</span> <span class="n">standard_deviation</span><span class="p">,</span>
+    <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">,</span>
+    <span class="s2">&quot;symmetry_looking&quot;</span><span class="p">:</span> <span class="n">symmetry_looking</span><span class="p">,</span>
+    <span class="s2">&quot;ts_complexity_cid_ce&quot;</span><span class="p">:</span> <span class="n">ts_complexity_cid_ce</span><span class="p">,</span>
+    <span class="s2">&quot;unique_value_number_to_time_series_length&quot;</span><span class="p">:</span> <span class="n">unique_value_number_to_time_series_length</span><span class="p">,</span>
+    <span class="s2">&quot;variance&quot;</span><span class="p">:</span> <span class="n">variance</span><span class="p">,</span>
+    <span class="s2">&quot;variance_larger_than_standard_deviation&quot;</span><span class="p">:</span> <span class="n">variance_larger_than_standard_deviation</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># class extractors_series(gw.TimeModule):</span>
+
+
+<div class="viewcode-block" id="extract_features_series">
+<a class="viewcode-back" href="../../extractors_series.html#xr_fresh.extractors_series.extract_features_series">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_features_series</span><span class="p">(</span><span class="n">gw_series</span><span class="p">,</span> <span class="n">feature_dict</span><span class="p">,</span> <span class="n">band_name</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts features from a geospatial time series and saves them as TIFF files.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        gw_series (geowombat.Dataset): Geospatial time series dataset.</span>
+<span class="sd">        feature_dict (dict): Dictionary containing feature names and parameters.</span>
+<span class="sd">        band_name (str): Name of the band.</span>
+<span class="sd">        output_dir (str): Directory to save the output TIFF files.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create output directory if it does not exist</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Set up logging</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+        <span class="n">filename</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;error_log.log&quot;</span><span class="p">,</span>
+        <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2">:</span><span class="si">%(levelname)s</span><span class="s2">:</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Apply the function to the geospatial time series</span>
+    <span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">series</span><span class="p">(</span><span class="n">gw_series</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">])</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="c1"># Iterate over each feature in the dictionary</span>
+        <span class="k">for</span> <span class="n">feature_name</span><span class="p">,</span> <span class="n">params_list</span> <span class="ow">in</span> <span class="n">feature_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">params_list</span><span class="p">:</span>
+                <span class="c1"># Get the corresponding function from the mapping</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="n">function_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">feature_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">func</span><span class="p">:</span>
+                    <span class="c1"># Instantiate the function with parameters</span>
+                    <span class="n">feature_func</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+                    <span class="c1"># Output file name</span>
+                    <span class="n">key_names</span><span class="p">,</span> <span class="n">value_names</span> <span class="o">=</span> <span class="n">extract_key_value_names</span><span class="p">(</span><span class="n">band_name</span><span class="p">)</span>
+                    <span class="n">grid</span> <span class="o">=</span> <span class="n">extract_grid</span><span class="p">(</span><span class="n">band_name</span><span class="p">)</span>
+                    <span class="n">output_file</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+                        <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">band_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key_names</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">value_names</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grid</span><span class="si">}</span><span class="s2">.tif&quot;</span>
+                    <span class="p">)</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">src</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                            <span class="n">func</span><span class="o">=</span><span class="n">feature_func</span><span class="p">,</span>
+                            <span class="n">outfile</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+                            <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                            <span class="n">bands</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;BIGTIFF&quot;</span><span class="p">:</span> <span class="s2">&quot;YES&quot;</span><span class="p">},</span>
+                        <span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Error extracting feature </span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2"> for band </span><span class="si">{</span><span class="n">band_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_key_value_names">
+<a class="viewcode-back" href="../../extractors_series.html#xr_fresh.extractors_series.extract_key_value_names">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_key_value_names</span><span class="p">(</span><span class="n">band_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts key_names and value_names from the band_name using regular expressions.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        band_name (str): Name of the band.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        key_names (str): Extracted key names.</span>
+<span class="sd">        value_names (str): Extracted value names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define the regular expressions to capture key_names and value_names</span>
+    <span class="n">key_names_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;key_(\w+)&quot;</span>
+    <span class="n">value_names_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;value_(\w+)&quot;</span>
+    <span class="c1"># Use regular expressions to extract key_names and value_names from the band_name</span>
+    <span class="n">key_names_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">key_names_pattern</span><span class="p">,</span> <span class="n">band_name</span><span class="p">)</span>
+    <span class="n">value_names_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">value_names_pattern</span><span class="p">,</span> <span class="n">band_name</span><span class="p">)</span>
+    <span class="c1"># Check if matches are found</span>
+    <span class="k">if</span> <span class="n">key_names_match</span> <span class="ow">and</span> <span class="n">value_names_match</span><span class="p">:</span>
+        <span class="n">key_names</span> <span class="o">=</span> <span class="n">key_names_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">value_names</span> <span class="o">=</span> <span class="n">value_names_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">key_names</span><span class="p">,</span> <span class="n">value_names</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Return default values if matches are not found</span>
+        <span class="k">return</span> <span class="s2">&quot;default_key&quot;</span><span class="p">,</span> <span class="s2">&quot;default_value&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="extract_grid">
+<a class="viewcode-back" href="../../extractors_series.html#xr_fresh.extractors_series.extract_grid">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_grid</span><span class="p">(</span><span class="n">band_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts grid value from the band_name using regular expressions.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        band_name (str): Name of the band.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        grid (str): Extracted grid value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define the regular expression pattern to capture the grid value</span>
+    <span class="n">grid_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;grid_(\d+)&quot;</span>
+    <span class="c1"># Use regular expression to extract the grid value from the band_name</span>
+    <span class="n">grid_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">grid_pattern</span><span class="p">,</span> <span class="n">band_name</span><span class="p">)</span>
+    <span class="c1"># Check if match is found</span>
+    <span class="k">if</span> <span class="n">grid_match</span><span class="p">:</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">grid_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grid</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Return default value if match is not found</span>
+        <span class="k">return</span> <span class="s2">&quot;default_grid&quot;</span></div>
+
+
+
+<span class="c1">#################################################################################################################################</span>
+<span class="c1">#################################################################################################################################</span>
+
+<span class="c1"># Example usage</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Define the geospatial time series dataset</span>
+    <span class="n">gw_series</span> <span class="o">=</span> <span class="o">...</span>
+
+    <span class="c1"># Define the feature dictionary</span>
+    <span class="n">feature_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;abs_energy&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;absolute_sum_of_changes&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;autocorr&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;lag&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;lag&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;lag&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}],</span>
+        <span class="s2">&quot;count_above_mean&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;count_below_mean&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;doy_of_maximum&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;doy_of_minimum&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;kurtosis&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;large_standard_deviation&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="c1"># # # &quot;longest_strike_above_mean&quot;: [{}],  # not working with jax GPU ram issue</span>
+        <span class="c1"># # # &quot;longest_strike_below_mean&quot;: [{}],  # not working with jax GPU ram issue</span>
+        <span class="s2">&quot;maximum&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;mean_abs_change&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;mean_change&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;mean_second_derivative_central&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;minimum&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="c1"># &quot;ols_slope_intercept&quot;: [</span>
+        <span class="c1">#     {&quot;returns&quot;: &quot;intercept&quot;},</span>
+        <span class="c1">#     {&quot;returns&quot;: &quot;slope&quot;},</span>
+        <span class="c1">#     {&quot;returns&quot;: &quot;rsquared&quot;},</span>
+        <span class="c1"># ],  # not working</span>
+        <span class="s2">&quot;quantile&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">}],</span>
+        <span class="s2">&quot;ratio_beyond_r_sigma&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}],</span>
+        <span class="s2">&quot;skewness&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;standard_deviation&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;symmetry_looking&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;ts_complexity_cid_ce&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;variance&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="s2">&quot;variance_larger_than_standard_deviation&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Define the band name and output directory</span>
+    <span class="n">band_name</span> <span class="o">=</span> <span class="s2">&quot;B2&quot;</span>
+
+    <span class="c1"># Create the output directory if it doesn&#39;t exist</span>
+    <span class="n">output_directory</span> <span class="o">=</span> <span class="s2">&quot;../features&quot;</span>
+
+    <span class="c1"># Extract features from the geospatial time series</span>
+    <span class="n">extract_features_series</span><span class="p">(</span><span class="n">gw_series</span><span class="p">,</span> <span class="n">feature_dict</span><span class="p">,</span> <span class="n">band_name</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>
