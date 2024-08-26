@@ -289,6 +289,27 @@ class interpolate_nan(gw.TimeModule):
         # Return the interpolated array (3d -> time/bands x height x width)
         # If the array is (time x 1 x height x width) then squeeze to 3d
         return array.squeeze()
+    
+def apply_interpolation(input_file, interp_type="linear"):
+    # Open the input file using geowombat
+    with gw.open(input_file) as src:
+        data = src.data
+        dates = src.dates  # Assuming dates are stored in the file's metadata
+
+    # Instantiate the interpolation class
+    interpolator = interpolate_nan(interp_type=interp_type, dates=dates)
+
+    # Apply the interpolation
+    interpolated_data = interpolator.calculate(data)
+
+    # Export individual files for each time period
+    for i, date in enumerate(dates):
+        output_filename = f"{input_file.stem}_{interp_type}_{date.strftime('%Y%m%d')}{input_file.suffix}"
+        with gw.open(output_filename, 'w', **src.meta) as dst:
+            dst.write(interpolated_data[i, :, :], 1)
+
+# Example usage
+#apply_interpolation('input_data_file.tif', interp_type='linear')
 
 
 # __all__ = ["interp"]
