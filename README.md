@@ -114,12 +114,12 @@ with gw.series( files) as src:
                     if len(list(params.keys())) > 0:
                         key_names = list(params.keys())[0]
                         value_names = list(params.values())[0]
-                        outfile = f"{band_name}_{func_name}_{key_names}_{value_names}_{grid}.tif"
+                        outfile = f"{band_name}_{func_name}_{key_names}_{value_names}.tif"
                         # avoid issue with all dates
                         if func_name in ["doy_of_maximum", "doy_of_minimum"]:
-                            outfile = f"{band_name}_{func_name}_{key_names}_{grid}.tif"
+                            outfile = f"{band_name}_{func_name}_{key_names}.tif"
                     else:
-                        outfile = f"{band_name}_{func_name}_{grid}.tif"
+                        outfile = f"{band_name}_{func_name}.tif"
 
                     # extract features
                     try:
@@ -133,7 +133,7 @@ with gw.series( files) as src:
                         )
                     except Exception as e:
                         logging.error(
-                            f"Error extracting features from {band_name} {func_name} {grid}: {e}"
+                            f"Error extracting features from {band_name} {func_name}: {e}"
                         )
                         continue
 ```
