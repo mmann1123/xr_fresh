@@ -1,13 +1,10 @@
 name: Custom Unit Tests
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # This line adds the manual trigger option
-
-
+  workflow_dispatch:  # This line allows manual triggering
 jobs:
   build:
     runs-on: ubuntu-latest
