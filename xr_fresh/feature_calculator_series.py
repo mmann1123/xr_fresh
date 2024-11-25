@@ -299,7 +299,6 @@ class kurtosis_excess(gw.TimeModule):
 
 
 class large_standard_deviation(gw.TimeModule):
-    
     """
     Boolean variable denoting if the standard dev of x is higher than 'r' times the range.
 
@@ -335,7 +334,8 @@ def _count_longest_consecutive(values):
 
 # try importing rle
 try:
-    import rle
+    from xr_fresh import rle
+
     longest_true_run = rle._count_longest_consecutive
 except ImportError:
     print("C++ rle module not found, using Python version")
