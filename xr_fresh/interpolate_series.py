@@ -6,10 +6,10 @@ from scipy.interpolate import CubicSpline
 from scipy.interpolate import UnivariateSpline
 from datetime import datetime
 import geowombat as gw
+import warnings
 
 
 class interpolate_nan(gw.TimeModule):
-
     """
     Interpolate missing values in a geospatial time series. Without dates set this class assumes a
     regular time interval between observations. With dates set this class can handle irregular time,
@@ -40,6 +40,7 @@ class interpolate_nan(gw.TimeModule):
                 func=interpolate_nan(
                     missing_value=0,
                     count=len(src.filenames),
+                    dates=dates,
                 ),
                 outfile="/home/mmann1123/Downloads/test.tif",
                 num_workers=min(12,src.nchunks),
@@ -51,14 +52,20 @@ class interpolate_nan(gw.TimeModule):
         super(interpolate_nan, self).__init__()
         # Validate dates is a list of datetime objects
         if dates is None:
-            print("NOTE: Dates are unknown, assuming regular time interval")
+            warnings.warn(
+                "NOTE: Dates are unknown, assuming regular time interval", UserWarning
+            )
             self.dates = dates
         elif not isinstance(dates, list) or not all(
             isinstance(d, datetime) for d in dates
         ):
             raise TypeError("dates must be a list of datetime objects")
         else:
-            print("NOTE: Dates will be used to index the time series for interpolation")
+            warnings.warn(
+                "NOTE: Dates will be used to index the time series for interpolation",
+                UserWarning,
+            )
+
             self.dates = dates
             self.date_indices = np.array(
                 [(date - self.dates[0]).days for date in self.dates]
@@ -289,27 +296,44 @@ class interpolate_nan(gw.TimeModule):
         # Return the interpolated array (3d -> time/bands x height x width)
         # If the array is (time x 1 x height x width) then squeeze to 3d
         return array.squeeze()
-    
-def apply_interpolation(input_file, interp_type="linear"):
-    # Open the input file using geowombat
-    with gw.open(input_file) as src:
-        data = src.data
-        dates = src.dates  # Assuming dates are stored in the file's metadata
 
-    # Instantiate the interpolation class
-    interpolator = interpolate_nan(interp_type=interp_type, dates=dates)
 
-    # Apply the interpolation
-    interpolated_data = interpolator.calculate(data)
+# from datetime import datetime, timedelta
 
-    # Export individual files for each time period
-    for i, date in enumerate(dates):
-        output_filename = f"{input_file.stem}_{interp_type}_{date.strftime('%Y%m%d')}{input_file.suffix}"
-        with gw.open(output_filename, 'w', **src.meta) as dst:
-            dst.write(interpolated_data[i, :, :], 1)
 
-# Example usage
-#apply_interpolation('input_data_file.tif', interp_type='linear')
+# def apply_interpolation(input_file, dates=None, interp_type="linear"):
+#     """
+#     Apply interpolation to a geospatial time series.
+
+#     Args:
+#         input_file (str): The input file path.
+#         dates (list[datetime], optional): List of datetime objects corresponding to each time slice.
+#         interp_type (str, optional): The type of interpolation algorithm to use. Options include "linear",
+#                                      "nearest", "zero", "slinear", "quadratic", "cubic", "previous", "next",
+#                                      "cubicspline", "spline", and "UnivariateSpline". Default is "linear".
+
+#     Example Usage:
+#             apply_interpolation(['input-day1.tif','input-day2.tif'], interp_type='linear')
+#     """
+
+#     # Open the input file using geowombat
+#     with gw.open(input_file) as src:
+#         data = src.data
+#         if dates is None:
+#             # assume dates are consecutive days if none are provided
+#             dates = [datetime.now() + timedelta(days=i) for i in range(src.shape[0])]
+
+#     # Instantiate the interpolation class
+#     interpolator = interpolate_nan(interp_type=interp_type, dates=dates)
+
+#     # Apply the interpolation
+#     interpolated_data = interpolator.calculate(data)
+
+#     # Export individual files for each time period
+#     for i, date in enumerate(dates):
+#         output_filename = f"{input_file.stem}_{interp_type}_{date.strftime('%Y%m%d')}{input_file.suffix}"
+#         with gw.open(output_filename, "w", **src.meta) as dst:
+#             dst.write(interpolated_data[i, :, :], 1)
 
 
 # __all__ = ["interp"]

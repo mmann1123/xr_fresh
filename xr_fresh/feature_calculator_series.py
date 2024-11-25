@@ -336,7 +336,7 @@ def _count_longest_consecutive(values):
 try:
     from xr_fresh import rle
 
-    longest_true_run = rle._count_longest_consecutive
+    longest_true_run = rle.longest_true_run
 except ImportError:
     print("C++ rle module not found, using Python version")
     longest_true_run = _count_longest_consecutive

@@ -98,6 +98,7 @@ REQUIRED = [
     "pyproj>=2.4.2",
     "bokeh>=2.0.0",
     "gdal>=2.3.3",
+    "numba>=0.48.0",
     jax_dependency,
 ]
 
