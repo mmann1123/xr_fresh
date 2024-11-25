@@ -64,10 +64,14 @@ def _check_valid_array(obj):
 
 class abs_energy(gw.TimeModule):
     """
-    Returns the absolute energy of the time series which is the sum over the squared values
+    Returns the absolute energy of the time series which is the sum over the squared values.
+
+    .. math::
+
+        E = \\sum_{i=1}^{n} x_i^2
 
     Args:
-        gw (_type_): _description_
+        x (numpy.ndarray): Geowombat series object contain time series of images.
     """
 
     def __init__(self):
@@ -79,10 +83,14 @@ class abs_energy(gw.TimeModule):
 
 class absolute_sum_of_changes(gw.TimeModule):
     """
-    Returns the sum over the absolute value of consecutive changes in the series x
+    Returns the sum over the absolute value of consecutive changes in the series x.
+
+    .. math::
+
+        \\sum_{i=1}^{n-1} \\mid x_{i+1} - x_i \\mid
 
     Args:
-        gw (_type_): _description_
+        x (numpy.ndarray): Geowombat series object contain time series of images.
     """
 
     def __init__(self):
@@ -93,11 +101,23 @@ class absolute_sum_of_changes(gw.TimeModule):
 
 
 class autocorrelation(gw.TimeModule):
-    """Returns the autocorrelation of the time series data at a specified lag
+    """
+    Calculates the autocorrelation of the specified lag, according to the formula [1].
+
+    .. math::
+
+        \\frac{1}{(n-l)\\sigma^{2}} \\sum_{t=1}^{n-l}(X_{t}-\\mu )(X_{t+l}-\\mu)
+
+    where :math:`n` is the length of the time series :math:`X_i`, :math:`\\sigma^2` its variance and :math:`\\mu` its
+    mean. `l` denotes the lag.
+
+    .. rubric:: References
+
+    [1] https://en.wikipedia.org/wiki/Autocorrelation#Estimation
 
     Args:
-        gw (_type_): _description_
-        lag (int): lag at which to calculate the autocorrelation (default: {1})
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+        lag (int): lag at which to calculate the autocorrelation (default: {1}).
     """
 
     def __init__(self, lag=1):
@@ -115,10 +135,15 @@ class autocorrelation(gw.TimeModule):
 
 
 class count_above_mean(gw.TimeModule):
-    """Returns the number of values in X that are higher than the mean of X
+    """
+    Returns the number of values in x that are higher than the mean of x.
+
+    .. math::
+
+        N_{\\text{above}} = \\sum_{i=1}^n (x_i > \\bar{x})
 
     Args:
-        gw (_type_): _description_
+        x (numpy.ndarray): Geowombat series object contain time series of images.
         mean (int): An integer to use as the "mean" value of the raster
     """
 
@@ -134,10 +159,15 @@ class count_above_mean(gw.TimeModule):
 
 
 class count_below_mean(gw.TimeModule):
-    """Returns the number of values in X that are lower than the mean of X
+    """
+    Returns the number of values in x that are lower than the mean of x.
+
+    .. math::
+
+        N_{\\text{below}} = \\sum_{i=1}^n (x_i < \\bar{x})
 
     Args:
-        gw (_type_): _description_
+        x (numpy.ndarray): Geowombat series object contain time series of images.
         mean (int): An integer to use as the "mean" value of the raster
     """
 
@@ -154,11 +184,15 @@ class count_below_mean(gw.TimeModule):
 
 
 class doy_of_maximum(gw.TimeModule):
-    """Returns the day of the year (doy) location of the maximum value of the series - treats all years as the same.
+    """
+    Returns the day of the year (doy) location of the maximum value of the series - treats all years as the same.
 
     Args:
-        gw (_type_): _description_
-        dates (np.array): An array holding the dates of the time series as integers or as datetime objects.
+        dates (numpy.ndarray): An array holding the dates of the time series as integers or as datetime objects.
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        int: The day of the year of the maximum value.
     """
 
     def __init__(self, dates=None):
@@ -177,11 +211,15 @@ class doy_of_maximum(gw.TimeModule):
 
 
 class doy_of_minimum(gw.TimeModule):
-    """Returns the day of the year (doy) location of the minimum value of the series - treats all years as the same.
+    """
+    Returns the day of the year (doy) location of the minimum value of the series - treats all years as the same.
 
     Args:
-        gw (_type_): _description_
-        dates (np.array): An array holding the dates of the time series as integers or as datetime objects.
+        dates (numpy.ndarray): An array holding the dates of the time series as integers or as datetime objects.
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        int: The day of the year of the minimum value.
     """
 
     def __init__(self, dates=None):
@@ -200,10 +238,19 @@ class kurtosis(gw.TimeModule):
     """
     Compute the sample kurtosis of a given array along the time axis.
 
+    .. math::
+
+        G_2 = \\frac{\\mu_4}{\\sigma^4} - 3
+
+    where :math:`\\mu_4` is the fourth central moment and :math:`\\sigma` is the standard deviation.
+
     Args:
         array (GeoWombat series object): An object that contains geospatial and temporal metadata.
         fisher (bool, optional): If True, Fisher’s definition is used (normal ==> 0.0).
                                  If False, Pearson’s definition is used (normal ==> 3.0).
+
+    Returns:
+        float: Returns the kurtosis of x (calculated with the adjusted Fisher-Pearson standardized moment coefficient G2).
     """
 
     def __init__(self, fisher=True):
@@ -221,9 +268,21 @@ class kurtosis(gw.TimeModule):
 
 class kurtosis_excess(gw.TimeModule):
     """
-    Returns the excess kurtosis of X (calculated with the adjusted Fisher-Pearson standardized moment coefficient G2).
+    Compute the excess kurtosis of a given array along the time axis.
+
+    .. math::
+
+        G_2 = \\frac{\\mu_4}{\\sigma^4} - 3
+
+    where :math:`\\mu_4` is the fourth central moment and :math:`\\sigma` is the standard deviation.
+
     Args:
-        gw (_type_): _description_
+        array (GeoWombat series object): An object that contains geospatial and temporal metadata.
+        fisher (bool, optional): If True, Fisher’s definition is used (normal ==> 0.0).
+                                 If False, Pearson’s definition is used (normal ==> 3.0).
+
+    Returns:
+        float: Returns the excess kurtosis of X (calculated with the adjusted Fisher-Pearson standardized moment coefficient G2).
     """
 
     def __init__(self, Fisher=True):
@@ -278,14 +337,18 @@ try:
     from xr_fresh import rle
 
     longest_true_run = rle.longest_true_run
-except ImportWarning:
-    print("C++ rle not found, using slow version")
+except ImportError:
+    print("C++ rle module not found, using Python version")
     longest_true_run = _count_longest_consecutive
 
 
 class longest_strike_above_mean(gw.TimeModule):
     """
-    Returns the length of the longest consecutive subsequence in X that is larger than the mean of X
+    Returns the length of the longest consecutive subsequence in x that is bigger than the mean of x.
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
     """
 
     def __init__(self, mean=None):
@@ -313,7 +376,11 @@ class longest_strike_above_mean(gw.TimeModule):
 
 class longest_strike_below_mean(gw.TimeModule):
     """
-    Returns the length of the longest consecutive subsequence in X that is smaller than the mean of X
+    Returns the length of the longest consecutive subsequence in x that is smaller than the mean of x.
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
     """
 
     def __init__(self, mean=None):
@@ -342,7 +409,17 @@ class longest_strike_below_mean(gw.TimeModule):
 
 class maximum(gw.TimeModule):
     """
-    Calculate the highest value of the time series.
+    Returns the maximum value of the time series x.
+
+    .. math::
+
+        x_{\\text{max}}
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        float: The maximum value.
     """
 
     def __init__(self):
@@ -354,7 +431,17 @@ class maximum(gw.TimeModule):
 
 class minimum(gw.TimeModule):
     """
-    Calculate the lowest value of the time series.
+    Returns the minimum value of the time series x.
+
+    .. math::
+
+        x_{\\text{min}}
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        float: The minimum value.
     """
 
     def __init__(self):
@@ -366,7 +453,17 @@ class minimum(gw.TimeModule):
 
 class mean(gw.TimeModule):
     """
-    Calculate the mean value of the time series.
+    Returns the mean value of the time series x.
+
+    .. math::
+
+        \\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        float: The mean value.
     """
 
     def __init__(self):
@@ -378,7 +475,17 @@ class mean(gw.TimeModule):
 
 class mean_abs_change(gw.TimeModule):
     """
-    Calculate the mean over the absolute differences between subsequent time series values.
+    Returns the mean over the absolute differences between subsequent time series values which is
+
+    .. math::
+
+        \\frac{1}{n-1} \\sum_{i=1}^{n-1} | x_{i+1} - x_{i} |
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        float: The mean absolute change.
     """
 
     def __init__(self):
@@ -391,7 +498,17 @@ class mean_abs_change(gw.TimeModule):
 
 class mean_change(gw.TimeModule):
     """
-    Calculate the mean over the differences between subsequent time series values.
+    Returns the mean over the differences between subsequent time series values which is
+
+    .. math::
+
+        \\frac{1}{n-1} \\sum_{i=1}^{n-1} ( x_{i+1} - x_{i} )
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        float: The mean change.
     """
 
     def __init__(self):
@@ -404,7 +521,17 @@ class mean_change(gw.TimeModule):
 
 class mean_second_derivative_central(gw.TimeModule):
     """
-    Returns the mean over the differences between subsequent time series values.
+    Returns the mean value of a central approximation of the second derivative of the time series.
+
+    .. math::
+
+        \\frac{1}{2(n-2)} \\sum_{i=1}^{n-2} \\frac{1}{2} (x_{i+2} - 2 \\cdot x_{i+1} + x_{i})
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        float: The mean second derivative.
     """
 
     def __init__(self):
@@ -423,7 +550,17 @@ class mean_second_derivative_central(gw.TimeModule):
 
 class median(gw.TimeModule):
     """
-    Calculate the median value of the time series.
+    Returns the median of the time series x.
+
+    .. math::
+
+        \\tilde{x}
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        float: The median value.
     """
 
     def __init__(self):
@@ -486,10 +623,14 @@ class ols_slope_intercept(gw.TimeModule):
 
 class quantile(gw.TimeModule):
     """
-    Compute the q-th quantile of the data along the time axis.
+    Calculates the q-th quantile of x. This is the value of x greater than q% of the ordered values from x.
 
     Args:
-        q (int): Probability or sequence of probabilities for the quantiles to compute. Values must be between 0 and 1 inclusive.
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+        q (float): Probability or sequence of probabilities for the quantiles to compute. Values must be between 0 and 1 inclusive.
+
+    Returns:
+        float: The q-th quantile of x.
     """
 
     def __init__(self, q=None, method="linear"):
@@ -503,11 +644,18 @@ class quantile(gw.TimeModule):
 
 class ratio_beyond_r_sigma(gw.TimeModule):
     """
-    Ratio of values that are more than r*std(x) (so r sigma) away from the mean of x.
+    Returns the ratio of values that are more than r times the standard deviation away from the mean of the time series.
+
+    .. math::
+
+        P_{r} = \\frac{1}{n} \\sum_{i=1}^{n} (| x_i - \\bar{x} | > r \\cdot \\sigma)
 
     Args:
-        gw (_type_): _description_
-        r (int, optional):   Defaults to 2.
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+        r (float): The number of standard deviations. Defaults to 2.
+
+    Returns:
+        float: The ratio of values beyond r sigma.
     """
 
     def __init__(self, r=2):
@@ -528,14 +676,21 @@ class ratio_beyond_r_sigma(gw.TimeModule):
 
 class skewness(gw.TimeModule):
     """
-    Returns the sample skewness of X.
+    Returns the skewness of x.
+
+    .. math::
+
+        \\frac{n}{(n-1)(n-2)} \\sum \\left( \\frac{X_i - \\overline{X}}{s} \\right)^3
 
     Args:
-        gw (_type_): _description_
+        x (numpy.ndarray): Geowombat series object contain time series of images.
         axis (int, optional): Axis along which to compute the kurtosis. Default is 0.
         fisher (bool, optional): If True, Fisher's definition is used (normal=0).
                                  If False, Pearson's definition is used (normal=3).
                                  Default is False.
+
+    Returns:
+        float: The skewness.
     """
 
     def __init__(self):
@@ -551,9 +706,18 @@ class skewness(gw.TimeModule):
 
 
 class standard_deviation(gw.TimeModule):
-    """Calculate the standard deviation value of the time series.
+    """
+    Returns the standard deviation of x.
+
+    .. math::
+
+        \\sqrt{ \\frac{1}{N} \\sum_{i=1}^{n} (x_i - \\bar{x})^2 }
+
     Args:
-        gw (_type_): _description_
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        float: The standard deviation.
     """
 
     def __init__(self):
@@ -564,7 +728,19 @@ class standard_deviation(gw.TimeModule):
 
 
 class sum(gw.TimeModule):
-    """Calculate the sum of the time series values."""
+    """
+    Returns the sum of all values in x.
+
+    .. math::
+
+        S = \\sum_{i=1}^{n} x_i
+
+    Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
+    Returns:
+        float: The sum of values.
+    """
 
     def __init__(self):
         super(sum, self).__init__()
@@ -575,10 +751,18 @@ class sum(gw.TimeModule):
 
 class symmetry_looking(gw.TimeModule):
     """
-    Boolean variable denoting if the distribution of x *looks symmetric*.
+    Measures the similarity of the time series when flipped horizontally. Boolean variable denoting if the distribution of x *looks symmetric*.
+
+    .. math::
+
+        | x_{\\text{mean}} - x_{\\text{median}} | < r \\cdot (x_{\\text{max}} - x_{\\text{min}} )
 
     Args:
-        r: the percentage of the range to compare with (default: 0.1)
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+        r (float): A threshold value, the percentage of the range to compare with (default: 0.1)
+
+    Returns:
+        float: The symmetry measure.
     """
 
     def __init__(self, r=0.1):
@@ -595,10 +779,18 @@ class symmetry_looking(gw.TimeModule):
 
 class ts_complexity_cid_ce(gw.TimeModule):
     """
-    This function calculator is an estimate for a time series complexity.
+    Returns the time series complexity measure CID CE.
+
+    .. math::
+
+        \\sqrt{ \\sum_{i=1}^{n-1} ( x_{i} - x_{i-1})^2 }
 
     Args:
+        x (numpy.ndarray): Geowombat series object contain time series of images.
         normalize: should the time series be z-transformed? (default: True)
+
+    Returns:
+        float: The complexity measure.
     """
 
     def __init__(self, normalize=True):
@@ -619,7 +811,7 @@ class ts_complexity_cid_ce(gw.TimeModule):
 
 
 class unique_value_number_to_time_series_length(gw.TimeModule):
-    """SLOW
+    """
     Returns a factor which is 1 if all values in the time series occur only once,
     and below one if this is not the case.
     In principle, it just returns
@@ -639,12 +831,18 @@ class unique_value_number_to_time_series_length(gw.TimeModule):
 
 
 class variance(gw.TimeModule):
-    """Calculate the variance of the time series
+    """
+    Returns the variance of x.
+
+    .. math::
+
+        \\sigma^2 = \\frac{1}{N} \\sum_{i=1}^{n} (x_i - \\bar{x})^2
 
     Args:
-        gw (_type_): _description_
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
     Returns:
-        bool:
+        float: The variance.
     """
 
     def __init__(self):
@@ -655,12 +853,18 @@ class variance(gw.TimeModule):
 
 
 class variance_larger_than_standard_deviation(gw.TimeModule):
-    """Calculate the variance of the time series is larger than the standard_deviation.
+    """
+    Returns 1 if variance of x is larger than its standard deviation and 0 otherwise.
+
+    .. math::
+
+        \\sigma^2 > 1
 
     Args:
-        gw (_type_): _description_
+        x (numpy.ndarray): Geowombat series object contain time series of images.
+
     Returns:
-        bool:
+        int: 1 if variance is larger than standard deviation, 0 otherwise.
     """
 
     def __init__(self):
