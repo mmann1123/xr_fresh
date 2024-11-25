@@ -23,6 +23,13 @@ Example outputs:
 
 ![png](examples/output_8_0.png)
 
+
+The package can also calculate PCA components from stacks of raster data, and can be used to generate new rasters with the PCA components as bands.
+
+Example outputs from PCA components for African ppt data:
+
+![Principal component outputs](examples/pcas.png)
+
 # Install
 
 To install xr_fresh, you can use pip. However, since xr_fresh includes a C++ extension module, it requires compilation during the installation process. Here are the steps to install xr_fresh:
@@ -47,6 +54,12 @@ pip install .
 ```  
 Note: If you run into problems related to `rle` try running `python setup.py build_ext --inplace` from the `xr_fresh` directory
 
+To run PCA you must also install `ray`.  
+
+```
+conda install -c conda-forge "ray-default"
+```
+Note: `ray` is only is beta for Windows and will not be installed by default. Please read more about the installation [here](https://docs.ray.io/en/latest/ray-overview/installation.html)
 
 ## Example
 
