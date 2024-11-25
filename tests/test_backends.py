@@ -7,7 +7,7 @@ from dask.distributed.comm.core import CommClosedError as DistributedCommError
 class TestCluster(unittest.TestCase):
 
     def setUp(self):
-        # Common setup for each test
+        # Common setup for each test case
         self.cluster = Cluster()
 
     def tearDown(self):
