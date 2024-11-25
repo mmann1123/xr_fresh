@@ -9,16 +9,6 @@ from setuptools import find_packages, setup, Command, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
 import numpy as np
 
-
-# Package meta-data.
-NAME = "xr_fresh"
-DESCRIPTION = "Generating time-series raster features"
-URL = "https://github.com/mmann/xr_fresh"
-EMAIL = "mmann1123@gmail.com"
-AUTHOR = "Michael Mann"
-REQUIRES_PYTHON = ">=3.8"
-VERSION = "0.2.1"
-
 # Define the C++ extension module
 ext_modules = [
     Extension(
@@ -74,6 +64,15 @@ class UploadCommand(Command):
         sys.exit()
 
 
+# Package meta-data.
+NAME = "xr_fresh"
+DESCRIPTION = "Generating time-series raster features"
+URL = "https://github.com/mmann/xr_fresh"
+EMAIL = "mmann1123@gmail.com"
+AUTHOR = "Michael Mann"
+REQUIRES_PYTHON = ">=3.6.7"
+VERSION = "0.1.5"
+
 import platform
 
 # Determine the correct dependency
@@ -100,10 +99,6 @@ REQUIRED = [
     "gdal>=2.3.3",
     jax_dependency,
 ]
-
-# Add ray dependency if not on Windows
-if not platform.system().startswith("Windows"):
-    REQUIRED.append("ray[default]")
 
 here = os.path.abspath(os.path.dirname(__file__))
 
