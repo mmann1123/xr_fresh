@@ -59,7 +59,7 @@ jobs:
 
     - name: Build Sphinx documentation
       run: |
-        sphinx-build -E -b html docs/source docs/build/html
+        sphinx-build -E -b html docs/source docs
 
     - id: deployment
       uses: sphinx-notes/pages@v3 
