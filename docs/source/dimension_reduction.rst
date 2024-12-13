@@ -1,6 +1,6 @@
-.. _extractors:
+.. _dimension_reduction:
  
-Extractor Function
+Dimension Reduction Functions
 =====================================
 
  
@@ -8,13 +8,8 @@ Extractor Function
    :maxdepth: 3
  
 
-
-
-
 Functions
 ----------------------- 
-.. automodule:: xr_fresh.extractors_series
+.. automodule:: xr_fresh.dimension_reduction
     :members:
-
-
  

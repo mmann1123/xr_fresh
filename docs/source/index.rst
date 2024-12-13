@@ -1,9 +1,7 @@
- 
 The xr_fresh Docs!
-=====================================
+===================
 
-xr_fresh is here to fulfill all your raster fantasies!  Built off the power of geowombat, xarray and dask, you can now summarize large-scale raster times series in no time at all! 
- 
+xr_fresh is here to fulfill all your raster fantasies! Built off the power of geowombat, xarray, and dask, you can now summarize large-scale raster time series in no time at all!
 
 Indices and tables
 -----------------------
@@ -11,23 +9,19 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-
-**Modules**
-
-* :doc:`feature_calculator_series`
-* :doc:`extractors_series`
-* :doc:`backends`
-* :doc:`utils`
-* :doc:`io`
-
+Modules
+-------
 
 .. toctree::
-   :maxdepth: 1
-   :hidden:
-   :caption: Modules
+   :maxdepth: 2
+   :caption: Modules:
 
+   modules
    feature_calculator_series
+   interpolate_series
    extractors_series
-   backends
+   dimension_reduction
+   visualizer
    utils
+   backends
    io

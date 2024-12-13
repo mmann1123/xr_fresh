@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xr_fresh.transformers &mdash; xr_fresh 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+
+  
+    <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/_modules/xr_fresh/transformers.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=37f418d5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            xr_fresh
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">xr_fresh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_calculator_series.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interpolate_series.html">Interpolation Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../extractors_series.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dimension_reduction.html">Dimension Reduction Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualizer.html">Dimension Reduction Visualization Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../io.html">Utilities for reading and writing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">xr_fresh</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">xr_fresh.transformers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for xr_fresh.transformers</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Mon Aug 10 13:41:40 2020</span>
+<span class="sd">adapted from sklearn-xarray/preprocessing </span>
+<span class="sd">@author: mmann1123</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span> 
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+
+
+<div class="viewcode-block" id="is_dataarray">
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.transformers.is_dataarray">[docs]</a>
+<span class="k">def</span> <span class="nf">is_dataarray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">require_attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Check whether an object is a DataArray.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : anything</span>
+<span class="sd">        The object to be checked.</span>
+
+<span class="sd">    require_attrs : list of str, optional</span>
+<span class="sd">        The attributes the object has to have in order to pass as a DataArray.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        Whether the object is a DataArray or not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">require_attrs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">require_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">,</span> <span class="s2">&quot;coords&quot;</span><span class="p">,</span> <span class="s2">&quot;dims&quot;</span><span class="p">,</span> <span class="s2">&quot;to_dataset&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">require_attrs</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="is_dataset">
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.transformers.is_dataset">[docs]</a>
+<span class="k">def</span> <span class="nf">is_dataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">require_attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Check whether an object is a Dataset.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : anything</span>
+<span class="sd">        The object to be checked.</span>
+<span class="sd">    require_attrs : list of str, optional</span>
+<span class="sd">        The attributes the object has to have in order to pass as a Dataset.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        Whether the object is a Dataset or not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">require_attrs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">require_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;data_vars&quot;</span><span class="p">,</span> <span class="s2">&quot;coords&quot;</span><span class="p">,</span> <span class="s2">&quot;dims&quot;</span><span class="p">,</span> <span class="s2">&quot;to_array&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">require_attrs</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="BaseTransformer">
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.transformers.BaseTransformer">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseTransformer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Base class for transformers. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_call_groupwise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Call a function function on groups of data. &quot;&quot;&quot;</span>
+
+        <span class="n">group_idx</span> <span class="o">=</span> <span class="n">get_group_indices</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_dim</span><span class="p">)</span>
+        <span class="n">Xt_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">group_idx</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">group_dim</span><span class="p">:</span> <span class="n">i</span><span class="p">})</span>
+            <span class="n">Xt_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">Xt_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">group_dim</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseTransformer.fit">
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.transformers.BaseTransformer.fit">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Fit estimator to data.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : xarray DataArray or Dataset</span>
+<span class="sd">            Training set.</span>
+<span class="sd">        y : xarray DataArray or Dataset</span>
+<span class="sd">            Target values.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self:</span>
+<span class="sd">            The estimator itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">is_dataset</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;Dataset&quot;</span>
+        <span class="k">elif</span> <span class="n">is_dataarray</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type_</span> <span class="o">=</span> <span class="s2">&quot;DataArray&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The input appears to be neither a DataArray nor a Dataset.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="BaseTransformer.transform">
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.transformers.BaseTransformer.transform">[docs]</a>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Transform input data.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : xarray DataArray or Dataset</span>
+<span class="sd">            The input data.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Xt : xarray DataArray or Dataset</span>
+<span class="sd">            The transformed data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_</span> <span class="o">==</span> <span class="s2">&quot;Dataset&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_dataset</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;This estimator was fitted for Dataset inputs, but the &quot;</span>
+                <span class="s2">&quot;provided X does not seem to be a Dataset.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_</span> <span class="o">==</span> <span class="s2">&quot;DataArray&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_dataarray</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;This estimator was fitted for DataArray inputs, but the &quot;</span>
+                <span class="s2">&quot;provided X does not seem to be a DataArray.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_groupwise</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+</div>
+
+
+ 
+    
+<span class="c1">#%%</span>
+    
+ 
+
+<div class="viewcode-block" id="Stackerizer">
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.transformers.Stackerizer">[docs]</a>
+<span class="k">class</span> <span class="nc">Stackerizer</span><span class="p">(</span><span class="n">BaseTransformer</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Transformer to handle higher dimensional data, for instance data</span>
+<span class="sd">        sampled in time and location (&#39;x&#39;,&#39;y&#39;,&#39;time&#39;), that must be stacked</span>
+<span class="sd">        before running Featurizer, and unstacked after prediction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample_dim : list, tuple</span>
+<span class="sd">        List (tuple) of the dimensions used to define how the data is sampled. </span>
+<span class="sd">    </span>
+<span class="sd">        If your sample dim has multiple dimensions, for instance x,y,time </span>
+<span class="sd">        these can be passed as a list or tuple. Before stacking, a new </span>
+<span class="sd">        multiindex &#39;sample&#39; will be created for these dimensions. </span>
+
+<span class="sd">    direction : str, optional</span>
+<span class="sd">        &quot;stack&quot; or &quot;unstack&quot; defines the direction of transformation. </span>
+<span class="sd">        Default is &quot;stack&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    sample_dim : str</span>
+<span class="sd">        Name of multiindex used to stack sample dims. Defaults to &quot;sample&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    transposed : bool</span>
+<span class="sd">        Should the output be transposed after stacking. Default is True.</span>
+<span class="sd">        </span>
+<span class="sd"> </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Xt : xarray DataArray or Dataset</span>
+<span class="sd">        The transformed data.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">stack_dims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;stack&quot;</span><span class="p">,</span>
+        <span class="n">sample_dim</span> <span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+        <span class="n">transposed</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">groupby</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>      <span class="c1"># required by transformer, but not sure how you want to avoid</span>
+        <span class="n">compute</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stack_dims</span> <span class="o">=</span> <span class="n">stack_dims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_dim</span> <span class="o">=</span> <span class="n">sample_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transposed</span> <span class="o">=</span> <span class="n">transposed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="o">=</span> <span class="n">compute</span>
+     
+
+    <span class="k">def</span> <span class="nf">_transform_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Stack along multiple dimensions. &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_dims</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stack_dims</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_dims</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_dim</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack_dims</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dask stacking not currently supported&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_dim</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack_dims</span><span class="p">})</span>
+            <span class="c1"># TO DO figure out dask stacking, doesn&#39;t allow new dim name</span>
+            <span class="c1"># from dask.array import stack as da_stack</span>
+            <span class="c1"># print(&#39;stacking w dask&#39;)</span>
+            <span class="c1">#return da_stack(X, **{self.sample_dim: self.stack_dims})</span>
+
+
+    <span class="k">def</span> <span class="nf">_inverse_transform_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Unstack along sample dimension &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_dim</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Transform. &quot;&quot;&quot;</span>
+    
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;stack&#39;</span><span class="p">,</span><span class="s1">&#39;unstack&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;direction must be one of </span><span class="si">%r</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">[</span><span class="s1">&#39;stack&#39;</span><span class="p">,</span><span class="s1">&#39;unstack&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span>  <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">item</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">dims</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack_dims</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;stack_dims must be one of </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">dims</span><span class="p">,))</span>
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_</span> <span class="o">==</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span>
+            <span class="c1"># ! not sure how to test datasets !</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;stack&#39;</span><span class="p">:</span>
+   
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transposed</span><span class="p">:</span>    
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;transposing&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_var</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_var</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_transform_var</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                
+        <span class="k">else</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;stack&#39;</span><span class="p">:</span>
+   
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transposed</span><span class="p">:</span>    
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_var</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_var</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_transform_var</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+
+
+    
+
+<div class="viewcode-block" id="stackerizer">
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.transformers.stackerizer">[docs]</a>
+<span class="k">def</span> <span class="nf">stackerizer</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">return_estimator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Stacks all dimensions and variables except for sample dimension.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : xarray DataArray or Dataset&quot;&quot;</span>
+<span class="sd">        The input data.</span>
+
+<span class="sd">    return_estimator : bool</span>
+<span class="sd">        Whether to return the fitted estimator along with the transformed data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Xt : xarray DataArray or Dataset</span>
+<span class="sd">        The transformed data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">estimator</span> <span class="o">=</span> <span class="n">Stackerizer</span><span class="p">(</span><span class="o">**</span><span class="n">fit_params</span><span class="p">)</span>
+
+    <span class="n">Xt</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_estimator</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Xt</span><span class="p">,</span> <span class="n">estimator</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Xt</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

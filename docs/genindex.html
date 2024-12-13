@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; xr_fresh 0.2.0 documentation</title>
+  <title>Index &mdash; xr_fresh 0.2.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=938c9ccc"></script>
+        <script src="_static/documentation_options.js?v=37f418d5"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -43,10 +43,14 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">xr_fresh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="feature_calculator_series.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpolate_series.html">Interpolation Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extractors_series.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Dimension Reduction Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualizer.html">Dimension Reduction Visualization Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
 <li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
 </ul>
@@ -79,9 +83,12 @@
 
 <div class="genindex-jumpbox">
  <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#I"><strong>I</strong></a>
  | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -100,13 +107,29 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.abs_energy">abs_energy (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.abs_energy">abs_energy (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.abs_energy">[1]</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.absolute_sum_of_changes">absolute_sum_of_changes (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.absolute_sum_of_changes">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.absolute_sum_of_changes">absolute_sum_of_changes (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="xr_fresh.html#xr_fresh.utils.add_categorical">add_categorical() (in module xr_fresh.utils)</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.autocorrelation">autocorrelation (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="xr_fresh.html#xr_fresh.utils.add_time_targets">add_time_targets() (in module xr_fresh.utils)</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.autocorrelation">autocorrelation (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.autocorrelation">[1]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="xr_fresh.html#xr_fresh.transformers.BaseTransformer">BaseTransformer (class in xr_fresh.transformers)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="xr_fresh.html#xr_fresh.utils.bound">bound() (in module xr_fresh.utils)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -114,15 +137,85 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="backends.html#xr_fresh.backends.Cluster.close">close() (xr_fresh.backends.Cluster method)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.abs_energy.calculate">calculate() (xr_fresh.feature_calculator_series.abs_energy method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.abs_energy.calculate">[1]</a>
+
+      <ul>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate">(xr_fresh.feature_calculator_series.absolute_sum_of_changes method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate">[1]</a>
 </li>
-      <li><a href="backends.html#xr_fresh.backends.Cluster">Cluster (class in xr_fresh.backends)</a>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.autocorrelation.calculate">(xr_fresh.feature_calculator_series.autocorrelation method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.autocorrelation.calculate">[1]</a>
 </li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.count_above_mean.calculate">(xr_fresh.feature_calculator_series.count_above_mean method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.count_above_mean.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.count_below_mean.calculate">(xr_fresh.feature_calculator_series.count_below_mean method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.count_below_mean.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.doy_of_maximum.calculate">(xr_fresh.feature_calculator_series.doy_of_maximum method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.doy_of_maximum.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.doy_of_minimum.calculate">(xr_fresh.feature_calculator_series.doy_of_minimum method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.doy_of_minimum.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.kurtosis.calculate">(xr_fresh.feature_calculator_series.kurtosis method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.kurtosis.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.kurtosis_excess.calculate">(xr_fresh.feature_calculator_series.kurtosis_excess method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.kurtosis_excess.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.large_standard_deviation.calculate">(xr_fresh.feature_calculator_series.large_standard_deviation method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.large_standard_deviation.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate">(xr_fresh.feature_calculator_series.longest_strike_above_mean method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate">(xr_fresh.feature_calculator_series.longest_strike_below_mean method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.maximum.calculate">(xr_fresh.feature_calculator_series.maximum method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.maximum.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean.calculate">(xr_fresh.feature_calculator_series.mean method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.mean.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean_abs_change.calculate">(xr_fresh.feature_calculator_series.mean_abs_change method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_abs_change.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean_change.calculate">(xr_fresh.feature_calculator_series.mean_change method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_change.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate">(xr_fresh.feature_calculator_series.mean_second_derivative_central method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.median.calculate">(xr_fresh.feature_calculator_series.median method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.median.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.minimum.calculate">(xr_fresh.feature_calculator_series.minimum method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.minimum.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.ols_slope_intercept.calculate">(xr_fresh.feature_calculator_series.ols_slope_intercept method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.ols_slope_intercept.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.quantile.calculate">(xr_fresh.feature_calculator_series.quantile method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.quantile.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate">(xr_fresh.feature_calculator_series.ratio_beyond_r_sigma method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.skewness.calculate">(xr_fresh.feature_calculator_series.skewness method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.skewness.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.standard_deviation.calculate">(xr_fresh.feature_calculator_series.standard_deviation method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.standard_deviation.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.sum.calculate">(xr_fresh.feature_calculator_series.sum method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.sum.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.symmetry_looking.calculate">(xr_fresh.feature_calculator_series.symmetry_looking method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.symmetry_looking.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate">(xr_fresh.feature_calculator_series.ts_complexity_cid_ce method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate">(xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.variance.calculate">(xr_fresh.feature_calculator_series.variance method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.variance.calculate">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate">(xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation method)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate">[1]</a>
+</li>
+        <li><a href="interpolate_series.html#id0">(xr_fresh.interpolate_series.interpolate_nan method)</a>, <a href="interpolate_series.html#xr_fresh.interpolate_series.interpolate_nan.calculate">[1]</a>, <a href="xr_fresh.html#id0">[2]</a>, <a href="xr_fresh.html#xr_fresh.interpolate_series.interpolate_nan.calculate">[3]</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.count_above_mean">count_above_mean (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="xr_fresh.html#xr_fresh.utils.check_variable_lengths">check_variable_lengths() (in module xr_fresh.utils)</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.count_below_mean">count_below_mean (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="backends.html#xr_fresh.backends.Cluster.close">close() (xr_fresh.backends.Cluster method)</a>, <a href="xr_fresh.html#xr_fresh.backends.Cluster.close">[1]</a>
+</li>
+      <li><a href="backends.html#xr_fresh.backends.Cluster">Cluster (class in xr_fresh.backends)</a>, <a href="xr_fresh.html#xr_fresh.backends.Cluster">[1]</a>
+</li>
+      <li><a href="xr_fresh.html#xr_fresh.utils.compressed_pickle">compressed_pickle() (in module xr_fresh.utils)</a>
+</li>
+      <li><a href="xr_fresh.html#xr_fresh.utils.convert_to_min_dtype">convert_to_min_dtype() (in module xr_fresh.utils)</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.count_above_mean">count_above_mean (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.count_above_mean">[1]</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.count_below_mean">count_below_mean (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.count_below_mean">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -130,11 +223,15 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.doy_of_maximum">doy_of_maximum (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="xr_fresh.html#xr_fresh.utils.decompress_pickle">decompress_pickle() (in module xr_fresh.utils)</a>
+</li>
+      <li><a href="xr_fresh.html#xr_fresh.utils.downcast_pandas">downcast_pandas() (in module xr_fresh.utils)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.doy_of_minimum">doy_of_minimum (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.doy_of_maximum">doy_of_maximum (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.doy_of_maximum">[1]</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.doy_of_minimum">doy_of_minimum (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.doy_of_minimum">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -142,13 +239,43 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="extractors_series.html#xr_fresh.extractors_series.extract_features_series">extract_features_series() (in module xr_fresh.extractors_series)</a>
+      <li><a href="dimension_reduction.html#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor">ExtendedGeoWombatAccessor (class in xr_fresh.dimension_reduction)</a>, <a href="xr_fresh.html#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor">[1]</a>
+</li>
+      <li><a href="extractors_series.html#xr_fresh.extractors_series.extract_features_series">extract_features_series() (in module xr_fresh.extractors_series)</a>, <a href="xr_fresh.html#xr_fresh.extractors_series.extract_features_series">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="extractors_series.html#xr_fresh.extractors_series.extract_grid">extract_grid() (in module xr_fresh.extractors_series)</a>
+      <li><a href="extractors_series.html#xr_fresh.extractors_series.extract_grid">extract_grid() (in module xr_fresh.extractors_series)</a>, <a href="xr_fresh.html#xr_fresh.extractors_series.extract_grid">[1]</a>
 </li>
-      <li><a href="extractors_series.html#xr_fresh.extractors_series.extract_key_value_names">extract_key_value_names() (in module xr_fresh.extractors_series)</a>
+      <li><a href="extractors_series.html#xr_fresh.extractors_series.extract_key_value_names">extract_key_value_names() (in module xr_fresh.extractors_series)</a>, <a href="xr_fresh.html#xr_fresh.extractors_series.extract_key_value_names">[1]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="xr_fresh.html#xr_fresh.utils.find_variable_names">find_variable_names() (in module xr_fresh.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="xr_fresh.html#xr_fresh.utils.find_variable_year">find_variable_year() (in module xr_fresh.utils)</a>
+</li>
+      <li><a href="xr_fresh.html#xr_fresh.transformers.BaseTransformer.fit">fit() (xr_fresh.transformers.BaseTransformer method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interpolate_series.html#xr_fresh.interpolate_series.interpolate_nan">interpolate_nan (class in xr_fresh.interpolate_series)</a>, <a href="xr_fresh.html#xr_fresh.interpolate_series.interpolate_nan">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="xr_fresh.html#xr_fresh.transformers.is_dataarray">is_dataarray() (in module xr_fresh.transformers)</a>
+</li>
+      <li><a href="xr_fresh.html#xr_fresh.transformers.is_dataset">is_dataset() (in module xr_fresh.transformers)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -156,11 +283,13 @@
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.kurtosis">kurtosis (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="dimension_reduction.html#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor.k_pca">k_pca() (xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor method)</a>, <a href="xr_fresh.html#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor.k_pca">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.kurtosis_excess">kurtosis_excess (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.kurtosis">kurtosis (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.kurtosis">[1]</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.kurtosis_excess">kurtosis_excess (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.kurtosis_excess">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -168,13 +297,13 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.large_standard_deviation">large_standard_deviation (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.large_standard_deviation">large_standard_deviation (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.large_standard_deviation">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.longest_strike_above_mean">longest_strike_above_mean (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.longest_strike_above_mean">longest_strike_above_mean (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.longest_strike_above_mean">[1]</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.longest_strike_below_mean">longest_strike_below_mean (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.longest_strike_below_mean">longest_strike_below_mean (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.longest_strike_below_mean">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -182,33 +311,45 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.maximum">maximum (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.maximum">maximum (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.maximum">[1]</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean">mean (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean">mean (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.mean">[1]</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean_abs_change">mean_abs_change (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean_abs_change">mean_abs_change (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_abs_change">[1]</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean_change">mean_change (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean_change">mean_change (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_change">[1]</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean_second_derivative_central">mean_second_derivative_central (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.mean_second_derivative_central">mean_second_derivative_central (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_second_derivative_central">[1]</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.median">median (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.median">median (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.median">[1]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.minimum">minimum (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.minimum">minimum (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.minimum">[1]</a>
 </li>
       <li>
     module
 
       <ul>
-        <li><a href="backends.html#module-xr_fresh.backends">xr_fresh.backends</a>
+        <li><a href="xr_fresh.html#module-xr_fresh">xr_fresh</a>
 </li>
-        <li><a href="extractors_series.html#module-xr_fresh.extractors_series">xr_fresh.extractors_series</a>
+        <li><a href="backends.html#module-xr_fresh.backends">xr_fresh.backends</a>, <a href="xr_fresh.html#module-xr_fresh.backends">[1]</a>
 </li>
-        <li><a href="feature_calculator_series.html#module-xr_fresh.feature_calculator_series">xr_fresh.feature_calculator_series</a>
+        <li><a href="xr_fresh.data.html#module-xr_fresh.data">xr_fresh.data</a>
 </li>
-        <li><a href="io.html#module-xr_fresh.io">xr_fresh.io</a>
+        <li><a href="dimension_reduction.html#module-xr_fresh.dimension_reduction">xr_fresh.dimension_reduction</a>, <a href="xr_fresh.html#module-xr_fresh.dimension_reduction">[1]</a>
+</li>
+        <li><a href="extractors_series.html#module-xr_fresh.extractors_series">xr_fresh.extractors_series</a>, <a href="xr_fresh.html#module-xr_fresh.extractors_series">[1]</a>
+</li>
+        <li><a href="feature_calculator_series.html#module-xr_fresh.feature_calculator_series">xr_fresh.feature_calculator_series</a>, <a href="xr_fresh.html#module-xr_fresh.feature_calculator_series">[1]</a>
+</li>
+        <li><a href="interpolate_series.html#module-xr_fresh.interpolate_series">xr_fresh.interpolate_series</a>, <a href="xr_fresh.html#module-xr_fresh.interpolate_series">[1]</a>
+</li>
+        <li><a href="io.html#module-xr_fresh.io">xr_fresh.io</a>, <a href="xr_fresh.html#module-xr_fresh.io">[1]</a>
+</li>
+        <li><a href="xr_fresh.html#module-xr_fresh.transformers">xr_fresh.transformers</a>
+</li>
+        <li><a href="xr_fresh.html#module-xr_fresh.utils">xr_fresh.utils</a>
+</li>
+        <li><a href="visualizer.html#module-xr_fresh.visualizer">xr_fresh.visualizer</a>, <a href="xr_fresh.html#module-xr_fresh.visualizer">[1]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -217,7 +358,11 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.ols_slope_intercept">ols_slope_intercept (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.ols_slope_intercept">ols_slope_intercept (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.ols_slope_intercept">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="xr_fresh.html#xr_fresh.utils.open_pickle">open_pickle() (in module xr_fresh.utils)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -225,7 +370,11 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="io.html#xr_fresh.io.parquet_append">parquet_append() (in module xr_fresh.io)</a>
+      <li><a href="io.html#xr_fresh.io.parquet_append">parquet_append() (in module xr_fresh.io)</a>, <a href="xr_fresh.html#xr_fresh.io.parquet_append">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="visualizer.html#xr_fresh.visualizer.plot_interpolated_actual">plot_interpolated_actual() (in module xr_fresh.visualizer)</a>, <a href="xr_fresh.html#xr_fresh.visualizer.plot_interpolated_actual">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -233,7 +382,7 @@
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.quantile">quantile (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.quantile">quantile (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.quantile">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -241,11 +390,11 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma">ratio_beyond_r_sigma (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma">ratio_beyond_r_sigma (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="backends.html#xr_fresh.backends.Cluster.restart">restart() (xr_fresh.backends.Cluster method)</a>
+      <li><a href="backends.html#xr_fresh.backends.Cluster.restart">restart() (xr_fresh.backends.Cluster method)</a>, <a href="xr_fresh.html#xr_fresh.backends.Cluster.restart">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -253,23 +402,31 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.skewness">skewness (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="xr_fresh.html#xr_fresh.utils.save_pickle">save_pickle() (in module xr_fresh.utils)</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.standard_deviation">standard_deviation (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.skewness">skewness (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.skewness">[1]</a>
 </li>
-      <li><a href="backends.html#xr_fresh.backends.Cluster.start">start() (xr_fresh.backends.Cluster method)</a>
+      <li><a href="xr_fresh.html#xr_fresh.io.stack_to_pandas">stack_to_pandas() (in module xr_fresh.io)</a>
 </li>
-      <li><a href="backends.html#xr_fresh.backends.Cluster.start_large_IO_object">start_large_IO_object() (xr_fresh.backends.Cluster method)</a>
+      <li><a href="xr_fresh.html#xr_fresh.transformers.Stackerizer">Stackerizer (class in xr_fresh.transformers)</a>
+</li>
+      <li><a href="xr_fresh.html#xr_fresh.transformers.stackerizer">stackerizer() (in module xr_fresh.transformers)</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.standard_deviation">standard_deviation (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.standard_deviation">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="backends.html#xr_fresh.backends.Cluster.start_large_object">start_large_object() (xr_fresh.backends.Cluster method)</a>
+      <li><a href="backends.html#xr_fresh.backends.Cluster.start">start() (xr_fresh.backends.Cluster method)</a>, <a href="xr_fresh.html#xr_fresh.backends.Cluster.start">[1]</a>
 </li>
-      <li><a href="backends.html#xr_fresh.backends.Cluster.start_small_object">start_small_object() (xr_fresh.backends.Cluster method)</a>
+      <li><a href="backends.html#xr_fresh.backends.Cluster.start_large_IO_object">start_large_IO_object() (xr_fresh.backends.Cluster method)</a>, <a href="xr_fresh.html#xr_fresh.backends.Cluster.start_large_IO_object">[1]</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.sum">sum (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="backends.html#xr_fresh.backends.Cluster.start_large_object">start_large_object() (xr_fresh.backends.Cluster method)</a>, <a href="xr_fresh.html#xr_fresh.backends.Cluster.start_large_object">[1]</a>
 </li>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.symmetry_looking">symmetry_looking (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="backends.html#xr_fresh.backends.Cluster.start_small_object">start_small_object() (xr_fresh.backends.Cluster method)</a>, <a href="xr_fresh.html#xr_fresh.backends.Cluster.start_small_object">[1]</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.sum">sum (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.sum">[1]</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.symmetry_looking">symmetry_looking (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.symmetry_looking">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -277,7 +434,13 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.ts_complexity_cid_ce">ts_complexity_cid_ce (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="xr_fresh.html#xr_fresh.utils.to_vrt">to_vrt() (in module xr_fresh.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="xr_fresh.html#xr_fresh.transformers.BaseTransformer.transform">transform() (xr_fresh.transformers.BaseTransformer method)</a>
+</li>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.ts_complexity_cid_ce">ts_complexity_cid_ce (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.ts_complexity_cid_ce">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -285,7 +448,11 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length">unique_value_number_to_time_series_length (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="xr_fresh.html#xr_fresh.utils.unique">unique() (in module xr_fresh.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length">unique_value_number_to_time_series_length (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -293,11 +460,11 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.variance">variance (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.variance">variance (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.variance">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation">variance_larger_than_standard_deviation (class in xr_fresh.feature_calculator_series)</a>
+      <li><a href="feature_calculator_series.html#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation">variance_larger_than_standard_deviation (class in xr_fresh.feature_calculator_series)</a>, <a href="xr_fresh.html#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -305,7 +472,11 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="io.html#xr_fresh.io.WriteStackedArray">WriteStackedArray() (in module xr_fresh.io)</a>
+      <li><a href="xr_fresh.html#xr_fresh.io.WriteDaskArray">WriteDaskArray (class in xr_fresh.io)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="io.html#xr_fresh.io.WriteStackedArray">WriteStackedArray() (in module xr_fresh.io)</a>, <a href="xr_fresh.html#xr_fresh.io.WriteStackedArray">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -313,18 +484,41 @@
 <h2 id="X">X</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="xr_fresh.html#xr_fresh.utils.xarray_to_rasterio">xarray_to_rasterio() (in module xr_fresh.utils)</a>
+</li>
+      <li>
+    xr_fresh
+
+      <ul>
+        <li><a href="xr_fresh.html#module-xr_fresh">module</a>
+</li>
+      </ul></li>
       <li>
     xr_fresh.backends
 
       <ul>
-        <li><a href="backends.html#module-xr_fresh.backends">module</a>
+        <li><a href="backends.html#module-xr_fresh.backends">module</a>, <a href="xr_fresh.html#module-xr_fresh.backends">[1]</a>
+</li>
+      </ul></li>
+      <li>
+    xr_fresh.data
+
+      <ul>
+        <li><a href="xr_fresh.data.html#module-xr_fresh.data">module</a>
+</li>
+      </ul></li>
+      <li>
+    xr_fresh.dimension_reduction
+
+      <ul>
+        <li><a href="dimension_reduction.html#module-xr_fresh.dimension_reduction">module</a>, <a href="xr_fresh.html#module-xr_fresh.dimension_reduction">[1]</a>
 </li>
       </ul></li>
       <li>
     xr_fresh.extractors_series
 
       <ul>
-        <li><a href="extractors_series.html#module-xr_fresh.extractors_series">module</a>
+        <li><a href="extractors_series.html#module-xr_fresh.extractors_series">module</a>, <a href="xr_fresh.html#module-xr_fresh.extractors_series">[1]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -333,14 +527,42 @@
     xr_fresh.feature_calculator_series
 
       <ul>
-        <li><a href="feature_calculator_series.html#module-xr_fresh.feature_calculator_series">module</a>
+        <li><a href="feature_calculator_series.html#module-xr_fresh.feature_calculator_series">module</a>, <a href="xr_fresh.html#module-xr_fresh.feature_calculator_series">[1]</a>
+</li>
+      </ul></li>
+      <li>
+    xr_fresh.interpolate_series
+
+      <ul>
+        <li><a href="interpolate_series.html#module-xr_fresh.interpolate_series">module</a>, <a href="xr_fresh.html#module-xr_fresh.interpolate_series">[1]</a>
 </li>
       </ul></li>
       <li>
     xr_fresh.io
 
       <ul>
-        <li><a href="io.html#module-xr_fresh.io">module</a>
+        <li><a href="io.html#module-xr_fresh.io">module</a>, <a href="xr_fresh.html#module-xr_fresh.io">[1]</a>
+</li>
+      </ul></li>
+      <li>
+    xr_fresh.transformers
+
+      <ul>
+        <li><a href="xr_fresh.html#module-xr_fresh.transformers">module</a>
+</li>
+      </ul></li>
+      <li>
+    xr_fresh.utils
+
+      <ul>
+        <li><a href="xr_fresh.html#module-xr_fresh.utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    xr_fresh.visualizer
+
+      <ul>
+        <li><a href="visualizer.html#module-xr_fresh.visualizer">module</a>, <a href="xr_fresh.html#module-xr_fresh.visualizer">[1]</a>
 </li>
       </ul></li>
   </ul></td>

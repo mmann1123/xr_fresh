@@ -57,7 +57,10 @@ class WriteDaskArray(object):
         row_id = np.add.accumulate(row_chunks)
 
         self.src.attrs["chunk_ids"] = dict(
-            zip([f"{i:09d}" for i in row_id], range(0, len(row_id)),)
+            zip(
+                [f"{i:09d}" for i in row_id],
+                range(0, len(row_id)),
+            )
         )
         # note not working yet
         # chunk_id = self.src.attrs["chunk_ids"][f"{y.start:09d}"]
@@ -105,36 +108,37 @@ def WriteStackedArray(src: xr.DataArray, file_path="/tmp/test.parquet"):
 
 
 def parquet_append(
-    file_list: list, out_path: str, filters: list,
+    file_list: list,
+    out_path: str,
+    filters: list,
 ):
     """
     Read, filter and append large set of parquet files to a single file. Note: resulting file must be read with pd.read_parquet(engine='pyarrow')
 
     `See read_table docs <https://arrow.apache.org/docs/python/generated/pyarrow.parquet.read_table.html#pyarrow.parquet.read_table>`_
-    
+
     :param file_list: list of file paths to .parquet files
     :type file_list: list
     :param out_path: path and name of output parquet file
     :type out_path: str
-    :param filters: list of 
+    :param filters: list of
     :type filters: list
-
-    .. highlight:: python
-    .. code-block:: python
-
-        ('x', '=', 0)
-        ('y', 'in', ['a', 'b', 'c'])
-        ('z', 'not in', {'a','b'})
-    ...
 
     """
     pqwriter = None
     for i, df in enumerate(file_list):
-        table = pq.read_table(df, filters=filters, use_pandas_metadata=True,)
+        table = pq.read_table(
+            df,
+            filters=filters,
+            use_pandas_metadata=True,
+        )
         # for the first chunk of records
         if i == 0:
             # create a parquet write object giving it an output file
-            pqwriter = pq.ParquetWriter(out_path, table.schema,)
+            pqwriter = pq.ParquetWriter(
+                out_path,
+                table.schema,
+            )
         pqwriter.write_table(table)
 
     # close the parquet writer
