@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xr_fresh &mdash; xr_fresh 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+
+  
+    <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/modulesold.html" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=37f418d5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xr_fresh
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">xr_fresh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_calculator_series.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpolate_series.html">Interpolation Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extractors_series.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Dimension Reduction Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xr_fresh</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">xr_fresh</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modulesold.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="xr-fresh">
+<h1>xr_fresh<a class="headerlink" href="#xr-fresh" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="xr_fresh.html">xr_fresh package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.data.html">xr_fresh.data package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.data.html#module-xr_fresh.data">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#module-xr_fresh.backends">xr_fresh.backends module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.backends.Cluster"><code class="docutils literal notranslate"><span class="pre">Cluster</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.backends.Cluster.close"><code class="docutils literal notranslate"><span class="pre">Cluster.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.backends.Cluster.restart"><code class="docutils literal notranslate"><span class="pre">Cluster.restart()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.backends.Cluster.start"><code class="docutils literal notranslate"><span class="pre">Cluster.start()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.backends.Cluster.start_large_IO_object"><code class="docutils literal notranslate"><span class="pre">Cluster.start_large_IO_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.backends.Cluster.start_large_object"><code class="docutils literal notranslate"><span class="pre">Cluster.start_large_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.backends.Cluster.start_small_object"><code class="docutils literal notranslate"><span class="pre">Cluster.start_small_object()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#module-xr_fresh.dimension_reduction">xr_fresh.dimension_reduction module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor"><code class="docutils literal notranslate"><span class="pre">ExtendedGeoWombatAccessor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor.k_pca"><code class="docutils literal notranslate"><span class="pre">ExtendedGeoWombatAccessor.k_pca()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#module-xr_fresh.extractors_series">xr_fresh.extractors_series module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.extractors_series.extract_features_series"><code class="docutils literal notranslate"><span class="pre">extract_features_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.extractors_series.extract_grid"><code class="docutils literal notranslate"><span class="pre">extract_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.extractors_series.extract_key_value_names"><code class="docutils literal notranslate"><span class="pre">extract_key_value_names()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#module-xr_fresh.feature_calculator_series">xr_fresh.feature_calculator_series module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.abs_energy"><code class="docutils literal notranslate"><span class="pre">abs_energy</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.abs_energy.calculate"><code class="docutils literal notranslate"><span class="pre">abs_energy.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.absolute_sum_of_changes"><code class="docutils literal notranslate"><span class="pre">absolute_sum_of_changes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate"><code class="docutils literal notranslate"><span class="pre">absolute_sum_of_changes.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.autocorrelation"><code class="docutils literal notranslate"><span class="pre">autocorrelation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.autocorrelation.calculate"><code class="docutils literal notranslate"><span class="pre">autocorrelation.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.count_above_mean"><code class="docutils literal notranslate"><span class="pre">count_above_mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.count_above_mean.calculate"><code class="docutils literal notranslate"><span class="pre">count_above_mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.count_below_mean"><code class="docutils literal notranslate"><span class="pre">count_below_mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.count_below_mean.calculate"><code class="docutils literal notranslate"><span class="pre">count_below_mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.doy_of_maximum"><code class="docutils literal notranslate"><span class="pre">doy_of_maximum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.doy_of_maximum.calculate"><code class="docutils literal notranslate"><span class="pre">doy_of_maximum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.doy_of_minimum"><code class="docutils literal notranslate"><span class="pre">doy_of_minimum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.doy_of_minimum.calculate"><code class="docutils literal notranslate"><span class="pre">doy_of_minimum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.kurtosis"><code class="docutils literal notranslate"><span class="pre">kurtosis</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.kurtosis.calculate"><code class="docutils literal notranslate"><span class="pre">kurtosis.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.kurtosis_excess"><code class="docutils literal notranslate"><span class="pre">kurtosis_excess</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.kurtosis_excess.calculate"><code class="docutils literal notranslate"><span class="pre">kurtosis_excess.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.large_standard_deviation"><code class="docutils literal notranslate"><span class="pre">large_standard_deviation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.large_standard_deviation.calculate"><code class="docutils literal notranslate"><span class="pre">large_standard_deviation.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.longest_strike_above_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_above_mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate"><code class="docutils literal notranslate"><span class="pre">longest_strike_above_mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.longest_strike_below_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_below_mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate"><code class="docutils literal notranslate"><span class="pre">longest_strike_below_mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.maximum"><code class="docutils literal notranslate"><span class="pre">maximum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.maximum.calculate"><code class="docutils literal notranslate"><span class="pre">maximum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.mean"><code class="docutils literal notranslate"><span class="pre">mean</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.mean.calculate"><code class="docutils literal notranslate"><span class="pre">mean.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_abs_change"><code class="docutils literal notranslate"><span class="pre">mean_abs_change</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_abs_change.calculate"><code class="docutils literal notranslate"><span class="pre">mean_abs_change.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_change"><code class="docutils literal notranslate"><span class="pre">mean_change</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_change.calculate"><code class="docutils literal notranslate"><span class="pre">mean_change.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_second_derivative_central"><code class="docutils literal notranslate"><span class="pre">mean_second_derivative_central</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate"><code class="docutils literal notranslate"><span class="pre">mean_second_derivative_central.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.median"><code class="docutils literal notranslate"><span class="pre">median</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.median.calculate"><code class="docutils literal notranslate"><span class="pre">median.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.minimum"><code class="docutils literal notranslate"><span class="pre">minimum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.minimum.calculate"><code class="docutils literal notranslate"><span class="pre">minimum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.ols_slope_intercept"><code class="docutils literal notranslate"><span class="pre">ols_slope_intercept</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.ols_slope_intercept.calculate"><code class="docutils literal notranslate"><span class="pre">ols_slope_intercept.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.quantile"><code class="docutils literal notranslate"><span class="pre">quantile</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.quantile.calculate"><code class="docutils literal notranslate"><span class="pre">quantile.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma"><code class="docutils literal notranslate"><span class="pre">ratio_beyond_r_sigma</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate"><code class="docutils literal notranslate"><span class="pre">ratio_beyond_r_sigma.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.skewness"><code class="docutils literal notranslate"><span class="pre">skewness</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.skewness.calculate"><code class="docutils literal notranslate"><span class="pre">skewness.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.standard_deviation"><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.standard_deviation.calculate"><code class="docutils literal notranslate"><span class="pre">standard_deviation.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.sum"><code class="docutils literal notranslate"><span class="pre">sum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.sum.calculate"><code class="docutils literal notranslate"><span class="pre">sum.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.symmetry_looking"><code class="docutils literal notranslate"><span class="pre">symmetry_looking</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.symmetry_looking.calculate"><code class="docutils literal notranslate"><span class="pre">symmetry_looking.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.ts_complexity_cid_ce"><code class="docutils literal notranslate"><span class="pre">ts_complexity_cid_ce</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate"><code class="docutils literal notranslate"><span class="pre">ts_complexity_cid_ce.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length"><code class="docutils literal notranslate"><span class="pre">unique_value_number_to_time_series_length</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate"><code class="docutils literal notranslate"><span class="pre">unique_value_number_to_time_series_length.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.variance"><code class="docutils literal notranslate"><span class="pre">variance</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.variance.calculate"><code class="docutils literal notranslate"><span class="pre">variance.calculate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation"><code class="docutils literal notranslate"><span class="pre">variance_larger_than_standard_deviation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate"><code class="docutils literal notranslate"><span class="pre">variance_larger_than_standard_deviation.calculate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#module-xr_fresh.interpolate_series">xr_fresh.interpolate_series module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.interpolate_series.interpolate_nan"><code class="docutils literal notranslate"><span class="pre">interpolate_nan</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.interpolate_series.interpolate_nan.calculate"><code class="docutils literal notranslate"><span class="pre">interpolate_nan.calculate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#id0"><code class="docutils literal notranslate"><span class="pre">interpolate_nan.calculate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#module-xr_fresh.io">xr_fresh.io module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.io.WriteDaskArray"><code class="docutils literal notranslate"><span class="pre">WriteDaskArray</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.io.WriteStackedArray"><code class="docutils literal notranslate"><span class="pre">WriteStackedArray()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.io.parquet_append"><code class="docutils literal notranslate"><span class="pre">parquet_append()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.io.stack_to_pandas"><code class="docutils literal notranslate"><span class="pre">stack_to_pandas()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#module-xr_fresh.transformers">xr_fresh.transformers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.transformers.BaseTransformer"><code class="docutils literal notranslate"><span class="pre">BaseTransformer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.transformers.BaseTransformer.fit"><code class="docutils literal notranslate"><span class="pre">BaseTransformer.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="xr_fresh.html#xr_fresh.transformers.BaseTransformer.transform"><code class="docutils literal notranslate"><span class="pre">BaseTransformer.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.transformers.Stackerizer"><code class="docutils literal notranslate"><span class="pre">Stackerizer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.transformers.is_dataarray"><code class="docutils literal notranslate"><span class="pre">is_dataarray()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.transformers.is_dataset"><code class="docutils literal notranslate"><span class="pre">is_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.transformers.stackerizer"><code class="docutils literal notranslate"><span class="pre">stackerizer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#module-xr_fresh.utils">xr_fresh.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.add_categorical"><code class="docutils literal notranslate"><span class="pre">add_categorical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.add_time_targets"><code class="docutils literal notranslate"><span class="pre">add_time_targets()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.bound"><code class="docutils literal notranslate"><span class="pre">bound()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.check_variable_lengths"><code class="docutils literal notranslate"><span class="pre">check_variable_lengths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.compressed_pickle"><code class="docutils literal notranslate"><span class="pre">compressed_pickle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.convert_to_min_dtype"><code class="docutils literal notranslate"><span class="pre">convert_to_min_dtype()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.decompress_pickle"><code class="docutils literal notranslate"><span class="pre">decompress_pickle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.downcast_pandas"><code class="docutils literal notranslate"><span class="pre">downcast_pandas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.find_variable_names"><code class="docutils literal notranslate"><span class="pre">find_variable_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.find_variable_year"><code class="docutils literal notranslate"><span class="pre">find_variable_year()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.open_pickle"><code class="docutils literal notranslate"><span class="pre">open_pickle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.save_pickle"><code class="docutils literal notranslate"><span class="pre">save_pickle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.to_vrt"><code class="docutils literal notranslate"><span class="pre">to_vrt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.unique"><code class="docutils literal notranslate"><span class="pre">unique()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.utils.xarray_to_rasterio"><code class="docutils literal notranslate"><span class="pre">xarray_to_rasterio()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#xr-fresh-visualizer-module">xr_fresh.visualizer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="xr_fresh.html#xr_fresh.visualizer.plot_interpolated_actual"><code class="docutils literal notranslate"><span class="pre">plot_interpolated_actual()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="xr_fresh.html#module-xr_fresh">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath("../../xr_fresh"))
 
 project = "xr_fresh"
 author = "Michael Mann"
-release = "0.2.0"
+release = "0.2.1"
 
 # html_context = {
 #     "css_files": [
@@ -40,10 +40,12 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.viewcode",
     "sphinx.ext.inheritance_diagram",
+    "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "numpydoc",
     "sphinx_rtd_theme",
 ]
+autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ["_templates"]
@@ -58,7 +60,13 @@ exclude_patterns = []
 
 # pretend to install the following packages
 # autodoc_mock_imports = ["xr_fresh", "numpy", "geowombat", "gdal"]
-autodoc_mock_imports = ["rle"]
+autodoc_mock_imports = [
+    "rle",
+    "xgboost",
+    "xr_fresh.Sklearn_Methods",
+    "xr_fresh.script_run_classifier_and_save_results",
+    "xr_fresh.testbed",
+]
 
 
 # Skip specific members
@@ -67,10 +75,6 @@ def skip_member(app, what, name, obj, skip, options):
     if name == "rle" or "rle" in name:
         return True
     return skip
-
-
-def setup(app):
-    app.connect("autodoc-skip-member", skip_member)
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -82,7 +86,7 @@ html_theme = "sphinx_rtd_theme"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["../_static"]
+html_static_path = ["_static"]
 html_baseurl = "https://mmann1123.github.io/xr_fresh/"
 
 html_theme_options = {
@@ -102,3 +106,54 @@ html_theme_options = {
     "titles_only": False,
     "github_button": True,
 }
+
+
+## Copy all html files into the docs directory after build
+import os
+import shutil
+
+
+def copy_html_files(app, exception):
+    """
+    Copies HTML files from the build directory to the docs directory after the build is finished.
+
+    Args:
+        app: The Sphinx application object.
+        exception: An exception object if an error occurred, otherwise None.
+    """
+    if exception is not None:
+        # If there was an exception during the build, do not proceed with copying
+        return
+
+    # Define the source and destination directories
+    build_dir = os.path.join(
+        app.outdir, "..", "html"
+    )  # Typically, app.outdir is docs/_build/html
+    destination_dir = os.path.abspath(
+        os.path.join(app.srcdir, "..")
+    )  # Typically, docs/
+
+    # Ensure the destination directory exists
+    os.makedirs(destination_dir, exist_ok=True)
+
+    # Iterate through all HTML files in the build directory
+    for root, dirs, files in os.walk(build_dir):
+        for file in files:
+            if file.endswith(".html"):
+                src_file = os.path.join(root, file)
+                # Compute the relative path to preserve the directory structure
+                rel_path = os.path.relpath(root, build_dir)
+                dest_path = os.path.join(destination_dir, rel_path)
+                os.makedirs(dest_path, exist_ok=True)
+                shutil.copy2(src_file, os.path.join(dest_path, file))
+
+
+def setup(app):
+    """
+    Setup function to connect event hooks.
+
+    Args:
+        app: The Sphinx application object.
+    """
+    app.connect("autodoc-skip-member", skip_member)
+    app.connect("build-finished", copy_html_files)

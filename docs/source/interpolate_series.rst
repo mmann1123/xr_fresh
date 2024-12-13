@@ -1,6 +1,6 @@
-.. _extractors:
+.. _interpolate_series:
  
-Extractor Function
+Interpolation Functions
 =====================================
 
  
@@ -10,7 +10,7 @@ Extractor Function
 
 Functions
 ----------------------- 
-.. automodule:: xr_fresh.extractors_series
+.. automodule:: xr_fresh.interpolate_series
     :members:
 
 

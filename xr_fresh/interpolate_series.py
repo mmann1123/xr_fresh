@@ -28,6 +28,8 @@ class interpolate_nan(gw.TimeModule):
 
     Example Usage:
 
+    .. code-block:: python
+
         pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"
         files = sorted(glob(f"{pth}*.tif"))[0:10]
         strp_glob = f"{pth}RadT_tavg_%Y%m.tif"
@@ -35,7 +37,7 @@ class interpolate_nan(gw.TimeModule):
         date_strings = [date.strftime("%Y-%m-%d") for date in dates]
 
         # window size controls RAM usage, transfer lab can be jax if using GPU
-        with gw.series(files, window_size=[640,640],transfer_lib="numpy") as src:
+        with gw.series(files, window_size=[640, 640], transfer_lib="numpy") as src:
             src.apply(
                 func=interpolate_nan(
                     missing_value=0,
@@ -43,7 +45,7 @@ class interpolate_nan(gw.TimeModule):
                     dates=dates,
                 ),
                 outfile="/home/mmann1123/Downloads/test.tif",
-                num_workers=min(12,src.nchunks),
+                num_workers=min(12, src.nchunks),
                 bands=1,
             )
     """

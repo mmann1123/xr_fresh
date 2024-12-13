@@ -64,14 +64,17 @@ def _check_valid_array(obj):
 
 class abs_energy(gw.TimeModule):
     """
-    Returns the absolute energy of the time series which is the sum over the squared values.
+    Returns the absolute energy of the time series, which is the sum of the squared values.
 
     .. math::
 
         E = \\sum_{i=1}^{n} x_i^2
 
     Args:
-        x (numpy.ndarray): Geowombat series object contain time series of images.
+        x (numpy.ndarray): Geowombat series object containing a time series of images.
+
+    Returns:
+        E (numpy.ndarray): The absolute energy of the time series.
     """
 
     def __init__(self):
@@ -854,14 +857,14 @@ class variance(gw.TimeModule):
 
 class variance_larger_than_standard_deviation(gw.TimeModule):
     """
-    Returns 1 if variance of x is larger than its standard deviation and 0 otherwise.
+    Returns 1 if the variance of x is larger than its standard deviation and 0 otherwise.
 
     .. math::
 
-        \\sigma^2 > 1
+        \\sigma^2 > \\sigma
 
     Args:
-        x (numpy.ndarray): Geowombat series object contain time series of images.
+        x (numpy.ndarray): Geowombat series object containing a time series of images.
 
     Returns:
         int: 1 if variance is larger than standard deviation, 0 otherwise.

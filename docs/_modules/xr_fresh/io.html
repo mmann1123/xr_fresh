@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>xr_fresh.io &mdash; xr_fresh 0.2.0 documentation</title>
+  <title>xr_fresh.io &mdash; xr_fresh 0.2.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+        <script src="../../_static/documentation_options.js?v=37f418d5"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -43,10 +43,14 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">xr_fresh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../feature_calculator_series.html">Feature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interpolate_series.html">Interpolation Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../extractors_series.html">Extractor Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dimension_reduction.html">Dimension Reduction Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualizer.html">Dimension Reduction Visualization Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../backends.html">Utilities to work with Dask</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../io.html">Utilities for reading and writing</a></li>
 </ul>
@@ -84,6 +88,8 @@
 <span class="kn">import</span> <span class="nn">pyarrow.parquet</span> <span class="k">as</span> <span class="nn">pq</span>
 
 
+<div class="viewcode-block" id="stack_to_pandas">
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.io.stack_to_pandas">[docs]</a>
 <span class="k">def</span> <span class="nf">stack_to_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 
     <span class="c1"># The data from `da.store` are numpy arrays</span>
@@ -104,9 +110,12 @@
     <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
     <span class="n">X</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">X</span>
+    <span class="k">return</span> <span class="n">X</span></div>
 
 
+
+<div class="viewcode-block" id="WriteDaskArray">
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.io.WriteDaskArray">[docs]</a>
 <span class="k">class</span> <span class="nc">WriteDaskArray</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 
@@ -135,7 +144,10 @@
         <span class="n">row_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">accumulate</span><span class="p">(</span><span class="n">row_chunks</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">src</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;chunk_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="nb">zip</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">09d</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">row_id</span><span class="p">],</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_id</span><span class="p">)),)</span>
+            <span class="nb">zip</span><span class="p">(</span>
+                <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">09d</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">row_id</span><span class="p">],</span>
+                <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_id</span><span class="p">)),</span>
+            <span class="p">)</span>
         <span class="p">)</span>
         <span class="c1"># note not working yet</span>
         <span class="c1"># chunk_id = self.src.attrs[&quot;chunk_ids&quot;][f&quot;{y.start:09d}&quot;]</span>
@@ -159,11 +171,12 @@
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
-        <span class="k">pass</span>
+        <span class="k">pass</span></div>
+
 
 
 <div class="viewcode-block" id="WriteStackedArray">
-<a class="viewcode-back" href="../../io.html#xr_fresh.io.WriteStackedArray">[docs]</a>
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.io.WriteStackedArray">[docs]</a>
 <span class="k">def</span> <span class="nf">WriteStackedArray</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;/tmp/test.parquet&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes stacked ie. flattened by (y,x,time) to parquet in chunks.</span>
 
@@ -186,38 +199,39 @@
 
 
 <div class="viewcode-block" id="parquet_append">
-<a class="viewcode-back" href="../../io.html#xr_fresh.io.parquet_append">[docs]</a>
+<a class="viewcode-back" href="../../xr_fresh.html#xr_fresh.io.parquet_append">[docs]</a>
 <span class="k">def</span> <span class="nf">parquet_append</span><span class="p">(</span>
-    <span class="n">file_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">out_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">file_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">out_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read, filter and append large set of parquet files to a single file. Note: resulting file must be read with pd.read_parquet(engine=&#39;pyarrow&#39;)</span>
 
 <span class="sd">    `See read_table docs &lt;https://arrow.apache.org/docs/python/generated/pyarrow.parquet.read_table.html#pyarrow.parquet.read_table&gt;`_</span>
-<span class="sd">    </span>
+
 <span class="sd">    :param file_list: list of file paths to .parquet files</span>
 <span class="sd">    :type file_list: list</span>
 <span class="sd">    :param out_path: path and name of output parquet file</span>
 <span class="sd">    :type out_path: str</span>
-<span class="sd">    :param filters: list of </span>
+<span class="sd">    :param filters: list of</span>
 <span class="sd">    :type filters: list</span>
-
-<span class="sd">    .. highlight:: python</span>
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        (&#39;x&#39;, &#39;=&#39;, 0)</span>
-<span class="sd">        (&#39;y&#39;, &#39;in&#39;, [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;])</span>
-<span class="sd">        (&#39;z&#39;, &#39;not in&#39;, {&#39;a&#39;,&#39;b&#39;})</span>
-<span class="sd">    ...</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pqwriter</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file_list</span><span class="p">):</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span> <span class="n">use_pandas_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">,</span>
+            <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
+            <span class="n">use_pandas_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="c1"># for the first chunk of records</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># create a parquet write object giving it an output file</span>
-            <span class="n">pqwriter</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">ParquetWriter</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">schema</span><span class="p">,)</span>
+            <span class="n">pqwriter</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">ParquetWriter</span><span class="p">(</span>
+                <span class="n">out_path</span><span class="p">,</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="n">pqwriter</span><span class="o">.</span><span class="n">write_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 
     <span class="c1"># close the parquet writer</span>
