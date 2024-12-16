@@ -7,45 +7,13 @@ import os
 from glob import glob
 from datetime import datetime
 from pathlib import Path
-
-# Mapping of feature names to corresponding functions
-function_mapping = {
-    "abs_energy": abs_energy,
-    "absolute_sum_of_changes": absolute_sum_of_changes,
-    "autocorrelation": autocorrelation,
-    "count_above_mean": count_above_mean,
-    "count_below_mean": count_below_mean,
-    "doy_of_maximum": doy_of_maximum,
-    "doy_of_minimum": doy_of_minimum,
-    "kurtosis": kurtosis,
-    "kurtosis_excess": kurtosis_excess,
-    "large_standard_deviation": large_standard_deviation,
-    "longest_strike_above_mean": longest_strike_above_mean,
-    "longest_strike_below_mean": longest_strike_below_mean,
-    "maximum": maximum,
-    "minimum": minimum,
-    "mean": mean,
-    "mean_abs_change": mean_abs_change,
-    "mean_change": mean_change,
-    "mean_second_derivative_central": mean_second_derivative_central,
-    "median": median,
-    "ols_slope_intercept": ols_slope_intercept,
-    "quantile": quantile,
-    "ratio_beyond_r_sigma": ratio_beyond_r_sigma,
-    "skewness": skewness,
-    "standard_deviation": standard_deviation,
-    "sum": sum,
-    "symmetry_looking": symmetry_looking,
-    "ts_complexity_cid_ce": ts_complexity_cid_ce,
-    "unique_value_number_to_time_series_length": unique_value_number_to_time_series_length,
-    "variance": variance,
-    "variance_larger_than_standard_deviation": variance_larger_than_standard_deviation,
-}
-
-# class extractors_series(gw.TimeModule):
+import inspect
+from xr_fresh.feature_calculator_series import function_mapping
 
 
-def extract_features_series(gw_series, feature_dict, band_name, output_dir):
+def extract_features_series(
+    gw_series, feature_dict, band_name, output_dir, num_workers=-1, nodata=np.nan
+):
     """
     Extracts features from a geospatial time series and saves them as TIFF files.
 
@@ -69,30 +37,47 @@ def extract_features_series(gw_series, feature_dict, band_name, output_dir):
     )
 
     # Apply the function to the geospatial time series
-    with gw.series(gw_series, window_size=[512, 512]) as src:
+    with gw.series(gw_series, nodata=nodata, window_size=[256, 256]) as src:
         # Iterate over each feature in the dictionary
         for feature_name, params_list in feature_dict.items():
             for params in params_list:
                 # Get the corresponding function from the mapping
                 func = function_mapping.get(feature_name)
-                if func:
+                if inspect.isclass(func):
                     # Instantiate the function with parameters
                     feature_func = func(**params)
-                    # Output file name
-                    key_names, value_names = extract_key_value_names(band_name)
-                    grid = extract_grid(band_name)
-                    output_file = (
-                        Path(output_dir)
-                        / f"{band_name}_{feature_name}_{key_names}_{value_names}_{grid}.tif"
-                    )
+
+                    # create output file name if parameters exist
+                    # avoid issue with all dates
+                    if feature_name in ["doy_of_maximum", "doy_of_minimum"]:
+                        key_names = list(params.keys())[0]
+                        value_names = list(params.values())[0]
+                        output_file = os.path.join(
+                            output_dir,
+                            f"{band_name}_{feature_name}_{key_names}.tif",
+                        )
+                    elif len(list(params.keys())) > 0:
+                        key_names = list(params.keys())[0]
+                        value_names = list(params.values())[0]
+                        output_file = os.path.join(
+                            output_dir,
+                            f"{band_name}_{feature_name}_{key_names}_{value_names}.tif",
+                        )
+                    else:
+                        output_file = os.path.join(
+                            output_dir, f"{band_name}_{feature_name}.tif"
+                        )
 
                     try:
                         src.apply(
                             func=feature_func,
                             outfile=output_file,
-                            num_workers=1,
+                            num_workers=num_workers,
                             bands=1,
-                            kwargs={"BIGTIFF": "YES"},
+                            kwargs={
+                                "BIGTIFF": "IFNEEDED",
+                                "compress": "LZW",
+                            },
                         )
                     except Exception as e:
                         logging.error(

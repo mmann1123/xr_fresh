@@ -45,7 +45,7 @@ def _get_day_of_year(dt):
 def _check_valid_array(obj):
     # Check if the object is a NumPy or JAX array or list
     if not isinstance(obj, (np.ndarray, list)):  # jnp.DeviceArray,
-        raise TypeError("Object must be a NumPy array or list.")
+        raise TypeError("Date names must be a NumPy array or list.")
 
     # convert lists to numpy array
     if isinstance(obj, list):
@@ -201,6 +201,7 @@ class doy_of_maximum(gw.TimeModule):
     def __init__(self, dates=None):
         super(doy_of_maximum, self).__init__()
         # check that dates is an array holding datetime objects or integers throw error if not
+
         dates = _check_valid_array(dates)
         self.dates = jnp.array(dates) if dates is not None else None
 
