@@ -33,6 +33,9 @@ jobs:
         echo "C_INCLUDE_PATH=/usr/include/gdal" >> $GITHUB_ENV
         echo "LD_LIBRARY_PATH=/usr/local/lib" >> $GITHUB_ENV
 
+    - name: Verify GDAL Installation
+      run: which gdal-config
+        
     - name: Install Python packages
       run: |
         pip install -U pip setuptools wheel
