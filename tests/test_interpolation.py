@@ -230,6 +230,38 @@ class TestInterpolation(unittest.TestCase):
                 # assert all of band 5 are equal to 5
                 assert np.all(np.isclose(dst[4], 5, atol))
 
+    def test_cubicspline_interpolation(self):
+        with self.tmp_dir as tmp:
+            if not os.path.exists(tmp):
+                os.mkdir(tmp)
+            out_path = Path(tmp) / "test.tif"
+            with gw.series(
+                self.small_files, transfer_lib="jax", window_size=[256, 256]
+            ) as src:
+                src.apply(
+                    func=interpolate_nan(
+                        interp_type="cubicspline",
+                        missing_value=np.nan,
+                        count=len(src.filenames),
+                    ),
+                    outfile=out_path,
+                    bands=1,
+                )
+            with gw.open(out_path) as dst:
+                atol = 1e-2
+                self.assertEqual(dst.gw.nbands, 5)
+                self.assertEqual(dst.shape, (5, 1613, 64))
+                # assert all of band 1 are equal to 1
+                assert np.all(np.isclose(dst[0], 1, atol))
+                # assert all of band 2 are equal to 2
+                assert np.all(np.isclose(dst[1], 2, atol))
+                # assert all of band 4 are equal to 4
+                assert np.all(np.isclose(dst[2], 3, atol))
+                # assert all of band 4 are equal to 4
+                assert np.all(np.isclose(dst[3], 4, atol))
+                # assert all of band 5 are equal to 5
+                assert np.all(np.isclose(dst[4], 5, atol))
+
     # def test_apply_interpolation(self):
     #     input_file = self.files[0]  # Use the first file from the sorted list
     #     output_dir = Path(self.tmp_dir.name)
