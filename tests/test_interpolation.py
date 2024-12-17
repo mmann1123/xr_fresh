@@ -44,7 +44,9 @@ class TestInterpolation(unittest.TestCase):
             if not os.path.exists(tmp):
                 os.mkdir(tmp)
             out_path = Path(tmp) / "test.tif"
-            with gw.series(self.files, transfer_lib="jax") as src:
+            with gw.series(
+                self.files, transfer_lib="jax", window_size=[256, 256]
+            ) as src:
                 src.apply(
                     func=interpolate_nan(
                         interp_type="linear",

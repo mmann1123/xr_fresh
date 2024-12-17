@@ -247,7 +247,7 @@ class interpolate_nan(gw.TimeModule):
                 "previous",
                 "next",
             ]:
-                raise TypeError("interp1d not supported - use splines or linear - ")
+                # raise TypeError("interp1d not supported - use splines or linear - ")
                 if self.dates is None:
                     array = np.apply_along_axis(
                         self._interpolate_nans_interp1d,
