@@ -1,6 +1,6 @@
 import geowombat as gw
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 __all__ = ["plot_interpolated_actual"]
 
@@ -20,30 +20,52 @@ def sample_data(predict, actual, n=20):
 
 def plot_data(df1, df2):
     fig, ax = plt.subplots(figsize=(10, 6))
-    time_points = list(range(1, 6))
+
+    # Filter columns whose names are numeric
+    numeric_column_names = [col for col in df1.columns if isinstance(col, (int, float))]
+    # Get the index of these columns
+    numeric_column_indices = [df1.columns.get_loc(col) for col in numeric_column_names]
+    time_points = list(range(1, len(numeric_column_names) + 1))
     colors = plt.cm.viridis(np.linspace(0, 1, len(df1)))
+
+    # Plot a single representative point and line for the legend
+    ax.scatter(
+        time_points,
+        df2.iloc[0, 3:],
+        color="black",
+        label="Actual",
+        linestyle="-",
+    )
+    ax.plot(
+        time_points,
+        df1.iloc[0, 3:],
+        color="black",
+        label="Predicted",
+        linestyle="--",
+    )
 
     for idx, row in df2.iterrows():
         ax.scatter(
             time_points,
-            row[time_points],
+            row.values[numeric_column_indices],
             color=colors[idx],
-            label=f"actual, Point {row['point']}",
+            # label=f"Actual",  # , Point {row['point']}
             linestyle="-",
         )
 
     for idx, row in df1.iterrows():
         ax.plot(
             time_points,
-            row[time_points],
+            row.values[numeric_column_indices],
             color=colors[idx],
-            label=f"predicted, Point {row['point']}",
+            # label=f"Predicted",  # , Point {row['point']}
             linestyle="--",
         )
 
     ax.set_xlabel("Time")
     ax.set_ylabel("Value")
     ax.set_title("Time Series Comparison Between Predicted and Actual Values")
+    plt.legend()
     plt.show()
 
 
