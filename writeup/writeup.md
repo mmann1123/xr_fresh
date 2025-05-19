@@ -1,10 +1,9 @@
 ---
-
 title: "xr_fresh: Automated Gridded Time Series Feature Extraction for Remote Sensing Data"
 author:
 - name: Michael L. Mann
   affiliation: The George Washington University, Washington DC 20052
-  thanks: Corresponding author. Email mmann1123@gmail.com
+  thanks: Corresponding author. Email mmann1123@gwu.edu
  
 header-includes:
   - \usepackage{geometry}
@@ -19,38 +18,19 @@ header-includes:
   - \usepackage{array}
   - \usepackage{booktabs}
   - \usepackage{caption}
-  - |
-   ```{=latex}
-   \pagestyle{fancy}
-   \fancyhf{}
-   \rfoot{\thepage}
-   \renewcommand{\headrulewidth}{0pt}
-   \renewcommand{\footrulewidth}{0pt}
-   \fancypagestyle{plain}{
-     \fancyhf{}
-     \rfoot{\thepage}
-     \renewcommand{\headrulewidth}{0pt}
-     \renewcommand{\footrulewidth}{0pt}
-   }
-   ```
 
 abstract: |
   The extraction of meaningful features from gridded time series data in remote sensing is critical for environmental monitoring, agriculture, and resource management. xr_fresh extends the methodology of the Python package tsfresh by applying efficient, automated feature extraction techniques to pixel-based time series derived from satellite imagery datasets. By computing a comprehensive set of statistical and temporal features, xr_fresh allows for scalable feature engineering suitable for classical machine learning models. Utilizing parallelized computation via the xarray, jax and Dask libraries, xr_fresh significantly reduces computational time, making it ideal for large-scale remote sensing applications. The package integrates smoothly with established Python geospatial libraries, facilitating immediate usability in exploratory analyses and operational systems. This paper demonstrates xr_fresh's capabilities through case studies involving crop classification tasks using Sentinel-2 imagery, showcasing its potential for enhancing the accuracy and interpretability of remote sensing models.
---- 
+---
 
 Keywords: Remote sensing, feature extraction, time series, machine learning, crop classification, xarray, Dask.
-
-
-\linenumbers  
-\modulolinenumbers[1]  
-\pagewiselinenumbers  
-\newgeometry{margin=1in}
-\captionsetup{justification=raggedright, singlelinecheck=false}
-  
+ 
 <!-- compile working with:
-pandoc writeup.md --template=mytemplate.tex -o output.pdf --bibliography=refs.bib --pdf-engine=xelatex --citeproc 
+pandoc writeup.md --bibliography=refs.bib --filter pandoc-citeproc --pdf-engine=xelatex -o output.pdf
 
+<!-- pandoc writeup.md --template=mytemplate.tex -o output.pdf --bibliography=refs.bib --pdf-engine=xelatex --citeproc  -->
 
+<!-- 
 
 # convert to word doc (2 steps)
 pandoc writeup.md --template=mytemplate.tex \
@@ -61,7 +41,7 @@ pandoc writeup.md --template=mytemplate.tex \
   -o output.tex
 
 pandoc output.tex --from latex --to docx -o output.docx
--->
+--> -->
 <!-- 
 Look at https://mpastell.com/pweave/docs.html -->
 
@@ -146,9 +126,7 @@ Variance & Variance of the time series & $\sigma^2 = \frac{1}{N}\sum_{i=1}^{n} (
 Variance Larger than Standard Deviation & check if variance is larger than standard deviation & $\sigma^2 > 1$ \\
 \hline
 \end{longtable}
- 
-As an example of the feature extraction process, we can visualize the times series features from  
-![Example output](examples/output_8_0.png)
+  
 
 ### Addtional Functionality  
 
@@ -209,12 +187,44 @@ $$
 
 where $\alpha_k$ are the normalized eigenvectors. This yields a lower-dimensional representation $\mathbf{z}_{i,j} \in \mathbb{R}^d$ for each pixel, capturing the principal nonlinear temporal patterns in the data.
 
-
 ## Software Framework
 
 `xr_fresh` achieves scalability by employing a combination of parallel and distributed computing strategies throughout both the feature extraction and dimensionality reduction stages. During feature extraction, functions are applied in parallel across spatial windows of the dataset using the `geowombat.series` context manager. The `apply` method enables multi-core processing via the `num_workers` parameter, distributing computation over spatial blocks (such as 256×256 pixel windows) and efficiently utilizing all available CPU cores or distributed resources. Users can further extend functionality by defining custom feature extraction modules through subclassing `gw.TimeModule`, which are seamlessly integrated into the parallel pipeline and can leverage accelerated libraries like JAX, NumPy, or PyTorch for additional speedup.
 
 For high-dimensional data, dimensionality reduction (such as Kernel PCA) is performed in a distributed manner. The dataset is divided into spatial chunks, each processed in parallel using Ray, a distributed execution framework. Within each chunk, Numba-compiled functions (using `@numba.jit(nopython=True, parallel=True)`) accelerate the transformation and exploit multi-threading at the block level. This two-level parallelism—across blocks with Ray and within blocks with Numba—enables efficient scaling to very large datasets. The architecture is further supported by integration with Dask and xarray, which provide lazy evaluation, chunked computation, and seamless scaling from single machines to distributed clusters. Together, these strategies ensure that both feature extraction and dimensionality reduction are highly scalable, making `xr_fresh` suitable for operational use on large-scale remote sensing datasets.
+
+## Case Study: Precipiation In Africa
+
+As a demonstration of `xr_fresh`, we applied the package to a dataset of monthly precipitation estimates over East Africa, derived from the CHIRPS dataset in Figure 1. The goal was to extract features from the time series data for each pixel, enabling subsequent analysis and modeling.
+
+![Precipitation input data](figures/precip.png)
+
+```python
+# create list of desired series
+feature_list = {
+    "minimum": [{}],
+    "abs_energy": [{}],
+    "doy_of_maximum": [{"dates": dates}],
+    "mean_abs_change": [{}],
+    "ratio_beyond_r_sigma": [{"r": 1}, {"r": 2}],
+    "symmetry_looking": [{}],
+    "sum": [{}],
+    "quantile": [{"q": 0.05}, {"q": 0.95}],
+}
+from xr_fresh.extractors_series import extract_features_series
+
+# Extract features from the geospatial time series
+extract_features_series(image_list, feature_list, band_name, out_dir, num_workers=12, nodata=-9999)
+```
+
+The above code snippet demonstrates the use of `xr_fresh` to extract a set of features from the CHIRPS precipitation dataset. The `extract_features_series` function takes a list of files, a dictionary of desired features, and other parameters such as the band name and temporary directory for intermediate storage. The `num_workers` parameter allows for parallel processing across multiple CPU cores, significantly speeding up the feature extraction process.
+
+![Time series feature set ](figures/features.png)
+
+The extracted features found in Figure 2 can then be used for various applications, such as machine learning modeling, anomaly detection, or time series analysis. The flexibility of `xr_fresh` allows users to customize the feature extraction process according to their specific needs and datasets.
+
+
+
 
 ## Conclusion
 
@@ -239,3 +249,9 @@ The development of `xr_fresh` builds upon a robust ecosystem of open-source scie
 
 
 These libraries form the computational backbone of `xr_fresh`, enabling efficient, scalable, and reproducible remote sensing workflows.
+
+```{=latex}
+\newpage
+```
+
+# References
