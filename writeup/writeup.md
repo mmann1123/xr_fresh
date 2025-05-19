@@ -149,23 +149,54 @@ Variance Larger than Standard Deviation & check if variance is larger than stand
 \hline
 \end{longtable}
  
-  
-### Interpolation and Dimensionality Reduction
+### Addtional Features  
+
+Two common challenges in remote sensing time series data are the presence of missing values and the high dimensionality of the data. The `xr_fresh` library addresses these issues through advanced interpolation techniques and dimensionality reduction methods.
+
+#### Interpolation
 
 The `xr_fresh` library also includes functionality for interpolating missing values in the time series data. This is crucial for ensuring that the feature extraction process is not hindered by gaps in the data, which are common in remote sensing applications due to cloud cover or sensor errors. The interpolation methods implemented in `xr_fresh` are designed to be computationally efficient and can handle large datasets effectively.
 
-Time series from remote sensing data often contain missing observations due to cloud cover or sensor gaps. The module supports advanced interpolation techniques including linear, nearest-neighbor, cubic spline, and univariate spline interpolation. These methods can utilize either regular intervals or explicitly provided date vectors to guide the interpolation along the temporal (z) dimension. Interpolation is applied pixel-wise to reconstruct continuous temporal profiles before feature extraction. 
+Time series from remote sensing data often contain missing observations due to cloud cover or sensor gaps. The module supports advanced interpolation techniques including linear, nearest-neighbor, cubic spline, and univariate spline interpolation. These methods can utilize either regular intervals or explicitly provided date vectors to guide the interpolation along the temporal (z) dimension. Interpolation is applied pixel-wise to reconstruct continuous temporal profiles before feature extraction.
 
- For high-dimensional inputs or when the number of bands/time steps is large, dimensionality reduction can improve model interpretability and performance. xr_fresh integrates a GPU/CPU-parallelized Kernel Principal Component Analysis (KPCA) module using a radial basis function (RBF) kernel. The KPCA implementation samples valid observations for training, fits the kernel model, and projects each pixel’s time series into a lower-dimensional space. The transformation is parallelized across spatial blocks using Ray and compiled with Numba for fast evaluation.
+Formally, for a fixed pixel $(i, j)$, let the time series be:
+
+$$
+X_{i,j} = (x_{i,j,1}, x_{i,j,2}, \ldots, x_{i,j,T})
+$$
+
+where some $x_{i,j,t}$ may be missing due to clouds or sensor gaps. Interpolation estimates these missing values by fitting a function $f(t)$ to the observed time steps $\{t_k \in [1, T] \mid x_{i,j,t_k} \text{ is observed} \}$. The interpolated value at time $t$ is:
+
+$$
+\hat{x}_{i,j,t} = f(t), \quad \text{for } x_{i,j,t} \text{ missing}
+$$
+
+The function $f(t)$ may take the form of:
+
+* **Linear interpolation:** $f(t) = a t + b$
+* **Nearest neighbor:** $f(t) = x_{i,j,t_k}$ where $t_k = \arg\min_{t_k} |t - t_k|$
+* **Cubic spline interpolation:** smooth piecewise cubic polynomials with continuity up to the second derivative
+* **Univariate spline interpolation:** minimizes the penalized error
+
+$$
+\sum_k (x_{i,j,t_k} - f(t_k))^2 + \lambda \int (f''(t))^2 dt
+$$
+
+If acquisition times are irregular, time $t$ is replaced by a continuous index (e.g., days since first observation).
+
+
+#### Dimensionality Reduction
+
+For high-dimensional inputs or when the number of bands/time steps is large, dimensionality reduction can improve model interpretability and performance. xr_fresh integrates a GPU/CPU-parallelized Kernel Principal Component Analysis (KPCA) module using a radial basis function (RBF) kernel. The KPCA implementation samples valid observations for training, fits the kernel model, and projects each pixel’s time series into a lower-dimensional space. The transformation is parallelized across spatial blocks using Ray and compiled with Numba for fast evaluation.
 
 
 
-3. Software Framework
+## Software Framework
 
-3.1 Software Architecture
+### Software Architecture
 
 xr_fresh utilizes xarray data structures for efficient multidimensional array processing and integrates Dask for parallel computation across large datasets. The feature extraction algorithms are parallelized, significantly reducing computational overhead. The library seamlessly integrates with existing Python geospatial and machine learning libraries such as scikit-learn, enabling straightforward adoption into diverse workflows.
 
-3.2 Software Functionalities
+### Software Functionalities
 
 The following table provides a comprehensive list of the time series features extracted from the satellite imagery using the xr_fresh module. These features capture the temporal dynamics of crop growth and development, providing valuable information on the phenological patterns of different crops. The computed metrics encompass a wide range of statistical measures, changes over time, and distribution-based metrics, offering a detailed analysis of the temporal patterns in the study area.
