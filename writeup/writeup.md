@@ -69,12 +69,11 @@ Look at https://mpastell.com/pweave/docs.html -->
 
 Recent advancements in satellite technology and open-access remote sensing data have significantly enhanced our capability to monitor environmental phenomena through gridded time series analysis. Efficiently extracting relevant time series features at scale remains challenging, necessitating automated and robust methods. Inspired by tsfresh (Time Series FeatuRe Extraction on basis of Scalable Hypothesis tests), we introduce `xr_fresh`, tailored specifically for remote sensing datasets, to address this need by automating the extraction of time series features on a pixel-by-pixel basis.
 
-
 Gridded time series data from satellites, such as Sentinel-2, contain rich temporal information essential for applications like crop type classification, environmental monitoring, and natural resource management. Traditional methods rely heavily on manually engineered features, which are time-consuming, require domain expertise, and often lack scalability.
 
 To address these issues, `xr_fresh` automates the extraction of salient temporal and statistical features from each pixel’s time series. By leveraging automated feature extraction, `xr_fresh` reduces manual intervention and enhances reproducibility in remote sensing workflows.
 
-## Problems and Background 
+## Problems and Background
 
 A remote sensing image time series can be represented as a three-dimensional array with spatial dimensions $x$ and $y$, and temporal dimension $z$. Each pixel at location $(x_i, y_j)$ holds a time series:
 
@@ -107,9 +106,8 @@ $$
 $$
 
 where $\vec{a}_{i,j} \in \mathbb{R}^U$ represents the $U$ univariate attributes at pixel $(i, j)$.
-
-
-### Feature Set
+ 
+### Time Series Feature Set
 
 The table below summarizes the suite of time series features extracted by the `xr_fresh` module from satellite imagery. These features are designed to characterize the temporal behavior of each pixel $(x_i, y_j)$, capturing key aspects of crop phenology and seasonal dynamics. By including a diverse set of statistical, trend, and distribution-based metrics, `xr_fresh` enables detailed and scalable analysis of temporal patterns relevant to remote sensing applications such as crop classification and environmental monitoring.
 
@@ -149,7 +147,10 @@ Variance Larger than Standard Deviation & check if variance is larger than stand
 \hline
 \end{longtable}
  
-### Addtional Features  
+As an example of the feature extraction process, we can visualize the times series features from  
+![Example output](examples/output_8_0.png)
+
+### Addtional Functionality  
 
 Two common challenges in remote sensing time series data are the presence of missing values and the high dimensionality of the data. The `xr_fresh` library addresses these issues through advanced interpolation techniques and dimensionality reduction methods.
 
@@ -184,19 +185,57 @@ $$
 
 If acquisition times are irregular, time $t$ is replaced by a continuous index (e.g., days since first observation).
 
-
 #### Dimensionality Reduction
 
-For high-dimensional inputs or when the number of bands/time steps is large, dimensionality reduction can improve model interpretability and performance. xr_fresh integrates a GPU/CPU-parallelized Kernel Principal Component Analysis (KPCA) module using a radial basis function (RBF) kernel. The KPCA implementation samples valid observations for training, fits the kernel model, and projects each pixel’s time series into a lower-dimensional space. The transformation is parallelized across spatial blocks using Ray and compiled with Numba for fast evaluation.
+For high-dimensional inputs or when the number of bands/time steps is large, dimensionality reduction can improve model interpretability and performance. `xr_fresh` integrates a GPU/CPU-parallelized Kernel Principal Component Analysis (KPCA) module using a radial basis function (RBF) kernel. The KPCA implementation samples valid observations for training, fits the kernel model, and projects each pixel’s time series into a lower-dimensional space. The transformation is parallelized across spatial blocks using Ray and compiled with Numba for fast evaluation.
 
+Formally, let $\mathbf{x}_{i,j} \in \mathbb{R}^T$ denote the time series vector for pixel $(i, j)$, where $T$ is the number of time steps or bands. KPCA first computes the kernel matrix $K$ using the RBF kernel:
+
+$$
+K(\mathbf{x}_a, \mathbf{x}_b) = \exp\left(-\frac{\|\mathbf{x}_a - \mathbf{x}_b\|^2}{2\sigma^2}\right)
+$$
+
+where $\sigma$ is the kernel bandwidth parameter. The kernel matrix $K \in \mathbb{R}^{N \times N}$ (with $N$ the number of sampled pixels) is then centered and eigendecomposed:
+
+$$
+K_c = K - \mathbf{1}_N K - K \mathbf{1}_N + \mathbf{1}_N K \mathbf{1}_N
+$$
+
+where $\mathbf{1}_N$ is an $N \times N$ matrix with all entries $1/N$. The top $d$ eigenvectors $\{\mathbf{v}_1, \ldots, \mathbf{v}_d\}$ corresponding to the largest eigenvalues are selected, and each pixel’s time series is projected into the reduced space:
+
+$$
+\mathbf{z}_{i,j} = [\alpha_1 k(\mathbf{x}_{i,j}, \cdot), \ldots, \alpha_d k(\mathbf{x}_{i,j}, \cdot)]
+$$
+
+where $\alpha_k$ are the normalized eigenvectors. This yields a lower-dimensional representation $\mathbf{z}_{i,j} \in \mathbb{R}^d$ for each pixel, capturing the principal nonlinear temporal patterns in the data.
 
 
 ## Software Framework
 
-### Software Architecture
+`xr_fresh` achieves scalability by employing a combination of parallel and distributed computing strategies throughout both the feature extraction and dimensionality reduction stages. During feature extraction, functions are applied in parallel across spatial windows of the dataset using the `geowombat.series` context manager. The `apply` method enables multi-core processing via the `num_workers` parameter, distributing computation over spatial blocks (such as 256×256 pixel windows) and efficiently utilizing all available CPU cores or distributed resources. Users can further extend functionality by defining custom feature extraction modules through subclassing `gw.TimeModule`, which are seamlessly integrated into the parallel pipeline and can leverage accelerated libraries like JAX, NumPy, or PyTorch for additional speedup.
 
-xr_fresh utilizes xarray data structures for efficient multidimensional array processing and integrates Dask for parallel computation across large datasets. The feature extraction algorithms are parallelized, significantly reducing computational overhead. The library seamlessly integrates with existing Python geospatial and machine learning libraries such as scikit-learn, enabling straightforward adoption into diverse workflows.
+For high-dimensional data, dimensionality reduction (such as Kernel PCA) is performed in a distributed manner. The dataset is divided into spatial chunks, each processed in parallel using Ray, a distributed execution framework. Within each chunk, Numba-compiled functions (using `@numba.jit(nopython=True, parallel=True)`) accelerate the transformation and exploit multi-threading at the block level. This two-level parallelism—across blocks with Ray and within blocks with Numba—enables efficient scaling to very large datasets. The architecture is further supported by integration with Dask and xarray, which provide lazy evaluation, chunked computation, and seamless scaling from single machines to distributed clusters. Together, these strategies ensure that both feature extraction and dimensionality reduction are highly scalable, making `xr_fresh` suitable for operational use on large-scale remote sensing datasets.
 
-### Software Functionalities
+## Conclusion
 
-The following table provides a comprehensive list of the time series features extracted from the satellite imagery using the xr_fresh module. These features capture the temporal dynamics of crop growth and development, providing valuable information on the phenological patterns of different crops. The computed metrics encompass a wide range of statistical measures, changes over time, and distribution-based metrics, offering a detailed analysis of the temporal patterns in the study area.
+`xr_fresh` is a powerful and efficient tool for automated feature extraction from gridded time series data in remote sensing applications. By leveraging advanced statistical methods and parallel computing, it enables the extraction of a comprehensive set of features that can significantly enhance the performance of machine learning models. The integration with existing Python geospatial libraries ensures that `xr_fresh` is easy to use and can be seamlessly incorporated into existing machine learning workflows. It also provides advanced interpolation and dimensionality reduction capabilities, addressing common challenges in remote sensing data analysis.  Overall, `xr_fresh` represents a significant advancement in the field of remote sensing feature extraction, providing researchers and practitioners with a powerful tool for analyzing complex temporal patterns in satellite imagery.
+
+
+### Acknowledgements and Dependencies
+
+The development of `xr_fresh` builds upon a robust ecosystem of open-source scientific Python libraries. We gratefully acknowledge the following projects, which provide essential functionality for numerical computation, geospatial analysis, and scalable data processing:
+
+- **tsfresh** \cite{christ2018tsfresh}: Automated time series feature extraction based on scalable hypothesis tests.
+- **JAX** \cite{jax2018github}: High-performance numerical computing and automatic differentiation.
+- **Numba** \cite{lam2015numba}: Just-in-time compilation for accelerating Python code.
+- **scikit-learn** \cite{scikit-learn}: Machine learning algorithms and utilities.
+- **geowombat** \cite{geowombat}: Geospatial raster data processing and analysis.
+- **xarray** \cite{hoyer2017xarray}: Labeled, multi-dimensional arrays for scientific data.
+- **SciPy** \cite{virtanen2020scipy}: Scientific computing routines for Python.
+- **NumPy** \cite{harris2020array}: Fundamental array programming for numerical computing.
+- **Dask** \cite{rocklin2015dask}: Parallel and distributed computing for large datasets.
+- **geowombat** \cite{geowombat}: Flexible framework for large-scale geospatial raster processing and analysis.
+- **Ray** \cite{moritz2018ray}: Distributed computing framework for parallelizing Python code.
+
+
+These libraries form the computational backbone of `xr_fresh`, enabling efficient, scalable, and reproducible remote sensing workflows.
