@@ -4,7 +4,7 @@ author:
 - name: Michael L. Mann
   affiliation: The George Washington University, Washington DC 20052
   thanks: Corresponding author. Email mmann1123@gwu.edu
- 
+
 header-includes:
   - \usepackage{geometry}
   - \usepackage{pdflscape}
@@ -18,6 +18,7 @@ header-includes:
   - \usepackage{array}
   - \usepackage{booktabs}
   - \usepackage{caption}
+  - \usepackage{bbm}
 
 abstract: |
   The extraction of meaningful features from gridded time series data in remote sensing is critical for environmental monitoring, agriculture, and resource management. xr_fresh extends the methodology of the Python package tsfresh by applying efficient, automated feature extraction techniques to pixel-based time series derived from satellite imagery datasets. By computing a comprehensive set of statistical and temporal features, xr_fresh allows for scalable feature engineering suitable for classical machine learning models. Utilizing parallelized computation via the xarray, jax and Dask libraries, xr_fresh significantly reduces computational time, making it ideal for large-scale remote sensing applications. The package integrates smoothly with established Python geospatial libraries, facilitating immediate usability in exploratory analyses and operational systems. This paper demonstrates xr_fresh's capabilities through case studies involving crop classification tasks using Sentinel-2 imagery, showcasing its potential for enhancing the accuracy and interpretability of remote sensing models.
@@ -26,12 +27,12 @@ abstract: |
 Keywords: Remote sensing, feature extraction, time series, machine learning, crop classification, xarray, Dask.
  
 <!-- compile working with:
-pandoc writeup.md --bibliography=refs.bib --filter pandoc-citeproc --pdf-engine=xelatex -o output.pdf
+pandoc writeup.md --bibliography=refs.bib --filter pandoc-citeproc --pdf-engine=xelatex -o output.pdf-->
 
 <!-- pandoc writeup.md --template=mytemplate.tex -o output.pdf --bibliography=refs.bib --pdf-engine=xelatex --citeproc  -->
 
-<!-- 
-
+ 
+<!--
 # convert to word doc (2 steps)
 pandoc writeup.md --template=mytemplate.tex \
   --from markdown+raw_tex \
@@ -41,7 +42,7 @@ pandoc writeup.md --template=mytemplate.tex \
   -o output.tex
 
 pandoc output.tex --from latex --to docx -o output.docx
---> -->
+--> 
 <!-- 
 Look at https://mpastell.com/pweave/docs.html -->
 
@@ -49,9 +50,17 @@ Look at https://mpastell.com/pweave/docs.html -->
 
 Recent advancements in satellite technology and open-access remote sensing data have significantly enhanced our capability to monitor environmental phenomena through gridded time series analysis. Efficiently extracting relevant time series features at scale remains challenging, necessitating automated and robust methods. Inspired by tsfresh (Time Series FeatuRe Extraction on basis of Scalable Hypothesis tests), we introduce `xr_fresh`, tailored specifically for remote sensing datasets, to address this need by automating the extraction of time series features on a pixel-by-pixel basis.
 
-Gridded time series data from satellites, such as Sentinel-2, contain rich temporal information essential for applications like crop type classification, environmental monitoring, and natural resource management. Traditional methods rely heavily on manually engineered features, which are time-consuming, require domain expertise, and often lack scalability.
+Time series data, characterized by sequences of measurements indexed over time, are ubiquitous across diverse fields, including finance, healthcare, industrial monitoring, and environmental sciences **Ketan Kotecha (Ed.), Machine Learning (Emerging Trends and Applications)**. Analyzing and modeling these temporal sequences for tasks such as classification (assigning a time series to a predefined category) or regression (predicting a continuous value associated with a time series) is a fundamental problem in machine learning **Time Series Classification: A review of Algorithms and.pdf**. However, applying standard machine learning algorithms directly to raw time series data is often challenging due to the inherent temporal structure and potentially high dimensionality of the sequences **Time Series Classification: A review of Algorithms and.pdf**. Effective representation of the time series characteristics is crucial for building accurate and robust models **Automated data processing and feature engineering for deep.pdf** **Time Series Classification: A review of Algorithms and.pdf**.
 
-To address these issues, `xr_fresh` automates the extraction of salient temporal and statistical features from each pixel’s time series. By leveraging automated feature extraction, `xr_fresh` reduces manual intervention and enhances reproducibility in remote sensing workflows.
+Traditional approaches to time series analysis and machine learning often rely on manual feature engineering, a process where domain experts handcraft relevant features from the raw data **Forecasting with time series imaging.pdf**   . While effective in specific contexts, this process is labor-intensive, requires significant expertise, and may not generalize well across different datasets or tasks **Forecasting with time series imaging.pdf** **Time Series Classification: A review of Algorithms and.pdf**. The increasing volume and complexity of modern time series data necessitate more automated and scalable approaches to data processing and feature extraction **Automated data processing and feature engineering for deep.pdf** **Forecasting with time series imaging.pdf**.
+
+A prominent tool in this domain is `tsfresh` [@CHRIST201872], a Python package specifically designed for time series feature extraction based on scalable hypothesis tests **Automated dilated spatio-temporal synchronous graph modeling for traffic prediction.pdf** **Automated data processing and feature engineering for deep.pdf** **Chaos as an interpretable benchmark for forecasting and data-driven modelling.pdf** **Chemiresistive sensor array and machine learning classification of food.pdf** **Choose wisely: An extensive evaluation of model selection for anomaly detection in time series.pdf** **Event Stream GPT: a data pre-processing and modeling library for generative, pre-trained transformers over continuous-time sequences of complex events.pdf** **Forecasting: theory and practice.pdf** **AI-based rainfall prediction model for debris flows.pdf** **Choose wisely: An extensive evaluation of model selection for anomaly detection in time series.pdf**. `tsfresh` automates the process of calculating a diverse and large number of features from time series data. These features are derived from existing research and include distribution properties (e.g., mean, standard deviation, kurtosis), measures of autocorrelation (e.g., fast Fourier transform (FFT) and power spectral density coefficients), properties of linear regressors (e.g., gradient, standard error), energy, entropy, and stochasticity [@CHRIST201872]. After feature extraction, `tsfresh` also offers automated feature selection methods, such as using statistical tests like the Mann-Whitney U test, to identify and select the most relevant features for a specific task [@CHRIST201872].
+
+Gridded time series data from satellites, senors and climate models, contain rich temporal information essential for applications like crop type classification, environmental monitoring, and natural resource management **Handbook on remote sensing bfor agricultural statistics.pdf**. Traditional methods rely heavily on manually engineered features, which are time-consuming, require domain expertise, and often lack scalability.
+
+Traditional machine learning approaches are well-suited for analyzing gridded time series data from a variety of sources, including remote sensing platforms, in-situ sensors, and climate reanalysis products. These methods can effectively leverage both spatial and temporal patterns within the data, capturing key trends and anomalies across environmental variables  [@begue2018remote; @delince2017handbook]. Compared to deep learning architectures, traditional machine learning offers greater interpretability and lower computational overhead. Their transparent decision-making processes can be readily examined by domain experts, and they typically require less training data and computational power, making them ideal for many operational or resource-constrained applications [@hohl2024recent; @rs13132591;  @LI2023103345; @MA2019166]. Currently, no method exists to rapidly extract a comprehensive set of features from gridded time series data, such as those derived from remote sensing imagery. Existing packages like `tsfresh` are not optimized for the unique characteristics of gridded time series data, which often include irregular sampling intervals, missing values, and high dimensionality. This limitation hinders the ability to efficiently analyze and model these datasets, particularly in the context of remote sensing applications where large volumes of data are generated.
+
+To address this gap, `xr_fresh` automates the extraction of salient temporal and statistical features from each pixel’s time series. By leveraging automated feature extraction, `xr_fresh` reduces manual intervention and enhances reproducibility in remote sensing workflows.
 
 ## Problems and Background
 
@@ -70,6 +79,10 @@ $$
 $$
 
 where each $f_m$ is a time series feature extraction function (e.g. mean, variance, trend, autocorrelation), and $M$ is the total number of extracted features.
+
+A visual representation of this transformation is shown in Figure 1. The feature extraction process is applied to each pixel's time series, resulting in a feature vector $\vec{x}_{i,j}$ for each pixel $(i,j)$.
+
+![Feature Extraction Process](figures/feature extract.png)
 
 This results in a 2D design matrix of features for the entire image:
 
@@ -97,32 +110,34 @@ The table below summarizes the suite of time series features extracted by the `x
 \textbf{Statistic} & \textbf{Description} & \textbf{Equation} \\
 \hline
 \endhead
-Absolute energy &  sum over the squared values & $E = \sum_{i=1}^n x_i^2$ \\
+Absolute energy &  sum over the squared values & $\sum_{i=1}^n x_i^2$ \\
 Absolute Sum of Changes  & sum over the absolute value of consecutive changes in the series  & $ \sum_{i=1}^{n-1} \mid x_{i+1}- x_i \mid $ \\
 Autocorrelation (1 \& 2 month lag) & Correlation between the time series and its lagged values & $\frac{1}{(n-l)\sigma^{2}} \sum_{t=1}^{n-l}(X_{t}-\mu )(X_{t+l}-\mu)$\\
-Count Above Mean & Number of values above the mean & $N_{\text{above}} = \sum_{i=1}^n (x_i > \bar{x})$ \\
-Count Below Mean & Number of values below the mean & $N_{\text{below}} = \sum_{i=1}^n (x_i < \bar{x})$ \\Day of Year of Maximum Value & Day of the year when the maximum value occurs in series & --- \\
+Count Above Mean & Number of values above the mean & $\sum_{i=1}^n (x_i > \bar{x})$ \\
+Count Below Mean & Number of values below the mean & $\sum_{i=1}^n (x_i < \bar{x})$ \\Day of Year of Maximum Value & Day of the year when the maximum value occurs in series & --- \\
 Day of Year of Minimum Value & Day of the year when the minimum value occurs in series & --- \\
-Kurtosis & Measure of the tailedness of the time series distribution & $G_2 = \frac{\mu_4}{\sigma^4} - 3$ \\
-Linear Time Trend & Linear trend coefficient estimated over the entire time series & $b = \frac{\sum_{i=1}^n (x_i - \bar{x})(t_i - \bar{t})}{\sum_{i=1}^n (x_i - \bar{x})^2}$ \\
+Kurtosis Excess & Excess kurtosis, measuring the "tailedness" of the distribution beyond normal & 
+$\frac{\mu_4}{\sigma^4} - 3$   \\
+Large Standard Deviation & Boolean variable denoting if the standard deviation of $x$ is higher than $r$ times the range & $\left(\mathrm{std}(x) > r \cdot (\max(X) - \min(X))\right)$ \\
+Linear Time Trend & Linear trend coefficient estimated over the entire time series & $\frac{\sum_{i=1}^n (x_i - \bar{x})(t_i - \bar{t})}{\sum_{i=1}^n (x_i - \bar{x})^2}$ \\
 Longest Strike Above Mean & Longest consecutive sequence of values above the mean & --- \\
 Longest Strike Below Mean & Longest consecutive sequence of values below the mean & --- \\
 Maximum & Maximum value of the time series & $x_{\text{max}}$ \\
-Mean & Mean value of the time series & $\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i$ \\
+Mean & Mean value of the time series & $\frac{1}{n}\sum_{i=1}^n x_i$ \\
 Mean Absolute Change & Mean of absolute differences between consecutive values & $\frac{1}{n-1} \sum_{i=1}^{n-1} | x_{i+1} - x_{i}|$ \\
 Mean Change & Mean of the differences between consecutive values & $ \frac{1}{n-1} \sum_{i=1}^{n-1}  x_{i+1} - x_{i} $ \\
 Mean Second Derivative Central & measure of acceleration of changes in a time series data & $\frac{1}{2(n-2)} \sum_{i=1}^{n-1}  \frac{1}{2} (x_{i+2} - 2 \cdot x_{i+1} + x_i)
 $ \\
 Median & Median value of the time series & $\tilde{x}$ \\
 Minimum & Minimum value of the time series & $x_{\text{min}}$ \\
-Quantile (q = 0.05, 0.95) & Values representing the specified quantiles (5th and 95th percentiles) & $Q_{0.05}, Q_{0.95}$ \\
-Ratio Beyond r Sigma (r=1,2,3) & Proportion of values beyond r standard deviations from the mean & $P_r = \frac{1}{n}\sum_{i=1}^{n} (|x_i - \bar{x}| > r\sigma_{x})$ \\
+Quantile (q = 0.05, 0.95) & Values representing the specified quantiles (xth percentiles) & $Q_{0.05}, Q_{0.95}$ \\
+Ratio Beyond r Sigma (r=1,2,3) & Proportion of values beyond r standard deviations from the mean & $\frac{1}{n}\sum_{i=1}^{n} (|x_i - \bar{x}| > r\sigma_{x})$ \\
 Skewness & Measure of the asymmetry of the time series distribution & $\frac{n}{(n-1)(n-2)} \sum \left(\frac{X_i - \overline{X}}{s}\right)^3$ \\
 Standard Deviation & Standard deviation of the time series & $  \sqrt{\frac{1}{N}\sum_{i=1}^{n} (x_i - \bar{x})^2}$ \\
-Sum Values & Sum of all values in the time series & $S = \sum_{i=1}^{n} x_i$ \\
+Sum Values & Sum of all values in the time series & $\sum_{i=1}^{n} x_i$ \\
 Symmetry Looking & Measures the similarity of the time series when flipped horizontally & $| x_{\text{mean}}-x_{\text{median}} | < r * (x_{\text{max}} - x_{\text{min}} ) $ \\
 Time Series Complexity (CID CE) & measure of number of peaks and valleys & $\sqrt{ \sum_{i=1}^{n-1} ( x_{i} - x_{i-1})^2 }$\\
-Variance & Variance of the time series & $\sigma^2 = \frac{1}{N}\sum_{i=1}^{n} (x_i - \bar{x})^2$ \\
+Variance & Variance of the time series & $\frac{1}{N}\sum_{i=1}^{n} (x_i - \bar{x})^2$ \\
 Variance Larger than Standard Deviation & check if variance is larger than standard deviation & $\sigma^2 > 1$ \\
 \hline
 \end{longtable}
@@ -195,7 +210,7 @@ For high-dimensional data, dimensionality reduction (such as Kernel PCA) is perf
 
 ## Case Study: Precipiation In Africa
 
-As a demonstration of `xr_fresh`, we applied the package to a dataset of monthly precipitation estimates over East Africa, derived from the CHIRPS dataset in Figure 1. The goal was to extract features from the time series data for each pixel, enabling subsequent analysis and modeling.
+As a demonstration of `xr_fresh`, we applied the package to a dataset of monthly precipitation estimates over East Africa, derived from the CHIRPS dataset in Figure 2. The goal was to extract features from the time series data for each pixel, enabling subsequent analysis and modeling.
 
 ![Precipitation input data](figures/precip.png)
 
@@ -221,7 +236,7 @@ The above code snippet demonstrates the use of `xr_fresh` to extract a set of fe
 
 ![Time series feature set ](figures/features.png)
 
-The extracted features found in Figure 2 can then be used for various applications, such as machine learning modeling, anomaly detection, or time series analysis. The flexibility of `xr_fresh` allows users to customize the feature extraction process according to their specific needs and datasets.
+The extracted features found in Figure 3 can then be used for various applications, such as machine learning modeling, anomaly detection, or time series analysis. The flexibility of `xr_fresh` allows users to customize the feature extraction process according to their specific needs and datasets.
 
 
 
