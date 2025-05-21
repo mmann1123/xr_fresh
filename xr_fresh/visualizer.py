@@ -75,7 +75,7 @@ def plot_interpolated_actual(
     """Plots the interpolated and actual values for a given time series.
 
     Args:
-        interpolated_stack (str): multiband stack of images representing interpolated time series. Defaults to None.
+        interpolated_stack (str): path to multiband stack of images representing interpolated time series. Defaults to None.
         original_image_list (list): list of files used in interpolation. Defaults to None.
         samples (int, optional): number of random points to compare time series. Defaults to 20.
     """
