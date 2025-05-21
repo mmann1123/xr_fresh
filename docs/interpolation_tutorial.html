@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interpolating Missing Values in Raster Time Series with Geowombat and XR_Fresh &mdash; xr_fresh 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+    <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/interpolation_tutorial.html" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=37f418d5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xr_fresh
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xr_fresh</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Interpolating Missing Values in Raster Time Series with Geowombat and XR_Fresh</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/interpolation_tutorial.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Interpolating-Missing-Values-in-Raster-Time-Series-with-Geowombat-and-XR_Fresh">
+<h1>Interpolating Missing Values in Raster Time Series with Geowombat and XR_Fresh<a class="headerlink" href="#Interpolating-Missing-Values-in-Raster-Time-Series-with-Geowombat-and-XR_Fresh" title="Link to this heading"></a></h1>
+<p>This notebook demonstrates how to:</p>
+<ol class="arabic simple">
+<li><p>Load raster time series with missing values (<code class="docutils literal notranslate"><span class="pre">NaN</span></code>).</p></li>
+<li><p>Interpolate missing data using the <code class="docutils literal notranslate"><span class="pre">xr_fresh</span></code> library.</p></li>
+<li><p>Save and visualize the interpolated results.</p></li>
+</ol>
+<p>We will use <strong>geowombat</strong> to handle raster files and <strong>xr_fresh</strong> for interpolation.</p>
+<section id="Step-1:-Install-Required-Libraries">
+<h2>Step 1: Install Required Libraries<a class="headerlink" href="#Step-1:-Install-Required-Libraries" title="Link to this heading"></a></h2>
+<p>Ensure you have the necessary libraries installed. Run the following command in your terminal or notebook:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>geowombat-ml<span class="w"> </span>ray-default
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/mmann1123/xr_fresh
+<span class="nb">cd</span><span class="w"> </span>xr_fresh
+pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>pip<span class="w"> </span>setuptools<span class="w"> </span>wheel
+pip<span class="w"> </span>install<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="Step-2:-Prepare-Input-Raster-Files">
+<h2>Step 2: Prepare Input Raster Files<a class="headerlink" href="#Step-2:-Prepare-Input-Raster-Files" title="Link to this heading"></a></h2>
+<p>We have a series of <code class="docutils literal notranslate"><span class="pre">.tif</span></code> files named in the <code class="docutils literal notranslate"><span class="pre">/xr_fresh/tests/data</span></code> directory. These files represent time steps with missing values (<code class="docutils literal notranslate"><span class="pre">NaN</span></code>).:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>data/values_equal_1.tif
+data/values_equal_2.tif
+data/values_equal_3.tif
+data/values_equal_4.tif
+data/values_equal_5.tif
+</pre></div>
+</div>
+<p>These files represent time steps with missing values (<code class="docutils literal notranslate"><span class="pre">NaN</span></code>).</p>
+</section>
+<section id="Step-3:-Load-the-Raster-Time-Series">
+<h2>Step 3: Load the Raster Time Series<a class="headerlink" href="#Step-3:-Load-the-Raster-Time-Series" title="Link to this heading"></a></h2>
+<p>We will use <strong>geowombat</strong> to open the raster time series.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">geowombat</span> <span class="k">as</span> <span class="nn">gw</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+
+<span class="c1"># Define the directory containing raster files</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../tests/data&quot;</span><span class="p">)</span>
+
+<span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;values_equal_*.tif&quot;</span><span class="p">))</span>
+<span class="c1"># Print file paths for debugging</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Raster files:&quot;</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+    <span class="n">ds</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Raster files: [&#39;values_equal_1.tif&#39;, &#39;values_equal_2.tif&#39;, &#39;values_equal_3.tif&#39;, &#39;values_equal_4.tif&#39;, &#39;values_equal_5.tif&#39;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/interpolation_tutorial_4_1.png" src="_images/interpolation_tutorial_4_1.png" />
+</div>
+</div>
+<p>Notice that each image holds a fixed value ranging from 1 to 5. We then have alternating <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values in the time series.</p>
+</section>
+<section id="Step-4:-Perform-Interpolation-with-XR_Fresh">
+<h2>Step 4: Perform Interpolation with XR_Fresh<a class="headerlink" href="#Step-4:-Perform-Interpolation-with-XR_Fresh" title="Link to this heading"></a></h2>
+<p>We will use the <code class="docutils literal notranslate"><span class="pre">interpolate_nan</span></code> function from <strong>xr_fresh</strong> to fill the missing data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xr_fresh.interpolate_series</span> <span class="kn">import</span> <span class="n">interpolate_nan</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="n">temp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+
+<span class="c1"># Output path for the interpolated raster</span>
+<span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span><span class="s2">&quot;interpolated_time_series.tif&quot;</span><span class="p">)</span>
+
+<span class="c1"># Apply interpolation</span>
+<span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">series</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">transfer_lib</span><span class="o">=</span><span class="s2">&quot;jax&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">])</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="n">src</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">interpolate_nan</span><span class="p">(</span>
+            <span class="n">interp_type</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>   <span class="c1"># Interpolation type</span>
+            <span class="n">missing_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>   <span class="c1"># Value representing missing data</span>
+            <span class="n">count</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">filenames</span><span class="p">)</span>  <span class="c1"># Number of time steps</span>
+        <span class="p">),</span>
+        <span class="n">outfile</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+        <span class="n">bands</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Apply interpolation to the first band</span>
+    <span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Interpolation completed. Output saved to:&quot;</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 70/70 [00:17&lt;00:00,  4.10it/s]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Interpolation completed. Output saved to: /tmp/tmpqg6trw5b/interpolated_time_series.tif
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+
+</pre></div></div>
+</div>
+<p><strong>Note:</strong> If you have a GPU or limited RAM you can adjust the amount of memory used by setting the <code class="docutils literal notranslate"><span class="pre">window_size</span></code> parameter, just make sure the window dims are multiple of 16.</p>
+</section>
+<section id="Step-5:-Visualize-the-Results">
+<h2>Step 5: Visualize the Results<a class="headerlink" href="#Step-5:-Visualize-the-Results" title="Link to this heading"></a></h2>
+<p>Visualize the original and interpolated bands to confirm that <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values have been filled.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the directory containing raster files</span>
+<span class="n">interpolated_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;interpolated_time_series.tif&quot;</span><span class="p">)</span>
+
+<span class="c1"># Print file paths for debugging</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Raster files:&quot;</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">interpolated_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+    <span class="c1"># display(ds)</span>
+    <span class="n">ds</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Raster files: [&#39;values_equal_1.tif&#39;, &#39;values_equal_2.tif&#39;, &#39;values_equal_3.tif&#39;, &#39;values_equal_4.tif&#39;, &#39;values_equal_5.tif&#39;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/interpolation_tutorial_10_1.png" src="_images/interpolation_tutorial_10_1.png" />
+</div>
+</div>
+<p>Next let’s look at a plot of the original and interpolated bands. Here we use a random sample of cells (n controlled by <code class="docutils literal notranslate"><span class="pre">samples</span></code>) to show the difference between the original and interpolated values.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xr_fresh.visualizer</span> <span class="kn">import</span> <span class="n">plot_interpolated_actual</span>
+
+<span class="c1"># Plot the interpolated and actual time series</span>
+<span class="n">plot_interpolated_actual</span><span class="p">(</span><span class="n">interpolated_stack</span><span class="o">=</span><span class="n">interpolated_file</span><span class="p">,</span>
+                         <span class="n">original_image_list</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+                        <span class="n">samples</span><span class="o">=</span><span class="mi">2</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/interpolation_tutorial_12_0.png" src="_images/interpolation_tutorial_12_0.png" />
+</div>
+</div>
+<p>Notice that the initial and final periods are not interpolated correctly, this is a limitation of the method used.</p>
+</section>
+<section id="Summary">
+<h2>Summary<a class="headerlink" href="#Summary" title="Link to this heading"></a></h2>
+<p>In this notebook, you:</p>
+<ol class="arabic simple">
+<li><p>Loaded a raster time series with missing values using <strong>geowombat</strong>.</p></li>
+<li><p>Interpolated the missing values using <strong>xr_fresh</strong>.</p></li>
+<li><p>Visualized and validated the interpolated output.</p></li>
+</ol>
+<p>This workflow is useful for cleaning raster datasets for time series analysis.</p>
+</section>
+<section id="Practical-Example">
+<h2>Practical Example<a class="headerlink" href="#Practical-Example" title="Link to this heading"></a></h2>
+<p>This workflow can be used to interpolate missing values in any gridded dataset, such as satellite imagery, weather data, or any other raster dataset with missing values.</p>
+<p>In this case we will take a short series of measurements of average temperature in a region and interpolate the missing values.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">file_glob</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RadT_*tif&quot;</span>
+<span class="n">strp_glob</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RadT_tavg_%Y%m.tif&quot;</span>
+
+<span class="n">dates</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+    <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">strp_glob</span><span class="p">)</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">file_glob</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">file_glob</span><span class="p">))</span>
+
+<span class="c1"># print dates and files in a table</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">dates</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="n">files</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>file</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2023-01-01</td>
+      <td>RadT_tavg_202301.tif</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2023-02-01</td>
+      <td>RadT_tavg_202302.tif</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2023-04-01</td>
+      <td>RadT_tavg_202304.tif</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2023-05-01</td>
+      <td>RadT_tavg_202305.tif</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Now let’s remove some values from the dataset and interpolate them.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Open the dataset</span>
+<span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">)):</span>
+
+        <span class="c1"># Replace alternating strips of rows with NaN values in each band</span>
+        <span class="n">block_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">//</span> <span class="mi">5</span>  <span class="c1"># Divide the y dimension into 5 blocks</span>
+        <span class="n">start_row</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">block_length</span>  <span class="c1"># Start row index for the current block</span>
+        <span class="n">end_row</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_length</span>  <span class="c1"># End row index for the current block</span>
+
+        <span class="c1"># Replace the rows in each band with NaN values for the current block</span>
+        <span class="n">src</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">start_row</span><span class="p">:</span><span class="n">end_row</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="c1"># Save the modified dataset</span>
+        <span class="n">gw</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+            <span class="n">src</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/tavg_nan_</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="s1">&#39;%Y%j&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 321/321 [00:00&lt;00:00, 2999.40it/s]
+100%|██████████| 321/321 [00:00&lt;00:00, 3072.64it/s]
+100%|██████████| 321/321 [00:00&lt;00:00, 2553.90it/s]
+100%|██████████| 341/341 [00:00&lt;00:00, 3286.48it/s]
+</pre></div></div>
+</div>
+<p>Let’s take a look at the new data set with missing values.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the directory containing raster files</span>
+<span class="n">tavg_missing</span> <span class="o">=</span>  <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span><span class="s2">&quot;tavg_nan_*.tif&quot;</span><span class="p">))</span>
+
+<span class="c1"># Print file paths for debugging</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Raster files:&quot;</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">tavg_missing</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+    <span class="n">ds</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Raster files: [&#39;RadT_tavg_202301.tif&#39;, &#39;RadT_tavg_202302.tif&#39;, &#39;RadT_tavg_202304.tif&#39;, &#39;RadT_tavg_202305.tif&#39;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/interpolation_tutorial_20_1.png" src="_images/interpolation_tutorial_20_1.png" />
+</div>
+</div>
+<p>Now let’s use the linear interpolation method to fill the missing values.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Output path for the interpolated raster</span>
+<span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;tavg_interp.tif&quot;</span><span class="p">)</span>
+
+<span class="c1"># Apply interpolation</span>
+<span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">series</span><span class="p">(</span><span class="n">tavg_missing</span><span class="p">,</span> <span class="n">transfer_lib</span><span class="o">=</span><span class="s2">&quot;jax&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">])</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="n">src</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">interpolate_nan</span><span class="p">(</span>
+            <span class="n">interp_type</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>  <span class="c1"># Interpolation type</span>
+            <span class="c1"># dates=dates,  # Dates of the time series</span>
+            <span class="n">missing_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>  <span class="c1"># Value representing missing data</span>
+            <span class="n">count</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">filenames</span><span class="p">),</span>  <span class="c1"># Number of time steps</span>
+        <span class="p">),</span>
+        <span class="n">outfile</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+        <span class="n">bands</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Apply interpolation to the first band</span>
+    <span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Interpolation completed. Output saved to:&quot;</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 70/70 [00:09&lt;00:00,  7.68it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Interpolation completed. Output saved to: /tmp/tmpqg6trw5b/tavg_interp.tif
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+    <span class="n">ds</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/interpolation_tutorial_23_0.png" src="_images/interpolation_tutorial_23_0.png" />
+</div>
+</div>
+<p>Notice that the output is a stack of images, with each image representing a time step with the missing values filled. Each one is stored as a <code class="docutils literal notranslate"><span class="pre">band</span></code> in the <code class="docutils literal notranslate"><span class="pre">xarray</span></code> object.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in jupyterlab.
+ *
+ */
+
+:root {
+  --xr-font-color0: var(--jp-content-font-color0, rgba(0, 0, 0, 1));
+  --xr-font-color2: var(--jp-content-font-color2, rgba(0, 0, 0, 0.54));
+  --xr-font-color3: var(--jp-content-font-color3, rgba(0, 0, 0, 0.38));
+  --xr-border-color: var(--jp-border-color2, #e0e0e0);
+  --xr-disabled-color: var(--jp-layout-color3, #bdbdbd);
+  --xr-background-color: var(--jp-layout-color0, white);
+  --xr-background-color-row-even: var(--jp-layout-color1, white);
+  --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
+}
+
+html[theme=dark],
+body[data-theme=dark],
+body.vscode-dark {
+  --xr-font-color0: rgba(255, 255, 255, 1);
+  --xr-font-color2: rgba(255, 255, 255, 0.54);
+  --xr-font-color3: rgba(255, 255, 255, 0.38);
+  --xr-border-color: #1F1F1F;
+  --xr-disabled-color: #515151;
+  --xr-background-color: #111111;
+  --xr-background-color-row-even: #111111;
+  --xr-background-color-row-odd: #313131;
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  border-bottom: solid 1px var(--xr-border-color);
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-array-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type {
+  color: var(--xr-font-color2);
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 20px 20px;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item input {
+  display: none;
+}
+
+.xr-section-item input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.5em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: '►';
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: '▼';
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  display: none;
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: '(';
+}
+
+.xr-dim-list:after {
+  content: ')';
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ',';
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  margin-bottom: 0;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  background-color: var(--xr-background-color) !important;
+  padding-bottom: 5px !important;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.DataArray (band: 4, y: 1613, x: 2313)&gt;
+dask.array&lt;open_rasterio-ee04daeacc5baae8f60f7c1827755a13&lt;this-array&gt;, shape=(4, 1613, 2313), dtype=float64, chunksize=(4, 256, 256), chunktype=numpy.ndarray&gt;
+Coordinates:
+  * band     (band) int64 1 2 3 4
+  * x        (x) float64 -40.36 -40.31 -40.27 -40.22 ... 63.35 63.4 63.44 63.49
+  * y        (y) float64 37.57 37.53 37.48 37.44 ... -34.7 -34.74 -34.79 -34.83
+Attributes: (12/13)
+    transform:           (0.04491576420597607, 0.0, -40.37927202117249, 0.0, ...
+    crs:                 4326
+    res:                 (0.04491576420597607, 0.04491576420597607)
+    is_tiled:            1
+    nodatavals:          (0.0, 0.0, 0.0, 0.0)
+    _FillValue:          0.0
+    ...                  ...
+    offsets:             (0.0, 0.0, 0.0, 0.0)
+    filename:            /tmp/tmpqg6trw5b/tavg_interp.tif
+    resampling:          nearest
+    AREA_OR_POINT:       Area
+    _data_are_separate:  0
+    _data_are_stacked:   0</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-array-name'></div><ul class='xr-dim-list'><li><span class='xr-has-index'>band</span>: 4</li><li><span class='xr-has-index'>y</span>: 1613</li><li><span class='xr-has-index'>x</span>: 2313</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-389962ce-bd68-4631-b6bd-5f054b999315' class='xr-array-in' type='checkbox' checked><label for='section-389962ce-bd68-4631-b6bd-5f054b999315' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>dask.array&lt;chunksize=(4, 256, 256), meta=np.ndarray&gt;</span></div><div class='xr-array-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 113.86 MiB </td>
+                        <td> 2.00 MiB </td>
+                    </tr>
+
+                    <tr>
+                        <th> Shape </th>
+                        <td> (4, 1613, 2313) </td>
+                        <td> (4, 256, 256) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 70 chunks in 2 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float64 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="194" height="148" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="10" y1="0" x2="24" y2="14" style="stroke-width:2" />
+  <line x1="10" y1="13" x2="24" y2="28" />
+  <line x1="10" y1="26" x2="24" y2="41" />
+  <line x1="10" y1="39" x2="24" y2="54" />
+  <line x1="10" y1="53" x2="24" y2="68" />
+  <line x1="10" y1="66" x2="24" y2="81" />
+  <line x1="10" y1="79" x2="24" y2="94" />
+  <line x1="10" y1="83" x2="24" y2="98" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="10" y1="0" x2="10" y2="83" style="stroke-width:2" />
+  <line x1="24" y1="14" x2="24" y2="98" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="10.0,0.0 24.9485979497544,14.948597949754403 24.9485979497544,98.63212583561692 10.0,83.68352788586252" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="10" y1="0" x2="130" y2="0" style="stroke-width:2" />
+  <line x1="24" y1="14" x2="144" y2="14" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="10" y1="0" x2="24" y2="14" style="stroke-width:2" />
+  <line x1="23" y1="0" x2="38" y2="14" />
+  <line x1="36" y1="0" x2="51" y2="14" />
+  <line x1="49" y1="0" x2="64" y2="14" />
+  <line x1="63" y1="0" x2="78" y2="14" />
+  <line x1="76" y1="0" x2="91" y2="14" />
+  <line x1="89" y1="0" x2="104" y2="14" />
+  <line x1="102" y1="0" x2="117" y2="14" />
+  <line x1="116" y1="0" x2="131" y2="14" />
+  <line x1="129" y1="0" x2="144" y2="14" />
+  <line x1="130" y1="0" x2="144" y2="14" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="10.0,0.0 130.0,0.0 144.9485979497544,14.948597949754403 24.9485979497544,14.948597949754403" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="24" y1="14" x2="144" y2="14" style="stroke-width:2" />
+  <line x1="24" y1="28" x2="144" y2="28" />
+  <line x1="24" y1="41" x2="144" y2="41" />
+  <line x1="24" y1="54" x2="144" y2="54" />
+  <line x1="24" y1="68" x2="144" y2="68" />
+  <line x1="24" y1="81" x2="144" y2="81" />
+  <line x1="24" y1="94" x2="144" y2="94" />
+  <line x1="24" y1="98" x2="144" y2="98" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="24" y1="14" x2="24" y2="98" style="stroke-width:2" />
+  <line x1="38" y1="14" x2="38" y2="98" />
+  <line x1="51" y1="14" x2="51" y2="98" />
+  <line x1="64" y1="14" x2="64" y2="98" />
+  <line x1="78" y1="14" x2="78" y2="98" />
+  <line x1="91" y1="14" x2="91" y2="98" />
+  <line x1="104" y1="14" x2="104" y2="98" />
+  <line x1="117" y1="14" x2="117" y2="98" />
+  <line x1="131" y1="14" x2="131" y2="98" />
+  <line x1="144" y1="14" x2="144" y2="98" />
+  <line x1="144" y1="14" x2="144" y2="98" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="24.9485979497544,14.948597949754403 144.9485979497544,14.948597949754403 144.9485979497544,98.63212583561692 24.9485979497544,98.63212583561692" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="84.948598" y="118.632126" font-size="1.0rem" font-weight="100" text-anchor="middle" >2313</text>
+  <text x="164.948598" y="56.790362" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,164.948598,56.790362)">1613</text>
+  <text x="7.474299" y="111.157827" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,7.474299,111.157827)">4</text>
+</svg>
+        </td>
+    </tr>
+</table></div></div></li><li class='xr-section-item'><input id='section-1973e563-9770-4232-8a4e-b84c2774b836' class='xr-section-summary-in' type='checkbox'  checked><label for='section-1973e563-9770-4232-8a4e-b84c2774b836' class='xr-section-summary' >Coordinates: <span>(3)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>band</span></div><div class='xr-var-dims'>(band)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>1 2 3 4</div><input id='attrs-c1e7547a-d0c5-4818-a4fd-1ec9243ab740' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-c1e7547a-d0c5-4818-a4fd-1ec9243ab740' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-66b4d3d3-cd61-4876-ad17-f822a6b5bf58' class='xr-var-data-in' type='checkbox'><label for='data-66b4d3d3-cd61-4876-ad17-f822a6b5bf58' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([1, 2, 3, 4])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>x</span></div><div class='xr-var-dims'>(x)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>-40.36 -40.31 ... 63.44 63.49</div><input id='attrs-aaaf7ca9-8047-4542-a53f-539886018b5a' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-aaaf7ca9-8047-4542-a53f-539886018b5a' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-1e2a8fb5-8858-4a3d-8bcf-000a2643a435' class='xr-var-data-in' type='checkbox'><label for='data-1e2a8fb5-8858-4a3d-8bcf-000a2643a435' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-40.356814, -40.311898, -40.266983, ...,  63.398601,  63.443517,
+        63.488433])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>y</span></div><div class='xr-var-dims'>(y)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>37.57 37.53 37.48 ... -34.79 -34.83</div><input id='attrs-56b97b71-3acb-4eb3-a445-721af0c93e29' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-56b97b71-3acb-4eb3-a445-721af0c93e29' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-14607978-8f84-4f16-8ec8-98cd69b23204' class='xr-var-data-in' type='checkbox'><label for='data-14607978-8f84-4f16-8ec8-98cd69b23204' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([ 37.572037,  37.527121,  37.482205, ..., -34.742344, -34.787259,
+       -34.832175])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-b688dd0b-6bd3-48b9-8a5a-678386885530' class='xr-section-summary-in' type='checkbox'  ><label for='section-b688dd0b-6bd3-48b9-8a5a-678386885530' class='xr-section-summary' >Indexes: <span>(3)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>band</div></div><div class='xr-index-preview'>PandasIndex</div><div></div><input id='index-53e412c9-dafe-46a4-8044-109da1824f80' class='xr-index-data-in' type='checkbox'/><label for='index-53e412c9-dafe-46a4-8044-109da1824f80' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([1, 2, 3, 4], dtype=&#x27;int64&#x27;, name=&#x27;band&#x27;))</pre></div></li><li class='xr-var-item'><div class='xr-index-name'><div>x</div></div><div class='xr-index-preview'>PandasIndex</div><div></div><input id='index-722e407f-e6dd-4782-a232-c37811c5cffc' class='xr-index-data-in' type='checkbox'/><label for='index-722e407f-e6dd-4782-a232-c37811c5cffc' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([  -40.3568141390695, -40.311898374863524,  -40.26698261065755,
+       -40.222066846451575,   -40.1771510822456,  -40.13223531803962,
+       -40.087319553833645,  -40.04240378962767, -39.997488025421696,
+       -39.952572261215714,
+       ...
+         63.08419082729339,   63.12910659149937,  63.174022355705354,
+         63.21893811991132,    63.2638538841173,   63.30876964832327,
+         63.35368541252925,  63.398601176735234,    63.4435169409412,
+         63.48843270514718],
+      dtype=&#x27;float64&#x27;, name=&#x27;x&#x27;, length=2313))</pre></div></li><li class='xr-var-item'><div class='xr-index-name'><div>y</div></div><div class='xr-index-preview'>PandasIndex</div><div></div><input id='index-c5c9217a-e54f-4df5-a36f-8d5d526a8de2' class='xr-index-data-in' type='checkbox'/><label for='index-c5c9217a-e54f-4df5-a36f-8d5d526a8de2' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([37.572036758298985,  37.52712099409301, 37.482205229887036,
+        37.43728946568106,  37.39237370147509, 37.347457937269105,
+        37.30254217306313, 37.257626408857156,  37.21271064465118,
+         37.1677948804452,
+       ...
+       -34.42793326388066, -34.47284902808663, -34.51776479229261,
+       -34.56268055649859, -34.60759632070456, -34.65251208491054,
+       -34.69742784911651, -34.74234361332249, -34.78725937752847,
+       -34.83217514173444],
+      dtype=&#x27;float64&#x27;, name=&#x27;y&#x27;, length=1613))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-4629110c-512e-4c88-8891-f9a1c3558123' class='xr-section-summary-in' type='checkbox'  ><label for='section-4629110c-512e-4c88-8891-f9a1c3558123' class='xr-section-summary' >Attributes: <span>(13)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>transform :</span></dt><dd>(0.04491576420597607, 0.0, -40.37927202117249, 0.0, -0.04491576420597607, 37.594494640401976)</dd><dt><span>crs :</span></dt><dd>4326</dd><dt><span>res :</span></dt><dd>(0.04491576420597607, 0.04491576420597607)</dd><dt><span>is_tiled :</span></dt><dd>1</dd><dt><span>nodatavals :</span></dt><dd>(0.0, 0.0, 0.0, 0.0)</dd><dt><span>_FillValue :</span></dt><dd>0.0</dd><dt><span>scales :</span></dt><dd>(1.0, 1.0, 1.0, 1.0)</dd><dt><span>offsets :</span></dt><dd>(0.0, 0.0, 0.0, 0.0)</dd><dt><span>filename :</span></dt><dd>/tmp/tmpqg6trw5b/tavg_interp.tif</dd><dt><span>resampling :</span></dt><dd>nearest</dd><dt><span>AREA_OR_POINT :</span></dt><dd>Area</dd><dt><span>_data_are_separate :</span></dt><dd>0</dd><dt><span>_data_are_stacked :</span></dt><dd>0</dd></dl></div></li></ul></div></div></div>
+</div>
+<p>Let’s visualize the results to confirm that the missing values have been filled correctly.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xr_fresh.visualizer</span> <span class="kn">import</span> <span class="n">plot_interpolated_actual</span>
+
+<span class="c1"># Plot the interpolated and actual time series</span>
+<span class="n">plot_interpolated_actual</span><span class="p">(</span>
+    <span class="n">interpolated_stack</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">original_image_list</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/interpolation_tutorial_27_0.png" src="_images/interpolation_tutorial_27_0.png" />
+</div>
+</div>
+<p>So finally we need to write each band out to a separate file.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># write out each band as a separate file</span>
+<span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ds</span><span class="p">)):</span>
+        <span class="n">gw</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">/tavg_interp_</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="s1">&#39;%Y%j&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+  0%|          | 0/211 [00:00&lt;?, ?it/s]100%|██████████| 211/211 [00:00&lt;00:00, 459.24it/s]
+100%|██████████| 211/211 [00:00&lt;00:00, 860.26it/s]
+100%|██████████| 211/211 [00:00&lt;00:00, 890.63it/s]
+100%|██████████| 211/211 [00:00&lt;00:00, 864.54it/s]
+</pre></div></div>
+</div>
+<p>Now let’s confirm they were written correctly.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;tavg_interp_*.tif&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;/tmp/tmpqg6trw5b/tavg_interp_2023001.tif&#39;,
+ &#39;/tmp/tmpqg6trw5b/tavg_interp_2023032.tif&#39;,
+ &#39;/tmp/tmpqg6trw5b/tavg_interp_2023121.tif&#39;,
+ &#39;/tmp/tmpqg6trw5b/tavg_interp_2023091.tif&#39;]
+</pre></div></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

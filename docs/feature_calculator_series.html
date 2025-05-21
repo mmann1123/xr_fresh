@@ -4,10 +4,11 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feature Generators &mdash; xr_fresh 0.2.1 documentation</title>
+  <title>Feature Generators &mdash; xr_fresh 0.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
 
   
     <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/feature_calculator_series.html" />
@@ -17,7 +18,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=37f418d5"></script>
+        <script src="_static/documentation_options.js?v=000c92bf"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -47,141 +48,57 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="modules.html">xr_fresh</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Feature Generators</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.feature_calculator_series">Module Contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.abs_energy"><code class="docutils literal notranslate"><span class="pre">abs_energy</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.abs_energy.calculate"><code class="docutils literal notranslate"><span class="pre">abs_energy.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.absolute_sum_of_changes"><code class="docutils literal notranslate"><span class="pre">absolute_sum_of_changes</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.absolute_sum_of_changes.calculate"><code class="docutils literal notranslate"><span class="pre">absolute_sum_of_changes.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.autocorrelation"><code class="docutils literal notranslate"><span class="pre">autocorrelation</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.autocorrelation.calculate"><code class="docutils literal notranslate"><span class="pre">autocorrelation.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_above_mean"><code class="docutils literal notranslate"><span class="pre">count_above_mean</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_above_mean.calculate"><code class="docutils literal notranslate"><span class="pre">count_above_mean.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_below_mean"><code class="docutils literal notranslate"><span class="pre">count_below_mean</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_below_mean.calculate"><code class="docutils literal notranslate"><span class="pre">count_below_mean.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_maximum"><code class="docutils literal notranslate"><span class="pre">doy_of_maximum</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_maximum.calculate"><code class="docutils literal notranslate"><span class="pre">doy_of_maximum.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_minimum"><code class="docutils literal notranslate"><span class="pre">doy_of_minimum</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_minimum.calculate"><code class="docutils literal notranslate"><span class="pre">doy_of_minimum.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis"><code class="docutils literal notranslate"><span class="pre">kurtosis</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis.calculate"><code class="docutils literal notranslate"><span class="pre">kurtosis.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis_excess"><code class="docutils literal notranslate"><span class="pre">kurtosis_excess</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis_excess.calculate"><code class="docutils literal notranslate"><span class="pre">kurtosis_excess.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.large_standard_deviation"><code class="docutils literal notranslate"><span class="pre">large_standard_deviation</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.large_standard_deviation.calculate"><code class="docutils literal notranslate"><span class="pre">large_standard_deviation.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_above_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_above_mean</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_above_mean.calculate"><code class="docutils literal notranslate"><span class="pre">longest_strike_above_mean.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_below_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_below_mean</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_below_mean.calculate"><code class="docutils literal notranslate"><span class="pre">longest_strike_below_mean.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.maximum"><code class="docutils literal notranslate"><span class="pre">maximum</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.maximum.calculate"><code class="docutils literal notranslate"><span class="pre">maximum.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean"><code class="docutils literal notranslate"><span class="pre">mean</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean.calculate"><code class="docutils literal notranslate"><span class="pre">mean.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_abs_change"><code class="docutils literal notranslate"><span class="pre">mean_abs_change</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_abs_change.calculate"><code class="docutils literal notranslate"><span class="pre">mean_abs_change.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_change"><code class="docutils literal notranslate"><span class="pre">mean_change</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_change.calculate"><code class="docutils literal notranslate"><span class="pre">mean_change.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_second_derivative_central"><code class="docutils literal notranslate"><span class="pre">mean_second_derivative_central</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_second_derivative_central.calculate"><code class="docutils literal notranslate"><span class="pre">mean_second_derivative_central.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.median"><code class="docutils literal notranslate"><span class="pre">median</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.median.calculate"><code class="docutils literal notranslate"><span class="pre">median.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.minimum"><code class="docutils literal notranslate"><span class="pre">minimum</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.minimum.calculate"><code class="docutils literal notranslate"><span class="pre">minimum.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ols_slope_intercept"><code class="docutils literal notranslate"><span class="pre">ols_slope_intercept</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ols_slope_intercept.calculate"><code class="docutils literal notranslate"><span class="pre">ols_slope_intercept.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.quantile"><code class="docutils literal notranslate"><span class="pre">quantile</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.quantile.calculate"><code class="docutils literal notranslate"><span class="pre">quantile.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma"><code class="docutils literal notranslate"><span class="pre">ratio_beyond_r_sigma</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma.calculate"><code class="docutils literal notranslate"><span class="pre">ratio_beyond_r_sigma.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.skewness"><code class="docutils literal notranslate"><span class="pre">skewness</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.skewness.calculate"><code class="docutils literal notranslate"><span class="pre">skewness.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.standard_deviation"><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.standard_deviation.calculate"><code class="docutils literal notranslate"><span class="pre">standard_deviation.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.sum"><code class="docutils literal notranslate"><span class="pre">sum</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.sum.calculate"><code class="docutils literal notranslate"><span class="pre">sum.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.symmetry_looking"><code class="docutils literal notranslate"><span class="pre">symmetry_looking</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.symmetry_looking.calculate"><code class="docutils literal notranslate"><span class="pre">symmetry_looking.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ts_complexity_cid_ce"><code class="docutils literal notranslate"><span class="pre">ts_complexity_cid_ce</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ts_complexity_cid_ce.calculate"><code class="docutils literal notranslate"><span class="pre">ts_complexity_cid_ce.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length"><code class="docutils literal notranslate"><span class="pre">unique_value_number_to_time_series_length</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length.calculate"><code class="docutils literal notranslate"><span class="pre">unique_value_number_to_time_series_length.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance"><code class="docutils literal notranslate"><span class="pre">variance</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance.calculate"><code class="docutils literal notranslate"><span class="pre">variance.calculate()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation"><code class="docutils literal notranslate"><span class="pre">variance_larger_than_standard_deviation</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation.calculate"><code class="docutils literal notranslate"><span class="pre">variance_larger_than_standard_deviation.calculate()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="modules.html">xr_fresh</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Feature Generators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.feature_calculator_series">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.abs_energy"><code class="docutils literal notranslate"><span class="pre">abs_energy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.absolute_sum_of_changes"><code class="docutils literal notranslate"><span class="pre">absolute_sum_of_changes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.autocorrelation"><code class="docutils literal notranslate"><span class="pre">autocorrelation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_above_mean"><code class="docutils literal notranslate"><span class="pre">count_above_mean</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_below_mean"><code class="docutils literal notranslate"><span class="pre">count_below_mean</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_maximum"><code class="docutils literal notranslate"><span class="pre">doy_of_maximum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_minimum"><code class="docutils literal notranslate"><span class="pre">doy_of_minimum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis"><code class="docutils literal notranslate"><span class="pre">kurtosis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis_excess"><code class="docutils literal notranslate"><span class="pre">kurtosis_excess</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.large_standard_deviation"><code class="docutils literal notranslate"><span class="pre">large_standard_deviation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_above_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_above_mean</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_below_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_below_mean</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.maximum"><code class="docutils literal notranslate"><span class="pre">maximum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean"><code class="docutils literal notranslate"><span class="pre">mean</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_abs_change"><code class="docutils literal notranslate"><span class="pre">mean_abs_change</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_change"><code class="docutils literal notranslate"><span class="pre">mean_change</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_second_derivative_central"><code class="docutils literal notranslate"><span class="pre">mean_second_derivative_central</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.median"><code class="docutils literal notranslate"><span class="pre">median</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.minimum"><code class="docutils literal notranslate"><span class="pre">minimum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ols_slope_intercept"><code class="docutils literal notranslate"><span class="pre">ols_slope_intercept</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.quantile"><code class="docutils literal notranslate"><span class="pre">quantile</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma"><code class="docutils literal notranslate"><span class="pre">ratio_beyond_r_sigma</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.skewness"><code class="docutils literal notranslate"><span class="pre">skewness</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.standard_deviation"><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.sum"><code class="docutils literal notranslate"><span class="pre">sum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.symmetry_looking"><code class="docutils literal notranslate"><span class="pre">symmetry_looking</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ts_complexity_cid_ce"><code class="docutils literal notranslate"><span class="pre">ts_complexity_cid_ce</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length"><code class="docutils literal notranslate"><span class="pre">unique_value_number_to_time_series_length</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance"><code class="docutils literal notranslate"><span class="pre">variance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation"><code class="docutils literal notranslate"><span class="pre">variance_larger_than_standard_deviation</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="interpolate_series.html">Interpolation Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extractors_series.html">Extractor Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dimension_reduction.html">Dimension Reduction Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualizer.html">Dimension Reduction Visualization Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="interpolate_series.html">Interpolation Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extractors_series.html">Extractor Function</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Dimension Reduction Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="visualizer.html">Dimension Reduction Visualization Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
 
         </div>
@@ -198,9 +115,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="api.html">API Reference</a></li>
       <li class="breadcrumb-item active">Feature Generators</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/feature_calculator_series.rst.txt" rel="nofollow"> View page source</a>
+              <a href="https://github.com/mmann1123/xr_fresh/blob/main/docs/feature_calculator_series.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>

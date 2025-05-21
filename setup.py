@@ -100,6 +100,7 @@ REQUIRED = [
     "gdal>=2.3.3",
     "numba>=0.48.0",
     jax_dependency,
+    "nbsphinx>=0.8.3",
 ]
 
 # Add ray dependency if not on Windows

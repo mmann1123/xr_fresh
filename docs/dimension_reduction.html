@@ -4,10 +4,11 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dimension Reduction Functions &mdash; xr_fresh 0.2.1 documentation</title>
+  <title>Dimension Reduction Functions &mdash; xr_fresh 0.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
 
   
     <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/dimension_reduction.html" />
@@ -17,7 +18,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=37f418d5"></script>
+        <script src="_static/documentation_options.js?v=000c92bf"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -46,25 +47,28 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="modules.html">xr_fresh</a></li>
-<li class="toctree-l1"><a class="reference internal" href="feature_calculator_series.html">Feature Generators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interpolate_series.html">Interpolation Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extractors_series.html">Extractor Function</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Dimension Reduction Functions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-xr_fresh.dimension_reduction">Functions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor"><code class="docutils literal notranslate"><span class="pre">ExtendedGeoWombatAccessor</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor.k_pca"><code class="docutils literal notranslate"><span class="pre">ExtendedGeoWombatAccessor.k_pca()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="modules.html">xr_fresh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_calculator_series.html">Feature Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpolate_series.html">Interpolation Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extractors_series.html">Extractor Function</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Dimension Reduction Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.dimension_reduction">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor"><code class="docutils literal notranslate"><span class="pre">ExtendedGeoWombatAccessor</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="visualizer.html">Dimension Reduction Visualization Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="visualizer.html">Dimension Reduction Visualization Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
 
         </div>
@@ -81,9 +85,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="api.html">API Reference</a></li>
       <li class="breadcrumb-item active">Dimension Reduction Functions</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/dimension_reduction.rst.txt" rel="nofollow"> View page source</a>
+              <a href="https://github.com/mmann1123/xr_fresh/blob/main/docs/dimension_reduction.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -357,7 +362,10 @@
 </dd>
 </dl>
 <p>Examples:
-# Initialize Ray
+.. code-block:: python</p>
+<blockquote>
+<div><p>import xr_fresh.dimension_reduction  # This registers the accessor</p>
+<p># Initialize Ray
 with ray.init(num_cpus=8) as rays:</p>
 <blockquote>
 <div><p># Example usage
@@ -379,7 +387,7 @@ stack_dim=”band”,
 band_names=[0, 1, 2, 3],</p>
 </div></blockquote>
 <dl>
-<dt>) as src:</dt><dd><p># get third k principal components - base zero counting
+<dt>) as src:</dt><dd><p># get 3 k principal components - base zero counting
 transformed_dataarray = src.gw_ext.k_pca(</p>
 <blockquote>
 <div><p>gamma=15, n_components=3, n_workers=8, chunk_size=256</p>
@@ -389,6 +397,7 @@ transformed_dataarray.plot.imshow(col=’component’, col_wrap=1, figsize=(8, 1
 plt.show()</p>
 </dd>
 </dl>
+</div></blockquote>
 </div></blockquote>
 </dd></dl>
 

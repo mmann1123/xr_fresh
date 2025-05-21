@@ -8,10 +8,27 @@ import sys
 # Adjust path to include the xr_fresh directory
 sys.path.insert(0, os.path.abspath("../../xr_fresh"))
 # -- Project information -----------------------------------------------------
+import requests
+
+try:
+    resp = requests.get(
+        "https://api.github.com/repos/mmann1123/xr_fresh/releases/latest"
+    )
+    re = resp.json()["tag_name"]
+except Exception:
+    re = "0.2.1"
 
 project = "xr_fresh"
 author = "Michael Mann"
-release = "0.2.1"
+release = re
+
+html_context = {
+    "display_github": True,  # Integrate GitHub
+    "github_user": "mmann1123",  # Username
+    "github_repo": "xr_fresh",  # Repo name
+    "github_version": "main",  # Branch
+    "conf_py_path": "/docs/",  # Path in the repo to the docs root
+}
 
 # html_context = {
 #     "css_files": [
@@ -44,8 +61,10 @@ extensions = [
     "sphinx.ext.napoleon",
     "numpydoc",
     "sphinx_rtd_theme",
+    "myst_nb",
 ]
 autosummary_generate = True
+jupyter_execute_notebooks = "off"
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ["_templates"]

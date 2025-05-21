@@ -4,10 +4,11 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>xr_fresh package &mdash; xr_fresh 0.2.1 documentation</title>
+  <title>xr_fresh package &mdash; xr_fresh 0.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
 
   
     <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/xr_fresh.html" />
@@ -17,7 +18,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=37f418d5"></script>
+        <script src="_static/documentation_options.js?v=000c92bf"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -47,115 +48,39 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">xr_fresh</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">xr_fresh package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="xr_fresh.data.html">xr_fresh.data package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.backends">xr_fresh.backends module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.backends.Cluster"><code class="docutils literal notranslate"><span class="pre">Cluster</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.dimension_reduction">xr_fresh.dimension_reduction module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.dimension_reduction.ExtendedGeoWombatAccessor"><code class="docutils literal notranslate"><span class="pre">ExtendedGeoWombatAccessor</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.extractors_series">xr_fresh.extractors_series module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.extractors_series.extract_features_series"><code class="docutils literal notranslate"><span class="pre">extract_features_series()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.extractors_series.extract_grid"><code class="docutils literal notranslate"><span class="pre">extract_grid()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.extractors_series.extract_key_value_names"><code class="docutils literal notranslate"><span class="pre">extract_key_value_names()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.feature_calculator_series">xr_fresh.feature_calculator_series module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.abs_energy"><code class="docutils literal notranslate"><span class="pre">abs_energy</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.absolute_sum_of_changes"><code class="docutils literal notranslate"><span class="pre">absolute_sum_of_changes</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.autocorrelation"><code class="docutils literal notranslate"><span class="pre">autocorrelation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_above_mean"><code class="docutils literal notranslate"><span class="pre">count_above_mean</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.count_below_mean"><code class="docutils literal notranslate"><span class="pre">count_below_mean</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_maximum"><code class="docutils literal notranslate"><span class="pre">doy_of_maximum</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.doy_of_minimum"><code class="docutils literal notranslate"><span class="pre">doy_of_minimum</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis"><code class="docutils literal notranslate"><span class="pre">kurtosis</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.kurtosis_excess"><code class="docutils literal notranslate"><span class="pre">kurtosis_excess</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.large_standard_deviation"><code class="docutils literal notranslate"><span class="pre">large_standard_deviation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_above_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_above_mean</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.longest_strike_below_mean"><code class="docutils literal notranslate"><span class="pre">longest_strike_below_mean</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.maximum"><code class="docutils literal notranslate"><span class="pre">maximum</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean"><code class="docutils literal notranslate"><span class="pre">mean</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_abs_change"><code class="docutils literal notranslate"><span class="pre">mean_abs_change</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_change"><code class="docutils literal notranslate"><span class="pre">mean_change</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.mean_second_derivative_central"><code class="docutils literal notranslate"><span class="pre">mean_second_derivative_central</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.median"><code class="docutils literal notranslate"><span class="pre">median</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.minimum"><code class="docutils literal notranslate"><span class="pre">minimum</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ols_slope_intercept"><code class="docutils literal notranslate"><span class="pre">ols_slope_intercept</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.quantile"><code class="docutils literal notranslate"><span class="pre">quantile</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ratio_beyond_r_sigma"><code class="docutils literal notranslate"><span class="pre">ratio_beyond_r_sigma</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.skewness"><code class="docutils literal notranslate"><span class="pre">skewness</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.standard_deviation"><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.sum"><code class="docutils literal notranslate"><span class="pre">sum</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.symmetry_looking"><code class="docutils literal notranslate"><span class="pre">symmetry_looking</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.ts_complexity_cid_ce"><code class="docutils literal notranslate"><span class="pre">ts_complexity_cid_ce</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.unique_value_number_to_time_series_length"><code class="docutils literal notranslate"><span class="pre">unique_value_number_to_time_series_length</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance"><code class="docutils literal notranslate"><span class="pre">variance</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.feature_calculator_series.variance_larger_than_standard_deviation"><code class="docutils literal notranslate"><span class="pre">variance_larger_than_standard_deviation</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.interpolate_series">xr_fresh.interpolate_series module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.interpolate_series.interpolate_nan"><code class="docutils literal notranslate"><span class="pre">interpolate_nan</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.io">xr_fresh.io module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.io.WriteDaskArray"><code class="docutils literal notranslate"><span class="pre">WriteDaskArray</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.io.WriteStackedArray"><code class="docutils literal notranslate"><span class="pre">WriteStackedArray()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.io.parquet_append"><code class="docutils literal notranslate"><span class="pre">parquet_append()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.io.stack_to_pandas"><code class="docutils literal notranslate"><span class="pre">stack_to_pandas()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.transformers">xr_fresh.transformers module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.transformers.BaseTransformer"><code class="docutils literal notranslate"><span class="pre">BaseTransformer</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.transformers.Stackerizer"><code class="docutils literal notranslate"><span class="pre">Stackerizer</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.transformers.is_dataarray"><code class="docutils literal notranslate"><span class="pre">is_dataarray()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.transformers.is_dataset"><code class="docutils literal notranslate"><span class="pre">is_dataset()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.transformers.stackerizer"><code class="docutils literal notranslate"><span class="pre">stackerizer()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh.utils">xr_fresh.utils module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.add_categorical"><code class="docutils literal notranslate"><span class="pre">add_categorical()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.add_time_targets"><code class="docutils literal notranslate"><span class="pre">add_time_targets()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.bound"><code class="docutils literal notranslate"><span class="pre">bound()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.check_variable_lengths"><code class="docutils literal notranslate"><span class="pre">check_variable_lengths()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.compressed_pickle"><code class="docutils literal notranslate"><span class="pre">compressed_pickle()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.convert_to_min_dtype"><code class="docutils literal notranslate"><span class="pre">convert_to_min_dtype()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.decompress_pickle"><code class="docutils literal notranslate"><span class="pre">decompress_pickle()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.downcast_pandas"><code class="docutils literal notranslate"><span class="pre">downcast_pandas()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.find_variable_names"><code class="docutils literal notranslate"><span class="pre">find_variable_names()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.find_variable_year"><code class="docutils literal notranslate"><span class="pre">find_variable_year()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.open_pickle"><code class="docutils literal notranslate"><span class="pre">open_pickle()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.save_pickle"><code class="docutils literal notranslate"><span class="pre">save_pickle()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.to_vrt"><code class="docutils literal notranslate"><span class="pre">to_vrt()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.unique"><code class="docutils literal notranslate"><span class="pre">unique()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.utils.xarray_to_rasterio"><code class="docutils literal notranslate"><span class="pre">xarray_to_rasterio()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#xr-fresh-visualizer-module">xr_fresh.visualizer module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#xr_fresh.visualizer.plot_interpolated_actual"><code class="docutils literal notranslate"><span class="pre">plot_interpolated_actual()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-xr_fresh">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html">xr_fresh</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">xr_fresh package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xr_fresh.backends">xr_fresh.backends module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xr_fresh.dimension_reduction">xr_fresh.dimension_reduction module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xr_fresh.extractors_series">xr_fresh.extractors_series module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xr_fresh.feature_calculator_series">xr_fresh.feature_calculator_series module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xr_fresh.interpolate_series">xr_fresh.interpolate_series module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xr_fresh.io">xr_fresh.io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xr_fresh.transformers">xr_fresh.transformers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xr_fresh.utils">xr_fresh.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xr-fresh-visualizer-module">xr_fresh.visualizer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-xr_fresh">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="feature_calculator_series.html">Feature Generators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interpolate_series.html">Interpolation Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extractors_series.html">Extractor Function</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dimension_reduction.html">Dimension Reduction Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="visualizer.html">Dimension Reduction Visualization Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
-<li class="toctree-l1"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_calculator_series.html">Feature Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpolate_series.html">Interpolation Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extractors_series.html">Extractor Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dimension_reduction.html">Dimension Reduction Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualizer.html">Dimension Reduction Visualization Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backends.html">Utilities to work with Dask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io.html">Utilities for reading and writing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
 
         </div>
@@ -172,10 +97,11 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="api.html">API Reference</a></li>
           <li class="breadcrumb-item"><a href="modules.html">xr_fresh</a></li>
       <li class="breadcrumb-item active">xr_fresh package</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/xr_fresh.rst.txt" rel="nofollow"> View page source</a>
+              <a href="https://github.com/mmann1123/xr_fresh/blob/main/docs/xr_fresh.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -532,7 +458,10 @@
 </dd>
 </dl>
 <p>Examples:
-# Initialize Ray
+.. code-block:: python</p>
+<blockquote>
+<div><p>import xr_fresh.dimension_reduction  # This registers the accessor</p>
+<p># Initialize Ray
 with ray.init(num_cpus=8) as rays:</p>
 <blockquote>
 <div><p># Example usage
@@ -554,7 +483,7 @@ stack_dim=”band”,
 band_names=[0, 1, 2, 3],</p>
 </div></blockquote>
 <dl>
-<dt>) as src:</dt><dd><p># get third k principal components - base zero counting
+<dt>) as src:</dt><dd><p># get 3 k principal components - base zero counting
 transformed_dataarray = src.gw_ext.k_pca(</p>
 <blockquote>
 <div><p>gamma=15, n_components=3, n_workers=8, chunk_size=256</p>
@@ -565,6 +494,7 @@ plt.show()</p>
 </dd>
 </dl>
 </div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 </dd></dl>
@@ -574,7 +504,7 @@ plt.show()</p>
 <span id="xr-fresh-extractors-series-module"></span><h2>xr_fresh.extractors_series module<a class="headerlink" href="#module-xr_fresh.extractors_series" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="xr_fresh.extractors_series.extract_features_series">
-<span class="sig-prename descclassname"><span class="pre">xr_fresh.extractors_series.</span></span><span class="sig-name descname"><span class="pre">extract_features_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gw_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors_series.html#extract_features_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.extractors_series.extract_features_series" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">xr_fresh.extractors_series.</span></span><span class="sig-name descname"><span class="pre">extract_features_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gw_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xr_fresh/extractors_series.html#extract_features_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xr_fresh.extractors_series.extract_features_series" title="Link to this definition"></a></dt>
 <dd><p>Extracts features from a geospatial time series and saves them as TIFF files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -589,6 +519,27 @@ plt.show()</p>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<p>Example:
+.. code-block:: python</p>
+<blockquote>
+<div><p># Define the feature dictionary
+feature_dict = {</p>
+<blockquote>
+<div><p>“abs_energy”: [{}],
+“autocorr”: [{“lag”: 1}, {“lag”: 2}, {“lag”: 3}],
+“ratio_beyond_r_sigma”: [{“r”: 1}, {“r”: 2}],
+“skewness”: [{}],</p>
+</div></blockquote>
+<p>}</p>
+<blockquote>
+<div><p># Define the band name and output directory
+band_name = “B2”</p>
+<p># Create the output directory if it doesn’t exist
+output_directory = “../features”</p>
+<p># Extract features from the geospatial time series
+extract_features_series(gw_series, feature_dict, band_name, output_directory)</p>
+</div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
@@ -2804,7 +2755,7 @@ find_variable_names(path_glob)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>interpolated_stack</strong> (<em>str</em>) – multiband stack of images representing interpolated time series. Defaults to None.</p></li>
+<li><p><strong>interpolated_stack</strong> (<em>str</em>) – path to multiband stack of images representing interpolated time series. Defaults to None.</p></li>
 <li><p><strong>original_image_list</strong> (<em>list</em>) – list of files used in interpolation. Defaults to None.</p></li>
 <li><p><strong>samples</strong> (<em>int</em><em>, </em><em>optional</em>) – number of random points to compare time series. Defaults to 20.</p></li>
 </ul>

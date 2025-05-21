@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generating time series features with xr_fresh &mdash; xr_fresh 0.2.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+
+  
+    <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/feature_extraction.html" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=000c92bf"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Classification of raster timeseries with xr_fresh, geowombat and sklearn" href="classification_example.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xr_fresh
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Generating time series features with xr_fresh</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#read-in-data-and-sort-by-date">Read in data and sort by date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#calculate-the-longest-consecutive-streak-of-days-above-the-mean">Calculate the longest consecutive streak of days above the mean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-time-series-features-stack">Generate time series features stack</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="classification_example.html">Classification of raster timeseries with xr_fresh, geowombat and sklearn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dimension_reduction_ex.html">Dimensionality Reduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpolation.html">Interpolating Missing Values in Raster Time Series with Geowombat and XR_Fresh</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xr_fresh</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Generating time series features with xr_fresh</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mmann1123/xr_fresh/blob/main/docs/feature_extraction.ipynb" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="generating-time-series-features-with-xr-fresh">
+<h1>Generating time series features with xr_fresh<a class="headerlink" href="#generating-time-series-features-with-xr-fresh" title="Link to this heading"></a></h1>
+<p>This notebook demonstrates how to generate time series features using the <code class="docutils literal notranslate"><span class="pre">xr_fresh</span></code> library. The library is designed to work with rasters, xarray datasets and data arrays, and it provides a simple and flexible way to generate features from time series data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">geowombat</span> <span class="k">as</span> <span class="nn">gw</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/mmann1123/miniconda3/envs/xr_fresh_update/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;/home/mmann1123/Documents/github/xr_fresh/docs/source&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<section id="read-in-data-and-sort-by-date">
+<h2>Read in data and sort by date<a class="headerlink" href="#read-in-data-and-sort-by-date" title="Link to this heading"></a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># change working directory</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../../xr_fresh/data/&quot;</span><span class="p">)</span>
+
+<span class="n">band_name</span> <span class="o">=</span> <span class="s1">&#39;ppt&#39;</span>  <span class="c1"># used to rename outputs</span>
+<span class="n">file_glob</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pdsi*tif&quot;</span>
+<span class="n">strp_glob</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pdsi_%Y%m_4500m.tif&quot;</span>
+
+<span class="n">dates</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">strp_glob</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">file_glob</span><span class="p">)))</span>
+<span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">file_glob</span><span class="p">))</span>
+
+<span class="c1"># print dates and files in a table</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">dates</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">files</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>file</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2018-01-01</td>
+      <td>pdsi_201801_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2018-02-01</td>
+      <td>pdsi_201802_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2018-03-01</td>
+      <td>pdsi_201803_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2018-04-01</td>
+      <td>pdsi_201804_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2018-05-01</td>
+      <td>pdsi_201805_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2018-06-01</td>
+      <td>pdsi_201806_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>2018-07-01</td>
+      <td>pdsi_201807_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>2018-08-01</td>
+      <td>pdsi_201808_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>2018-09-01</td>
+      <td>pdsi_201809_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2018-10-01</td>
+      <td>pdsi_201810_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2018-11-01</td>
+      <td>pdsi_201811_4500m.tif</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2018-12-01</td>
+      <td>pdsi_201812_4500m.tif</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Now we will open the data to see what it looks like using <code class="docutils literal notranslate"><span class="pre">geowombat</span></code>, see docs <a class="reference external" href="https://geowombat.readthedocs.io/">here</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># open xarray</span>
+<span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> 
+             <span class="n">band_names</span><span class="o">=</span><span class="p">[</span><span class="n">band_name</span><span class="p">],</span>
+             <span class="n">time_names</span> <span class="o">=</span> <span class="n">dates</span><span class="p">,</span><span class="n">nodata</span><span class="o">=-</span><span class="mi">9999</span>  <span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">mask_nodata</span><span class="p">()</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># a.fig.savefig(&#39;../../writeup/figures/precip.png&#39;)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/717a6b4bdfe19ba6c34f2d7e04c219504591e6b03d6bc41cb29932752b717b69.png" src="_images/717a6b4bdfe19ba6c34f2d7e04c219504591e6b03d6bc41cb29932752b717b69.png" />
+</div>
+</div>
+</section>
+<section id="calculate-the-longest-consecutive-streak-of-days-above-the-mean">
+<h2>Calculate the longest consecutive streak of days above the mean<a class="headerlink" href="#calculate-the-longest-consecutive-streak-of-days-above-the-mean" title="Link to this heading"></a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># make temp folder</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="n">temp_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span>
+
+<span class="kn">from</span> <span class="nn">xr_fresh.feature_calculator_series</span> <span class="kn">import</span> <span class="n">longest_strike_below_mean</span>
+
+
+<span class="n">out_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s1">&#39;longest_strike_above_mean.tif&#39;</span><span class="p">)</span>
+<span class="c1"># use rasterio to create a new file tif file</span>
+
+<span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">series</span><span class="p">(</span><span class="n">files</span><span class="p">,</span><span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">])</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="n">src</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="n">longest_strike_below_mean</span><span class="p">(),</span>
+        <span class="n">bands</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">outfile</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-05-21 15:43:16.213397: W external/xla/xla/service/platform_util.cc:198] unable to create StreamExecutor for CUDA:0: failed initializing StreamExecutor for CUDA device ordinal 0: INTERNAL: failed call to cuDevicePrimaryCtxRetain: CUDA_ERROR_OUT_OF_MEMORY: out of memory; total memory reported: 12516655104
+CUDA backend failed to initialize: INTERNAL: no supported devices found for platform CUDA (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+100%|██████████| 4/4 [00:00&lt;00:00, 68.72it/s]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 549 ms, sys: 154 ms, total: 703 ms
+Wall time: 573 ms
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+    <span class="n">ds</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/856b773e2e043235e63a4f9248dc0d0c660fba8bf72aa1aee6dc853a4f096fce.png" src="_images/856b773e2e043235e63a4f9248dc0d0c660fba8bf72aa1aee6dc853a4f096fce.png" />
+</div>
+</div>
+</section>
+<section id="generate-time-series-features-stack">
+<h2>Generate time series features stack<a class="headerlink" href="#generate-time-series-features-stack" title="Link to this heading"></a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create list of desired series</span>
+<span class="n">feature_list</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;minimum&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+    <span class="s2">&quot;abs_energy&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+    <span class="s2">&quot;doy_of_maximum&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;dates&quot;</span><span class="p">:</span> <span class="n">dates</span><span class="p">}],</span>
+    <span class="s2">&quot;mean_abs_change&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+    <span class="s2">&quot;ratio_beyond_r_sigma&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}],</span>
+    <span class="s2">&quot;symmetry_looking&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+    <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+    <span class="s2">&quot;quantile&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">}],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xr_fresh.extractors_series</span> <span class="kn">import</span> <span class="n">extract_features_series</span>
+
+<span class="c1"># Extract features from the geospatial time series</span>
+<span class="n">extract_features_series</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">feature_list</span><span class="p">,</span> <span class="n">band_name</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=-</span><span class="mi">9999</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 4/4 [00:00&lt;00:00, 189.45it/s]
+100%|██████████| 4/4 [00:00&lt;00:00, 460.07it/s]
+100%|██████████| 4/4 [00:00&lt;00:00, 63.63it/s]
+100%|██████████| 4/4 [00:00&lt;00:00, 153.49it/s]
+100%|██████████| 4/4 [00:00&lt;00:00, 27.52it/s]
+100%|██████████| 4/4 [00:00&lt;00:00, 5603.61it/s]
+100%|██████████| 4/4 [00:00&lt;00:00, 37.88it/s]
+100%|██████████| 4/4 [00:00&lt;00:00, 13819.78it/s]
+100%|██████████| 4/4 [00:00&lt;00:00, 154.85it/s]
+100%|██████████| 4/4 [00:00&lt;00:00, 317.72it/s]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;*.tif&quot;</span><span class="p">)))</span>
+<span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">features</span><span class="p">]</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;feature&#39;</span><span class="p">:</span> <span class="n">feature_names</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">features</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>feature</th>
+      <th>file</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>longest_strike_above_mean</td>
+      <td>/tmp/tmph5cfydxb/longest_strike_above_mean.tif</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>ppt_abs_energy</td>
+      <td>/tmp/tmph5cfydxb/ppt_abs_energy.tif</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>ppt_doy_of_maximum_dates</td>
+      <td>/tmp/tmph5cfydxb/ppt_doy_of_maximum_dates.tif</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>ppt_mean_abs_change</td>
+      <td>/tmp/tmph5cfydxb/ppt_mean_abs_change.tif</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>ppt_minimum</td>
+      <td>/tmp/tmph5cfydxb/ppt_minimum.tif</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>ppt_quantile_q_0</td>
+      <td>/tmp/tmph5cfydxb/ppt_quantile_q_0.05.tif</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>ppt_quantile_q_0</td>
+      <td>/tmp/tmph5cfydxb/ppt_quantile_q_0.95.tif</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>ppt_ratio_beyond_r_sigma_r_1</td>
+      <td>/tmp/tmph5cfydxb/ppt_ratio_beyond_r_sigma_r_1.tif</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>ppt_ratio_beyond_r_sigma_r_2</td>
+      <td>/tmp/tmph5cfydxb/ppt_ratio_beyond_r_sigma_r_2.tif</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>ppt_sum</td>
+      <td>/tmp/tmph5cfydxb/ppt_sum.tif</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>ppt_symmetry_looking</td>
+      <td>/tmp/tmph5cfydxb/ppt_symmetry_looking.tif</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot all files in the temp directory with 4 columns and cleaned titles</span>
+<span class="n">n_cols</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">n_rows</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span> <span class="o">+</span> <span class="n">n_cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">n_cols</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">n_rows</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">features</span><span class="p">):</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="k">if</span> <span class="n">n_rows</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">axes</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">gw</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.tif&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="c1"># Hide any unused subplots</span>
+<span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">),</span> <span class="n">n_rows</span> <span class="o">*</span> <span class="n">n_cols</span><span class="p">):</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="k">if</span> <span class="n">n_rows</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">axes</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="c1"># plt.savefig(&quot;../../writeup/figures/features.png&quot;, dpi=300, bbox_inches=&quot;tight&quot;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/52af32d935cb2c6f24d022c19f49fa7807469dfb5f7f50b3e89659ef1999aa23.png" src="_images/52af32d935cb2c6f24d022c19f49fa7807469dfb5f7f50b3e89659ef1999aa23.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="c1"># clean up temp directory</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="classification_example.html" class="btn btn-neutral float-right" title="Classification of raster timeseries with xr_fresh, geowombat and sklearn" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

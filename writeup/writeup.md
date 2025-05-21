@@ -29,16 +29,15 @@ Keywords: Remote sensing, feature extraction, time series, machine learning, cro
 <!-- compile working with:
 pandoc writeup.md --bibliography=refs.bib --filter pandoc-citeproc --pdf-engine=xelatex -o output.pdf-->
 
-<!-- pandoc writeup.md --template=mytemplate.tex -o output.pdf --bibliography=refs.bib --pdf-engine=xelatex --citeproc  -->
+<!-- pandoc writeup.md --template=mytemplate.tex -o output.pdf --bibliography=refs.bib --pdf-engine=xelatex --filter pandoc-citeproc -->
 
  
-<!--
-# convert to word doc (2 steps)
-pandoc writeup.md --template=mytemplate.tex \
+<!-- convert to word doc (2 steps)  --template=mytemplate.tex \
+pandoc writeup.md 
   --from markdown+raw_tex \
   --to latex \
   --bibliography=refs.bib \
-  --citeproc \
+  --filter pandoc-citeproc\
   -o output.tex
 
 pandoc output.tex --from latex --to docx -o output.docx
@@ -84,6 +83,7 @@ where each $f_m$ is a time series feature extraction function (e.g. mean, varian
 
 A visual representation of this transformation is shown in Figure 1. The feature extraction process is applied to each pixel's time series, resulting in a feature vector $\vec{x}_{i,j}$ for each pixel $(i,j)$.
 
+\newpage
 ![Feature Extraction Process](figures/feature extract.png)
 
 This results in a 2D design matrix of features for the entire image:
@@ -91,6 +91,8 @@ This results in a 2D design matrix of features for the entire image:
 $$
 \mathbf{X}_{\text{features}} \in \mathbb{R}^{H \times W \times M}
 $$
+
+
 
 This transformation effectively reduces the temporal complexity while preserving informative temporal patterns, enabling efficient training of spatial models or further aggregation to coarser spatial units (e.g., fields or regions).
 
@@ -105,7 +107,7 @@ where $\vec{a}_{i,j} \in \mathbb{R}^U$ represents the $U$ univariate attributes 
 ### Time Series Feature Set
 
 The table below summarizes the suite of time series features extracted by the `xr_fresh` module from imagery. These features are designed to characterize the temporal behavior of each pixel $(x_i, y_j)$, capturing key aspects of, for instance crop phenology and seasonal dynamics. By including a diverse set of statistical, trend and distribution-based metrics, `xr_fresh` enables a detailed and scalable analysis of temporal patterns found to be relevant to time series applications of imagery [@jin2022automated]. Additional features can be added to the library as needed, and users can also define custom feature extraction functions.
-
+ 
 ```{=latex}
 
 \renewcommand{\arraystretch}{1.5}  
@@ -145,7 +147,7 @@ Variance & Variance of the time series & $\frac{1}{N}\sum_{i=1}^{n} (x_i - \bar{
 Variance Larger than Standard Deviation & check if variance is larger than standard deviation & $\sigma^2 > 1$ \\
 \hline
 \end{longtable}
-  
+```
 
 ### Additional Functionality  
 
@@ -206,11 +208,11 @@ where $\alpha_k$ are the normalized eigenvectors. This yields a lower-dimensiona
 
 ## Software Framework
 
-`xr_fresh` achieves scalability by employing a combination of parallel and distributed computing strategies throughout both the feature extraction and dimensionality reduction stages. During feature extraction, functions are applied in parallel across spatial windows of the dataset using the `geowombat.series` context manager. The `apply` method enables multicore processing via the `num_workers` parameter, distributing computation over spatial blocks (such as 256×256 pixel windows) and efficiently utilizing all available CPU cores or distributed resources. Users can further extend functionality by defining custom feature extraction modules through subclassing `gw.TimeModule`, which are seamlessly integrated into the parallel pipeline and can leverage accelerated libraries like JAX, NumPy, or PyTorch for additional speedup.
+`xr_fresh` achieves scalability by employing a combination of parallel and distributed computing strategies throughout both the feature extraction and dimensionality reduction stages. During feature extraction, functions are applied in parallel across spatial windows of the dataset using the `geowombat.series` context manager [@geowombat]. The `apply` method enables multicore processing via the `num_workers` parameter, distributing computation over spatial blocks (such as 256×256 pixel windows) and efficiently utilizing all available CPU cores or distributed resources. Users can further extend functionality by defining custom feature extraction modules through subclassing `gw.TimeModule`, which are seamlessly integrated into the parallel pipeline and can leverage accelerated libraries like JAX, NumPy, or PyTorch for additional speedup.
 
 For high-dimensional data, dimensionality reduction (such as Kernel PCA) is performed in a distributed manner. The data set is divided into spatial chunks, each processed in parallel using Ray, a distributed execution framework. Within each chunk, Numba-compiled functions (using `@numba.jit(nopython=True, parallel=True)`) accelerate the transformation and exploit multi-threading at the block level. This two-level parallelism—across blocks with Ray and within blocks with Numba—enables efficient scaling to very large datasets. The architecture is further supported by integration with Dask and xarray, which provide lazy evaluation, chunked computation, and seamless scaling from single machines to distributed clusters. Together, these strategies ensure that both feature extraction and dimensionality reduction are highly scalable, making `xr_fresh` suitable for operational use on large-scale image datasets.
 
-## Case Study: Precipitation In Africa
+## Example: Precipitation In Africa
 
 As a demonstration of `xr_fresh`, we applied the package to a dataset of monthly precipitation estimates in East Africa, derived from the CHIRPS dataset in Figure 2 [@funk2015climate]. The goal was to extract features from the time series data for each pixel, enabling subsequent analysis and modeling.
 
