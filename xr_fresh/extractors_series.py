@@ -25,6 +25,26 @@ def extract_features_series(
 
     Returns:
         None
+
+    Example:
+    .. code-block:: python
+        # Define the feature dictionary
+        feature_dict = {
+            "abs_energy": [{}],
+            "autocorr": [{"lag": 1}, {"lag": 2}, {"lag": 3}],
+            "ratio_beyond_r_sigma": [{"r": 1}, {"r": 2}],
+            "skewness": [{}],
+        }
+
+            # Define the band name and output directory
+            band_name = "B2"
+
+            # Create the output directory if it doesn't exist
+            output_directory = "../features"
+
+            # Extract features from the geospatial time series
+            extract_features_series(gw_series, feature_dict, band_name, output_directory)
+
     """
     # Create output directory if it does not exist
     Path(output_dir).mkdir(parents=True, exist_ok=True)
@@ -133,57 +153,3 @@ def extract_grid(band_name):
     else:
         # Return default value if match is not found
         return "default_grid"
-
-
-#################################################################################################################################
-#################################################################################################################################
-
-# Example usage
-if __name__ == "__main__":
-    # Define the geospatial time series dataset
-    gw_series = ...
-
-    # Define the feature dictionary
-    feature_dict = {
-        "abs_energy": [{}],
-        "absolute_sum_of_changes": [{}],
-        "autocorr": [{"lag": 1}, {"lag": 2}, {"lag": 3}],
-        "count_above_mean": [{}],
-        "count_below_mean": [{}],
-        "doy_of_maximum": [{}],
-        "doy_of_minimum": [{}],
-        "kurtosis": [{}],
-        "large_standard_deviation": [{}],
-        # # # "longest_strike_above_mean": [{}],  # not working with jax GPU ram issue
-        # # # "longest_strike_below_mean": [{}],  # not working with jax GPU ram issue
-        "maximum": [{}],
-        "mean": [{}],
-        "mean_abs_change": [{}],
-        "mean_change": [{}],
-        "mean_second_derivative_central": [{}],
-        "median": [{}],
-        "minimum": [{}],
-        # "ols_slope_intercept": [
-        #     {"returns": "intercept"},
-        #     {"returns": "slope"},
-        #     {"returns": "rsquared"},
-        # ],  # not working
-        "quantile": [{"q": 0.05}, {"q": 0.95}],
-        "ratio_beyond_r_sigma": [{"r": 1}, {"r": 2}],
-        "skewness": [{}],
-        "standard_deviation": [{}],
-        "sum": [{}],
-        "symmetry_looking": [{}],
-        "ts_complexity_cid_ce": [{}],
-        "variance": [{}],
-        "variance_larger_than_standard_deviation": [{}],
-    }
-
-    # Define the band name and output directory
-    band_name = "B2"
-
-    # Create the output directory if it doesn't exist
-    output_directory = "../features"
-
-    # Extract features from the geospatial time series
-    extract_features_series(gw_series, feature_dict, band_name, output_directory)
