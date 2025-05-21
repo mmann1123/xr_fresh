@@ -19,19 +19,8 @@ affiliations:
 date: 21 May 2025
 bibliography: refs.bib
 header-includes:
-  - \usepackage{geometry}
-  - \usepackage{pdflscape}
   - \usepackage{longtable}
-  - \usepackage{fancyhdr}
-  - \usepackage{float}
-  - \usepackage{graphicx}
-  - \usepackage{amsmath}
-  - \usepackage{amsfonts}
-  - \usepackage{lineno}
-  - \usepackage{array}
-  - \usepackage{booktabs}
-  - \usepackage{caption}
-  - \usepackage{bbm}
+
 
 abstract: |
   xr_fresh is a Python library for automated feature extraction from gridded time series data, such as satellite imagery, climate model outputs, and sensor arrays. Building on the methodology of tsfresh, xr_fresh extends this approach to pixel-level temporal sequences common in observational data such as from earth observation or repeat photography data. It computes a comprehensive set of statistical, trend, and distribution-based features for each pixel, enabling scalable preprocessing for classical machine learning. The library is optimized for large-scale applications through parallelized computation using xarray, Dask, Ray, and JAX. It also includes advanced interpolation techniques for handling missing data and GPU-accelerated kernel PCA for dimensionality reduction. We demonstrate xr_fresh through applications to crop classification and precipitation analysis, highlighting its performance, flexibility, and utility in remote sensing workflows.
