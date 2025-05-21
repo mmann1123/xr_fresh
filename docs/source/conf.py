@@ -165,6 +165,14 @@ def copy_html_files(app, exception):
                 dest_path = os.path.join(destination_dir, rel_path)
                 os.makedirs(dest_path, exist_ok=True)
                 shutil.copy2(src_file, os.path.join(dest_path, file))
+    # --- Copy the _images directory ---
+
+    images_src = os.path.join(build_dir, "_images")
+    images_dst = os.path.join(destination_dir, "_images")
+    if os.path.exists(images_src):
+        if os.path.exists(images_dst):
+            shutil.rmtree(images_dst)
+        shutil.copytree(images_src, images_dst)
 
 
 def setup(app):

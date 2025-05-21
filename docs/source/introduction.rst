@@ -23,7 +23,7 @@ Without `xr_fresh`, you would have to compute each of these features manually fo
 It works natively with xarray and Dask, and integrates smoothly with downstream tools like `scikit-learn`, `geopandas`, and `rasterio`.
 
 What can we do with these features?
------------------------------
+------------------------------------
 
 The extracted features allow you to:
 
@@ -34,7 +34,7 @@ The extracted features allow you to:
  
 
 What can't we do with xr\_fresh?
------------------------------
+---------------------------------
 
 Currently, `xr_fresh` is not designed:
 
@@ -43,7 +43,7 @@ Currently, `xr_fresh` is not designed:
 * or for tasks that require joint spatiotemporal convolution (where deep learning models like ConvLSTMs may be more appropriate).
 
 What else is out there?
-----------------------
+-------------------------
 
 There are other tools for time series analysis, such as:
 

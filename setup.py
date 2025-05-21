@@ -17,7 +17,6 @@ URL = "https://github.com/mmann/xr_fresh"
 EMAIL = "mmann1123@gmail.com"
 AUTHOR = "Michael Mann"
 REQUIRES_PYTHON = ">=3.8"
-VERSION = "0.2.1"
 
 # Define the C++ extension module
 ext_modules = [
@@ -100,7 +99,7 @@ REQUIRED = [
     "gdal>=2.3.3",
     "numba>=0.48.0",
     jax_dependency,
-    "nbsphinx>=0.8.3",
+    "myst_nb>=1.1.0",
 ]
 
 # Add ray dependency if not on Windows
@@ -118,12 +117,13 @@ except FileNotFoundError:
     long_description = DESCRIPTION
 
 # Load the package's __version__.py module as a dictionary.
+
 about = {}
-if not VERSION:
-    with open(os.path.join(here, NAME, "__version__.py")) as f:
-        exec(f.read(), about)
-else:
-    about["__version__"] = VERSION
+with open(os.path.join(here, NAME, "__init__.py")) as f:
+    for line in f:
+        if line.startswith("__version__"):
+            exec(line, about)
+            break
 
 # Where the magic happens:
 setup(
