@@ -1,4 +1,3 @@
-# %%
 import numba
 import ray
 import geowombat as gw
