@@ -36,6 +36,8 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
 
 
         Examples:
+        import xr_fresh.dimension_reduction  # This registers the accessor
+
         # Initialize Ray
         with ray.init(num_cpus=8) as rays:
 
@@ -52,7 +54,7 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
                 stack_dim="band",
                 band_names=[0, 1, 2, 3],
             ) as src:
-                # get third k principal components - base zero counting
+                # get 3 k principal components - base zero counting
                 transformed_dataarray = src.gw_ext.k_pca(
                     gamma=15, n_components=3, n_workers=8, chunk_size=256
                 )
@@ -162,7 +164,12 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
             attrs=self._obj.attrs,
         )
 
-        return transformed_dataarray
+        # add chunksize
+        chunk_size = transformed_dataarray.gw.check_chunksize(
+            512, transformed_dataarray.gw.ncols
+        )
+
+        return transformed_dataarray.chunk(chunk_size)
 
 
 # Register the new accessor
