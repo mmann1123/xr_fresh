@@ -36,30 +36,32 @@ class ExtendedGeoWombatAccessor(GeoWombatAccessor):
 
 
         Examples:
-        import xr_fresh.dimension_reduction  # This registers the accessor
+        .. code-block:: python
 
-        # Initialize Ray
-        with ray.init(num_cpus=8) as rays:
+            import xr_fresh.dimension_reduction  # This registers the accessor
 
-            # Example usage
-            with gw.open(
-                sorted(
-                    [
-                        "./tests/data/RadT_tavg_202301.tif",
-                        "./tests/data/RadT_tavg_202302.tif",
-                        "./tests/data/RadT_tavg_202304.tif",
-                        "./tests/data/RadT_tavg_202305.tif",
-                    ]
-                ),
-                stack_dim="band",
-                band_names=[0, 1, 2, 3],
-            ) as src:
-                # get 3 k principal components - base zero counting
-                transformed_dataarray = src.gw_ext.k_pca(
-                    gamma=15, n_components=3, n_workers=8, chunk_size=256
-                )
-                transformed_dataarray.plot.imshow(col='component', col_wrap=1, figsize=(8, 12))
-                plt.show()
+            # Initialize Ray
+            with ray.init(num_cpus=8) as rays:
+
+                # Example usage
+                with gw.open(
+                    sorted(
+                        [
+                            "./tests/data/RadT_tavg_202301.tif",
+                            "./tests/data/RadT_tavg_202302.tif",
+                            "./tests/data/RadT_tavg_202304.tif",
+                            "./tests/data/RadT_tavg_202305.tif",
+                        ]
+                    ),
+                    stack_dim="band",
+                    band_names=[0, 1, 2, 3],
+                ) as src:
+                    # get 3 k principal components - base zero counting
+                    transformed_dataarray = src.gw_ext.k_pca(
+                        gamma=15, n_components=3, n_workers=8, chunk_size=256
+                    )
+                    transformed_dataarray.plot.imshow(col='component', col_wrap=1, figsize=(8, 12))
+                    plt.show()
 
         """
 
