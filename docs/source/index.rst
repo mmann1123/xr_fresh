@@ -1,7 +1,3 @@
-.. image:: _static/xr_fresh.png
-   :width: 40%
-   :alt: xr_fresh logo
-
 The xr_fresh Docs!
 ===================
 .. image:: https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-3776AB.svg?style=flat&logo=python&logoColor=white
