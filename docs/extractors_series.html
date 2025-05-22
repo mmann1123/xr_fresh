@@ -8,7 +8,7 @@
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
-      <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
 
   
     <link rel="canonical" href="https://mmann1123.github.io/xr_fresh/extractors_series.html" />
@@ -122,27 +122,25 @@
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
-<p>Example:
-.. code-block:: python</p>
-<blockquote>
-<div><p># Define the feature dictionary
-feature_dict = {</p>
-<blockquote>
-<div><p>“abs_energy”: [{}],
-“autocorr”: [{“lag”: 1}, {“lag”: 2}, {“lag”: 3}],
-“ratio_beyond_r_sigma”: [{“r”: 1}, {“r”: 2}],
-“skewness”: [{}],</p>
-</div></blockquote>
-<p>}</p>
-<blockquote>
-<div><p># Define the band name and output directory
-band_name = “B2”</p>
-<p># Create the output directory if it doesn’t exist
-output_directory = “../features”</p>
-<p># Extract features from the geospatial time series
-extract_features_series(gw_series, feature_dict, band_name, output_directory)</p>
-</div></blockquote>
-</div></blockquote>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the feature dictionary</span>
+<span class="n">feature_dict</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s2">&quot;abs_energy&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+<span class="s2">&quot;autocorr&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;lag&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;lag&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;lag&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}],</span>
+<span class="s2">&quot;ratio_beyond_r_sigma&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}],</span>
+<span class="s2">&quot;skewness&quot;</span><span class="p">:</span> <span class="p">[{}],</span>
+<span class="p">}</span>
+
+<span class="c1"># Define the band name and output directory</span>
+<span class="n">band_name</span> <span class="o">=</span> <span class="s2">&quot;B2&quot;</span>
+
+<span class="c1"># Create the output directory if it doesn&#39;t exist</span>
+<span class="n">output_directory</span> <span class="o">=</span> <span class="s2">&quot;../features&quot;</span>
+
+<span class="c1"># Extract features from the geospatial time series</span>
+<span class="n">extract_features_series</span><span class="p">(</span><span class="n">gw_series</span><span class="p">,</span> <span class="n">feature_dict</span><span class="p">,</span> <span class="n">band_name</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">

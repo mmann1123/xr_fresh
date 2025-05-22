@@ -26,8 +26,8 @@ class interpolate_nan(gw.TimeModule):
     Methods:
         calculate(array): Applies the interpolation on the input array.
 
-    Example Usage:
-
+    Example
+    -------
     .. code-block:: python
 
         pth = "/home/mmann1123/Dropbox/Africa_data/Temperature/"

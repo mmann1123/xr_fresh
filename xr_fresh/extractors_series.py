@@ -17,7 +17,7 @@ def extract_features_series(
     """
     Extracts features from a geospatial time series and saves them as TIFF files.
 
-    Parameters:
+    Args:
         gw_series (geowombat.Dataset): Geospatial time series dataset.
         feature_dict (dict): Dictionary containing feature names and parameters.
         band_name (str): Name of the band.
@@ -26,25 +26,26 @@ def extract_features_series(
     Returns:
         None
 
-    Example:
+    Example
+    -------
     .. code-block:: python
+
         # Define the feature dictionary
         feature_dict = {
-            "abs_energy": [{}],
-            "autocorr": [{"lag": 1}, {"lag": 2}, {"lag": 3}],
-            "ratio_beyond_r_sigma": [{"r": 1}, {"r": 2}],
-            "skewness": [{}],
+        "abs_energy": [{}],
+        "autocorr": [{"lag": 1}, {"lag": 2}, {"lag": 3}],
+        "ratio_beyond_r_sigma": [{"r": 1}, {"r": 2}],
+        "skewness": [{}],
         }
 
-            # Define the band name and output directory
-            band_name = "B2"
+        # Define the band name and output directory
+        band_name = "B2"
 
-            # Create the output directory if it doesn't exist
-            output_directory = "../features"
+        # Create the output directory if it doesn't exist
+        output_directory = "../features"
 
-            # Extract features from the geospatial time series
-            extract_features_series(gw_series, feature_dict, band_name, output_directory)
-
+        # Extract features from the geospatial time series
+        extract_features_series(gw_series, feature_dict, band_name, output_directory)
     """
     # Create output directory if it does not exist
     Path(output_dir).mkdir(parents=True, exist_ok=True)

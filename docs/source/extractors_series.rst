@@ -11,7 +11,6 @@ Extractor Function
 Functions
 ----------------------- 
 .. automodule:: xr_fresh.extractors_series
-    :members:
-
-
- 
+   :members:
+   :undoc-members:
+   :show-inheritance:

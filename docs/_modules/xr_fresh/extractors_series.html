@@ -35,6 +35,7 @@
           
           <a href="../../index.html" class="icon icon-home">
             xr_fresh
+              <img src="../../_static/xr_fresh.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -98,7 +99,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts features from a geospatial time series and saves them as TIFF files.</span>
 
-<span class="sd">    Parameters:</span>
+<span class="sd">    Args:</span>
 <span class="sd">        gw_series (geowombat.Dataset): Geospatial time series dataset.</span>
 <span class="sd">        feature_dict (dict): Dictionary containing feature names and parameters.</span>
 <span class="sd">        band_name (str): Name of the band.</span>
@@ -107,25 +108,26 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        None</span>
 
-<span class="sd">    Example:</span>
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
 <span class="sd">    .. code-block:: python</span>
+
 <span class="sd">        # Define the feature dictionary</span>
 <span class="sd">        feature_dict = {</span>
-<span class="sd">            &quot;abs_energy&quot;: [{}],</span>
-<span class="sd">            &quot;autocorr&quot;: [{&quot;lag&quot;: 1}, {&quot;lag&quot;: 2}, {&quot;lag&quot;: 3}],</span>
-<span class="sd">            &quot;ratio_beyond_r_sigma&quot;: [{&quot;r&quot;: 1}, {&quot;r&quot;: 2}],</span>
-<span class="sd">            &quot;skewness&quot;: [{}],</span>
+<span class="sd">        &quot;abs_energy&quot;: [{}],</span>
+<span class="sd">        &quot;autocorr&quot;: [{&quot;lag&quot;: 1}, {&quot;lag&quot;: 2}, {&quot;lag&quot;: 3}],</span>
+<span class="sd">        &quot;ratio_beyond_r_sigma&quot;: [{&quot;r&quot;: 1}, {&quot;r&quot;: 2}],</span>
+<span class="sd">        &quot;skewness&quot;: [{}],</span>
 <span class="sd">        }</span>
 
-<span class="sd">            # Define the band name and output directory</span>
-<span class="sd">            band_name = &quot;B2&quot;</span>
+<span class="sd">        # Define the band name and output directory</span>
+<span class="sd">        band_name = &quot;B2&quot;</span>
 
-<span class="sd">            # Create the output directory if it doesn&#39;t exist</span>
-<span class="sd">            output_directory = &quot;../features&quot;</span>
+<span class="sd">        # Create the output directory if it doesn&#39;t exist</span>
+<span class="sd">        output_directory = &quot;../features&quot;</span>
 
-<span class="sd">            # Extract features from the geospatial time series</span>
-<span class="sd">            extract_features_series(gw_series, feature_dict, band_name, output_directory)</span>
-
+<span class="sd">        # Extract features from the geospatial time series</span>
+<span class="sd">        extract_features_series(gw_series, feature_dict, band_name, output_directory)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Create output directory if it does not exist</span>
     <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
