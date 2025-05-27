@@ -3,7 +3,7 @@
 [![](https://img.shields.io/github/v/release/mmann1123/xr_fresh?display_name=tag)](https://github.com/mmann1123/xr_fresh/releases)
 [![](https://img.shields.io/badge/License-MIT-black.svg)](https://github.com/jgrss/geowombat/blob/main/LICENSE.txt)
 ![Tests](https://github.com/mmann1123/xr_fresh/actions/workflows/python-tests.yml/badge.svg?branch=master)
-
+[![status](https://joss.theoj.org/papers/d2f29c3830187e4b75cf6141996f9f0b/status.svg)](https://joss.theoj.org/papers/d2f29c3830187e4b75cf6141996f9f0b)
 <!-- 
 [![](https://github.com/mmann1123/xr_fresh/actions/workflows/python-tests.yml/badge.svg)](https://github.com/mmann1123/xr_fresh/actions/workflows/python-tests.yml)
 
