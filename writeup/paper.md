@@ -31,7 +31,7 @@ pandoc writeup.md --bibliography=refs.bib --filter pandoc-citeproc --pdf-engine=
  
 ## Statement of need
 
-Gridded time series data from satellites, climate models, camera feeds, and sensors contain rich temporal information for applications like crop type classification and yields, anomaly detection, robotics, quality control, environmental monitoring, and natural resource management [@delince2017handbook;@mumuni2024automated;@hufkens2019monitoring;@MANN201760;@mann2019predicting]. Efficiently extracting relevant time series features at scale remains challenging, necessitating automated [@faouzi2022time;@li2020forecasting]. Inspired by `tsfresh`, we introduce `xr_fresh`, tailored specifically for image time series,by automating the extraction of time series features on a pixel-by-pixel basis [@CHRIST201872].
+Gridded time series data from satellites, climate models, camera feeds, and sensors contain rich temporal information for applications like crop type classification and yields, anomaly detection, robotics, quality control, environmental monitoring, and natural resource management [@delince2017handbook;@mumuni2024automated;@hufkens2019monitoring;@MANN201760;@mann2019predicting]. Efficiently extracting relevant time series features at scale remains challenging, necessitating automation [@faouzi2022time;@li2020forecasting]. Inspired by `tsfresh`, we introduce `xr_fresh`, tailored specifically for gridded time series by automating the extraction of time series features on a pixel-by-pixel basis [@CHRIST201872].
 
 Currently, there is no method to rapidly extract a comprehensive set of features from gridded time series data, such as those derived from remote sensing imagery. Existing packages like `tsfresh` are not optimized for the unique structure of gridded time series data. This limitation hinders the ability to efficiently analyze and model these datasets, particularly in the context of remote sensing applications where large volumes of data are generated.
 
@@ -77,11 +77,11 @@ where $\vec{a}_{i,j} \in \mathbb{R}^U$ represents the $U$ univariate attributes 
 
 ### Time Series Feature Set
 
-The [online documentation](https://mmann1123.github.io/xr_fresh/feature_calculator_series.html) summarizes the suite of time series features extracted by the `xr_fresh` module from gridded data. These features are designed to characterize the temporal behavior of each pixel $(x_i, y_j)$. By including a diverse set of statistical, trend and distribution-based metrics, `xr_fresh` enables a detailed and scalable analysis of temporal patterns [@jin2022automated;@venkatachalam2024temporal]. Additional features can be added to the library as needed, and users can also define custom feature extraction functions.
+The [documentation](https://mmann1123.github.io/xr_fresh/feature_calculator_series.html) summarizes the suite of time series features extracted by the `xr_fresh` module from gridded data. These features are designed to characterize the temporal behavior of each pixel $(x_i, y_j)$. By including a diverse set of statistical, trend and distribution-based metrics, `xr_fresh` enables a detailed and scalable analysis of temporal patterns [@jin2022automated;@venkatachalam2024temporal]. Additional features can be added to the library as needed, and users can also define custom feature extraction functions.
 
-#### Interpolation
+### Interpolation
 
-The `xr_fresh` library includes functionality to interpolate missing values pixel-wise in the gridded data. The interpolation methods implemented in `xr_fresh` are designed to be computationally efficient and can handle large datasets effectively. The module supports advanced interpolation techniques including linear, nearest-neighbor, cubic, and univariate spline interpolation [@virtanen2020scipy]. These methods can utilize either regular intervals or provided date vectors. 
+The `xr_fresh` library includes functionality to interpolate missing values pixel-wise in gridded data. The interpolation methods implemented in `xr_fresh` are designed to be computationally efficient and can handle large datasets effectively. The module supports advanced interpolation techniques including linear, nearest-neighbor, cubic, and univariate spline interpolation [@virtanen2020scipy].  
 
 Formally, for a fixed pixel $(i, j)$, let the time series be:
 
@@ -97,7 +97,7 @@ $$
 
 The function $f(t)$ may take the form of: 1) linear interpolation, 2) nearest neighbor, 3) cubic spline interpolation, or 4) univariate spline interpolation. If acquisition times are irregular, the time $t$ is replaced by a continuous index (e.g. datetime indexes).
 
-#### Dimensionality Reduction
+### Dimensionality Reduction
 
 For high-dimensional inputs or when the number of bands/time steps is large, dimensionality reduction can improve model performance. `xr_fresh` integrates a GPU/CPU-parallelized Kernel Principal Component Analysis (KPCA) module [@scikit-learn]. The KPCA implementation samples valid observations for training, fits the kernel model, and projects each pixel’s time series into a lower-dimensional space. 
 
@@ -107,12 +107,13 @@ For high-dimensional inputs or when the number of bands/time steps is large, dim
 
 ## Example: Precipitation In Africa
 
-We applied `xr_fresh` methods to a dataset of monthly precipitation estimates in East Africa, in Figure 2 [@funk2015climate]. The goal was to extract features from the time series data, enabling subsequent analysis and modeling.
+We apply `xr_fresh` methods to a dataset of monthly precipitation estimates in East Africa, in Figure 2 [@funk2015climate]. The goal is to extract features from the time series data, enabling subsequent analysis and modeling. The `extract_features_series` function takes a list of files, a dictionary of desired features.
+
 
 ![Precipitation input data](figures/precip.png)
 
 ```python
-# create list of desired series
+# create list of desired series and arguments
 feature_list = {
     "minimum": [{}],
     "abs_energy": [{}],
@@ -130,15 +131,13 @@ extract_features_series(image_list, feature_list, band_name, out_dir,
                         num_workers=12, nodata=-9999)
 ```
 
-The `extract_features_series` function takes a list of files, a dictionary of desired features.
-
 ![Time series feature set ](figures/features.png)
 
-The extracted features found in Figure 3 can then be used for various applications.
+The extracted features found in Figure 3 can then be used in a variety of applications.
 
 ## Conclusions
 
-`xr_fresh` is a powerful and efficient tool for automated feature extraction from gridded time series from imagery. Using advanced statistical methods and parallel computing, it enables the extraction of a comprehensive set of features that can significantly enhance the performance of machine learning models. Integration with existing Python geospatial libraries ensures that `xr_fresh` is easy to use and can be seamlessly incorporated into existing machine learning workflows. It also provides advanced interpolation and dimensionality reduction capabilities, addressing common challenges in remote sensing data analysis.  Overall, `xr_fresh` represents a significant advancement in the field of remote sensing feature extraction, providing researchers and practitioners with a powerful tool for analyzing complex temporal patterns in satellite imagery.
+`xr_fresh` is a powerful and efficient tool for automated feature extraction from gridded time series. Using advanced statistical methods and parallel computing, it enables the extraction of a comprehensive set of features that can significantly enhance the performance of machine learning models. Integration with existing Python geospatial libraries ensures that `xr_fresh` is easy to use and can be seamlessly incorporated into existing machine learning workflows. It also provides advanced interpolation and dimensionality reduction capabilities, addressing common challenges in remote sensing data analysis.  Overall, `xr_fresh` represents a significant advancement in the field of remote sensing feature extraction, providing researchers and practitioners with a powerful tool for analyzing complex temporal patterns in satellite or repeat imagery.
 
  
 ```{=latex}
