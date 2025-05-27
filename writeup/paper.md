@@ -23,7 +23,7 @@ header-includes:
 
 
 abstract: |
-  xr_fresh is a Python library for automated feature extraction from gridded time series data, such as satellite imagery, climate model outputs, and sensor arrays. Building on the methodology of tsfresh, xr_fresh extends this approach to pixel-level temporal sequences common in observational data such as from earth observation or repeat photography data. It computes a comprehensive set of statistical, trend, and distribution-based features for each pixel, enabling scalable preprocessing for classical machine learning. The library is optimized for large-scale applications through parallelized computation using xarray, Dask, Ray, and JAX. It also includes advanced interpolation techniques for handling missing data and GPU-accelerated kernel PCA for dimensionality reduction. We demonstrate xr_fresh through applications to crop classification and precipitation analysis, highlighting its performance, flexibility, and utility in remote sensing workflows.
+  xr_fresh is a Python library for automated feature extraction from gridded time series data, such as satellite imagery, climate model outputs, and sensor arrays. Building on the methodology of tsfresh, xr_fresh extends this approach to pixel-level temporal sequences common in observational data such as from earth observation or repeat photography data. It computes a comprehensive set of statistical, trend, and distribution-based features for each pixel, enabling scalable preprocessing for classical machine learning. The library is optimized for large-scale applications through parallelized computation using xarray, Dask, Ray, and JAX. It also includes advanced interpolation techniques for handling missing data and GPU-accelerated kernel PCA for dimensionality reduction.  
 ---
  
 <!-- compile working with:
@@ -57,7 +57,6 @@ where each $f_m$ is a time series feature extraction function (e.g. mean, varian
 
 A visual representation of this transformation is shown in Figure 1.  
 
-\newpage
 ![Feature Extraction Process](figures/feature extract.png)
 
 This results in a 2D design matrix of features for the entire image:
