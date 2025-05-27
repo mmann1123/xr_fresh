@@ -126,7 +126,8 @@ feature_list = {
 from xr_fresh.extractors_series import extract_features_series
 
 # Extract features from the geospatial time series
-extract_features_series(image_list, feature_list, band_name, out_dir, num_workers=12, nodata=-9999)
+extract_features_series(image_list, feature_list, band_name, out_dir, 
+                        num_workers=12, nodata=-9999)
 ```
 
 The `extract_features_series` function takes a list of files, a dictionary of desired features.
