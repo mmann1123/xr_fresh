@@ -95,7 +95,7 @@ $$
 \hat{x}_{i,j,t} = f(t), \quad \text{for } x_{i,j,t} \text{ missing}
 $$
 
-The function $f(t)$ may take the form of: 1) linear interpolation, 2) nearest neighbor, 3) cubic spline interpolation, or 4) univariate spline interpolation. If acquisition times are irregular, the time $t$ is replaced by a continuous index (e.g. datetime indexes).
+The function $f(t)$ may take the form of: 1) linear interpolation, 2) nearest neighbor, 3) cubic spline interpolation, or 4) univariate spline interpolation. If acquisition times are irregular, the time $t$ is replaced by a datetime indexes.
 
 ### Dimensionality Reduction
 
@@ -107,7 +107,7 @@ For high-dimensional inputs or when the number of bands/time steps is large, dim
 
 ## Example: Precipitation In Africa
 
-We apply `xr_fresh` methods to a dataset of monthly precipitation estimates in East Africa, in Figure 2 [@funk2015climate]. The goal is to extract features from the time series data, enabling subsequent analysis and modeling. The `extract_features_series` function takes a list of files, a dictionary of desired features.
+We apply `xr_fresh` methods to a dataset of monthly precipitation estimates in Africa (Figure 2) [@funk2015climate]. The goal is to extract features from the time series data, enabling subsequent analysis and modeling. The `extract_features_series` function takes a list of files, a dictionary of desired features.
 
 
 ![Precipitation input data](figures/precip.png)
@@ -137,8 +137,7 @@ The extracted features found in Figure 3 can then be used in a variety of applic
 
 ## Conclusions
 
-`xr_fresh` is a powerful and efficient tool for automated feature extraction from gridded time series. Using advanced statistical methods and parallel computing, it enables the extraction of a comprehensive set of features that can significantly enhance the performance of machine learning models. Integration with existing Python geospatial libraries ensures that `xr_fresh` is easy to use and can be seamlessly incorporated into existing machine learning workflows. It also provides advanced interpolation and dimensionality reduction capabilities, addressing common challenges in remote sensing data analysis.  Overall, `xr_fresh` represents a significant advancement in the field of remote sensing feature extraction, providing researchers and practitioners with a powerful tool for analyzing complex temporal patterns in satellite or repeat imagery.
-
+`xr_fresh` is a powerful and efficient tool for automated feature extraction from gridded time series. Using advanced statistical methods and parallel computing, it enables the extraction of a comprehensive set of features that can significantly enhance the performance of machine learning models. Integration with existing Python geospatial libraries ensures that `xr_fresh` is easy to use and can be seamlessly incorporated into existing machine learning workflows. It also provides advanced interpolation and dimensionality reduction capabilities, addressing common challenges in remote sensing data analysis.
  
 ```{=latex}
 \newpage
