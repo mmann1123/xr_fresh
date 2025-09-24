@@ -147,3 +147,5 @@ pip-selfcheck.json
 =======
 
 tests/data/*.aux.xml
+notebooks/ssp126_time_series
+CLAUDE.md
