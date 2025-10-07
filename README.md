@@ -20,8 +20,9 @@ The main operations of this package are:
 Why use `xr_fresh`?
 
 1) It is designed to be fast and efficient, using parallel processing to speed up the feature extraction process.
-2) It can run on a GPU, if available, to further speed up the process. See [comparison here](notebooks/time_trial.ipynb)
-3) You really should use google earth engine less!
+2) It can run on a GPU, if available, to further speed up the process.
+3) Radically improves feature generation speeds over tabular extracts using ts_fresh as the backend [comparison here](notebooks/time_trial.ipynb)
+4) You really should use google earth engine less!
 
 
 ## Time Series Feature Extraction
@@ -79,19 +80,6 @@ conda install -c conda-forge "ray-default"
 ```
 Note: `ray` is only is beta for Windows and will not be installed by default. Please read more about the installation [here](https://docs.ray.io/en/latest/ray-overview/installation.html)
 
-## Working with NetCDF Files
-
-While xr_fresh is designed to work with individual GeoTIFF files, you can work with NetCDF data (e.g., climate model output) using a simple workaround:
-
-1. **Export NetCDF time slices to individual GeoTIFF files** - Each time step becomes a separate raster file
-2. **Run xr_fresh on the exported files** - Process as normal time series
-3. **Extract features** - Generate temporal statistics across your time series
-
-See the complete [NetCDF workflow example](notebooks/netcdf.ipynb) that demonstrates:
-- Loading CESM2 climate model data (PRECT precipitation variable)
-- Exporting 1 year of daily data (~366 timesteps) to individual rasters
-- Extracting 27+ temporal features including extremes, variability, and trends
-
 ## Example
 
 Simple working example
@@ -142,6 +130,19 @@ feature_list = {
 # Extract features from the geospatial time series
 extract_features_series(files, feature_list, band_name, temp_dir, num_workers=12, nodata=-9999)
 ```
+
+## Working with NetCDF Files
+
+While xr_fresh is designed to work with individual GeoTIFF files, you can work with NetCDF data (e.g., climate model output) using a simple workaround:
+
+1. **Export NetCDF time slices to individual GeoTIFF files** - Each time step becomes a separate raster file
+2. **Run xr_fresh on the exported files** - Process as normal time series
+3. **Extract features** - Generate temporal statistics across your time series
+
+See the complete [NetCDF workflow example](notebooks/netcdf.ipynb) that demonstrates:
+- Loading CESM2 climate model data (PRECT precipitation variable)
+- Exporting 1 year of daily data (~366 timesteps) to individual rasters
+- Extracting 27+ temporal features including extremes, variability, and trends
 
 **Note**: Some features like `longest_strike_above_mean` and `longest_strike_below_mean` are not compatible with JAX tracing and should be excluded when using GPU acceleration. The notebook example shows a curated list of JAX-compatible features.
 
