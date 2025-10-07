@@ -149,7 +149,15 @@ extract_features_series(files, feature_list, band_name, temp_dir, num_workers=12
 
 After cloning the repository navigate locally to and open the [documentation](mmann1123.github.io/xr_fresh/)
 
- 
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+- Setting up a development environment
+- Running tests
+- Submitting pull requests
+- Code style and testing requirements
+- Reporting issues
+
 ## Citation
 
 Please cite work as:
