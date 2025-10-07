@@ -20,7 +20,7 @@ The main operations of this package are:
 Why use `xr_fresh`?
 
 1) It is designed to be fast and efficient, using parallel processing to speed up the feature extraction process.
-2) It can run on a GPU, if available, to further speed up the process.
+2) It can run on a GPU, if available, to further speed up the process. See [comparison here](notebooks/time_trial.ipynb)
 3) You really should use google earth engine less!
 
 
