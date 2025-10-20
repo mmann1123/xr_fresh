@@ -19,15 +19,14 @@ affiliations:
 date: 21 May 2025
 bibliography: refs.bib
 header-includes:
-  - \usepackage{longtable}
-
 
 abstract: |
   xr_fresh is a Python library for automated feature extraction from gridded time series data, such as satellite imagery, climate model outputs, and sensor arrays. Building on the methodology of tsfresh, xr_fresh extends this approach to pixel-level temporal sequences common in observational data such as from earth observation or repeat photography data. It computes a comprehensive set of statistical, trend, and distribution-based features for each pixel, enabling scalable preprocessing for classical machine learning. The library is optimized for large-scale applications through parallelized computation using xarray, Dask, Ray, and JAX. It also includes advanced interpolation techniques for handling missing data and GPU-accelerated kernel PCA for dimensionality reduction.  
 ---
  
 <!-- compile working with:
-pandoc paper.md --bibliography=refs.bib --filter pandoc-citeproc --pdf-engine=xelatex -o output.pdf-->
+pandoc paper.md --citeproc --bibliography=refs.bib --pdf-engine=xelatex -o output.pdf
+-->
  
 ## Statement of need
 
@@ -103,7 +102,7 @@ For high-dimensional inputs or when the number of bands/time steps is large, dim
 
 ## Software Framework
 
-`xr_fresh` achieves scalability by employing a combination of parallel and distributed computing strategies. During feature extraction, functions are applied in parallel across spatial windows with Dask and xarray, which provide lazy evaluation, chunked computation [@geowombat;@hoyer2017xarray;@rocklin2015dask]. Seamlessly integrated into the parallel pipeline and can leverage accelerated libraries like JAX, NumPy, ray, numba or PyTorch for additional speedup [@jax2018github;lam2015numba;@harris2020array;@moritz2018ray]. Together, these strategies ensure that methods are highly scalable, for use on large-scale datasets.
+`xr_fresh` achieves scalability by employing a combination of parallel and distributed computing strategies. During feature extraction, functions are applied in parallel across spatial windows with Dask and xarray, which provide lazy evaluation, chunked computation [@geowombat;@hoyer2017xarray;@rocklin2015dask]. Seamlessly integrated into the parallel pipeline and can leverage accelerated libraries like JAX, NumPy, ray, numba or PyTorch for additional speedup [@jax2018github;@lam2015numba;@harris2020array;@moritz2018ray]. Together, these strategies ensure that methods are highly scalable, for use on large-scale datasets.
 
 ## Example: Precipitation In Africa
 
