@@ -1,5 +1,5 @@
 ---
-title: "xr_fresh: Automated Time Series Feature Extraction for Remote Sensing & Gridded Data"
+title: "xr_fresh: Automated Time Series Feature Extraction for Remote Sensing and Gridded Data"
 tags:
   - Feature Extraction
   - Remote Sensing
