@@ -163,6 +163,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 Please cite work as:
 ```
-Michael Mann. (2024). mmann1123/xr_fresh: SpeedySeries (0.2.0). Zenodo. https://doi.org/10.5281/zenodo.12701466
+Mann, M. L., (2025). xr_fresh: Automated Time Series Feature Extraction for Remote Sensing and Gridded Data. Journal of Open Source Software, 10(115), 9009, https://doi.org/10.21105/joss.09009
 ```
-[![DOI](https://zenodo.org/badge/246113186.svg)](https://zenodo.org/doi/10.5281/zenodo.12519006)
+
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.09009/status.svg)](https://doi.org/10.21105/joss.09009)
