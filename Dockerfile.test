@@ -1,0 +1,51 @@
+# Dockerfile to simulate GitHub Actions environment for testing
+# Based on ubuntu-22.04 (same as GitHub Actions)
+FROM ubuntu:22.04
+
+# Set environment variables to avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Install system dependencies (matching GitHub Actions workflow)
+RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    && add-apt-repository ppa:ubuntugis/ppa -y \
+    && apt-get update && apt-get install -y \
+    gdal-bin \
+    libgdal-dev \
+    libgl1 \
+    libspatialindex-dev \
+    g++ \
+    libmysqlclient-dev \
+    python3.9 \
+    python3.9-dev \
+    python3.9-venv \
+    python3.10 \
+    python3.10-dev \
+    python3.10-venv \
+    python3.11 \
+    python3.11-dev \
+    python3.11-venv \
+    python3-pip \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables for GDAL
+ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
+ENV C_INCLUDE_PATH=/usr/include/gdal
+ENV LD_LIBRARY_PATH=/usr/local/lib
+
+# Create a working directory
+WORKDIR /workspace
+
+# Copy the entire project
+COPY . /workspace/
+
+# Default to Python 3.9 (first in GitHub Actions matrix)
+ENV PYTHON_VERSION=3.9
+
+# Entry point script to run tests
+COPY docker-test-runner.sh /docker-test-runner.sh
+RUN chmod +x /docker-test-runner.sh
+
+CMD ["/docker-test-runner.sh"]
